@@ -59,7 +59,9 @@
 	        baseUrl: localStorage.getItem("baseUrl") || "ws://localhost",
 	        parameters: localStorage.getItem("parameters") ? JSON.parse(localStorage.getItem("parameters")) : [],
 	        anchor: localStorage.getItem("anchor") || "",
-	        messageInternally: localStorage.getItem("message") || ""
+	        messageInternally: localStorage.getItem("message") || "",
+	        showRawInternally: !!localStorage.getItem("showRaw"),
+	        showFormattedInternally: !!localStorage.getItem("showFormatted")
 	    },
 	    computed: {
 	        isSocketIO: {
@@ -78,6 +80,24 @@
 	            set: function (value) {
 	                localStorage.setItem("ignorePing", value ? "1" : "");
 	                this.ignorePingInternally = value;
+	            }
+	        },
+	        showRaw: {
+	            get: function () {
+	                return this.showRawInternally;
+	            },
+	            set: function (value) {
+	                localStorage.setItem("showRaw", value ? "1" : "");
+	                this.showRawInternally = value;
+	            }
+	        },
+	        showFormatted: {
+	            get: function () {
+	                return this.showFormattedInternally;
+	            },
+	            set: function (value) {
+	                localStorage.setItem("showFormatted", value ? "1" : "");
+	                this.showFormattedInternally = value;
 	            }
 	        },
 	        message: {
@@ -222,6 +242,12 @@
 	                return;
 	            }
 
+	            vue.messages.unshift({
+	                moment: moment().format("HH:mm:ss"),
+	                type: e.type,
+	                rawData: e.data
+	            });
+
 	            if (this.isSocketIOInternally) {
 	                decoder.add(e.data);
 	            } else {
@@ -232,14 +258,7 @@
 	                        type: e.type,
 	                        formattedData: json
 	                    });
-	                } catch (error) {
-	                    this.messages.unshift({
-	                        moment: moment().format("HH:mm:ss"),
-	                        type: e.type,
-	                        data: e.data
-	                    });
-	                }
-
+	                } catch (error) { }
 	            }
 	        },
 	        onerror: function (e) {
