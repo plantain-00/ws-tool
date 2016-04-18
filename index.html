@@ -13,11 +13,24 @@
             font-family: "Lucida Grande", Lucida Sans Unicode, Hiragino Sans GB, WenQuanYi Micro Hei, Verdana, Aril, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
+        
+        pre {
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 
 <body id="body">
     <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>WebSocket/Socket.IO Test Tool</h4>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <input id="url" type="url" class="form-control" v-model="url">
@@ -35,6 +48,11 @@
         </div>
         <div class="row">
             <div class="col-md-6">
+                <div class="col-md-12">
+                    <textarea style="width:100%;height:200px;" class="form-control" v-model="message"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
                 <div v-for="parameter in parameters">
                     <div class="col-md-3">
                         <input type="text" class="form-control" value={{parameter.key}} onkeyup="vue.setParameter({{$index}}, this.value, '{{parameter.value}}')">
@@ -47,11 +65,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="col-md-12">
-                    <textarea style="width:100%;height:200px;" class="form-control" v-model="message"></textarea>
-                </div>
-            </div>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -60,6 +73,12 @@
                 </label>
                 <label v-show="isSocketIO">
                     <input type="checkbox" v-model="ignorePing" disabled={{!!websocket}}> ignore ping
+                </label>
+                <label>
+                    <input type="checkbox" v-model="showRaw"> show raw data
+                </label>
+                <label>
+                    <input type="checkbox" v-model="showFormatted"> show formatted data
                 </label>
             </div>
         </div>
@@ -83,7 +102,14 @@
                         <span v-if="message.type==='message'" class="label label-info">in</span>
                         <span v-if="message.reason">{{message.reason}}</span>
                         <span v-if="message.data">{{message.data}}</span>
-                        <pre v-if="message.formattedData">{{message.formattedData}}</pre>
+                        <span v-if="message.formattedData">
+                            <pre v-if="showFormatted">{{message.formattedData}}</pre>
+                            <span v-else class="label label-default">formatted</span>
+                        </span>
+                        <span v-if="message.rawData">
+                            <pre v-if="showRaw">{{message.rawData}}</pre>
+                            <span v-else class="label label-default">raw</span>
+                        </span>
                     </li>
                 </ul>
             </div>
