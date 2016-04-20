@@ -4,7 +4,7 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "bundle": "webpack index.js index.bundle.js"
   },
   "repository": {
     "type": "git",
