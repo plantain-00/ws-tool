@@ -74,7 +74,7 @@
                     <input type="checkbox" v-model="isSocketIO" disabled={{!!websocket}}> socket.io
                 </label>
                 <label v-show="isSocketIO">
-                    <input type="checkbox" v-model="ignorePing" disabled={{!!websocket}}> ignore ping
+                    <input type="checkbox" v-model="ignorePing" disabled={{!!websocket}}> will hide ping/pong of socket.io
                 </label>
                 <label>
                     <input type="checkbox" v-model="showRaw"> show raw data
@@ -114,6 +114,13 @@
                         </span>
                     </li>
                 </ul>
+                <pre v-show="messages.length === 0">
+Tips: 
+1. for socket.io, if you connect http://localhost, in ws's perspective, you connected ws://localhost/socket.io?transport=websocket
+2. for socket.io, if you connect https://localhost, in ws's perspective, you connected wss://localhost/socket.io?transport=websocket
+3. for socket.io, if you send a message(eg: {a_key:"a_value"}) in an event(eg: "a_event"), in ws's perspective, the actual message you send is: 42["a_event",{"a_key":"a_value"}]
+4. chrome's developer tool is a good tool to view ws connection and messages
+                </pre>
             </div>
         </div>
     </div>
