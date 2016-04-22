@@ -22,6 +22,10 @@
             white-space: -o-pre-wrap;
             word-wrap: break-word;
         }
+        
+        button, textarea, input[type="checkbox"], pre {
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -41,8 +45,10 @@
         <div class="row">
             <div class="col-md-12">
                 <button class="btn btn-default clipboard" data-clipboard-target="#url">
-                    copy
+                    copy URL
                 </button>
+                <button class="btn btn-default" @click="previewMessage()" disabled={{message===""}} v-show="!isPreview">preview message</button>
+                <button class="btn btn-default" @click="cancelPreview()" disabled={{message===""}} v-else>cancel preview</button>
                 <button class="btn btn-default" @click="addParameter()">
                     add a parameter
                 </button>
@@ -51,7 +57,8 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="col-md-12">
-                    <textarea style="width:100%;height:200px;" class="form-control" v-model="message"></textarea>
+                    <textarea style="width:100%;height:200px;" class="form-control" v-model="message" v-show="!isPreview"></textarea>
+                    <pre v-else>{{previewResult}}</pre>
                 </div>
             </div>
             <div class="col-md-6">
@@ -90,6 +97,7 @@
                 <button class="btn btn-default" @click="websocket.close()" disabled={{!websocket}}>disconnect</button>
                 <button class="btn btn-default" @click="clear()" disabled={{messages.length===0}}>clear</button>
                 <button class="btn btn-primary" @click="sendMessage()" disabled={{!websocket}}>send message</button>
+                <button class="btn btn-default" @click="showTips()">show tips</button>
             </div>
         </div>
         <div class="row">
@@ -102,6 +110,7 @@
                         <span v-if="message.type==='error'" class="label label-danger">errored</span>
                         <span v-if="message.type==='out'" class="label label-info">out</span>
                         <span v-if="message.type==='message'" class="label label-info">in</span>
+                        <span v-if="message.type==='tips'" class="label label-info">tips</span>
                         <span v-if="message.reason">{{message.reason}}</span>
                         <span v-if="message.data">{{message.data}}</span>
                         <span v-if="message.formattedData">
@@ -112,15 +121,9 @@
                             <pre v-if="showRaw">{{message.rawData}}</pre>
                             <span v-else class="label label-default">raw</span>
                         </span>
+                        <pre v-if="message.tips">{{message.tips}}</pre>
                     </li>
                 </ul>
-                <pre v-show="messages.length === 0">
-Tips: 
-1. for socket.io, if you connect http://localhost, in ws's perspective, you connected ws://localhost/socket.io?transport=websocket
-2. for socket.io, if you connect https://localhost, in ws's perspective, you connected wss://localhost/socket.io?transport=websocket
-3. for socket.io, if you send a message(eg: {a_key:"a_value"}) in an event(eg: "a_event"), in ws's perspective, the actual message you send is: 42["a_event",{"a_key":"a_value"}]
-4. chrome's developer tool is a good tool to view ws connection and messages
-                </pre>
             </div>
         </div>
     </div>

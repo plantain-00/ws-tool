@@ -2,6 +2,7 @@ new Clipboard(".clipboard");
 var pingId;
 var parser = require("socket.io-parser");
 var decoder = new parser.Decoder();
+var previewDecoder = new parser.Decoder();
 
 vue = new Vue({
     el: "#body",
@@ -15,7 +16,9 @@ vue = new Vue({
         anchor: localStorage.getItem("anchor") || "",
         messageInternally: localStorage.getItem("message") || "",
         showRawInternally: !!localStorage.getItem("showRaw"),
-        showFormattedInternally: !!localStorage.getItem("showFormatted")
+        showFormattedInternally: !!localStorage.getItem("showFormatted"),
+        previewResult: "",
+        isPreview: false
     },
     computed: {
         isSocketIO: {
@@ -167,6 +170,33 @@ vue = new Vue({
         clear: function () {
             this.messages = [];
         },
+        previewMessage: function () {
+            this.isPreview = true;
+            if (this.isSocketIO) {
+                this.previewResult = "";
+                previewDecoder.add(this.message);
+            } else {
+                try {
+                    this.previewResult = JSON.stringify(JSON.parse(this.message), null, "    ");
+                } catch (error) {
+                    this.previewResult = error;
+                }
+            }
+        },
+        cancelPreview: function () {
+            this.isPreview = false;
+        },
+        showTips: function () {
+            this.messages.unshift({
+                moment: moment().format("HH:mm:ss"),
+                type: "tips",
+                tips: "Tips: \n" +
+                "1. for socket.io, if you connect http://localhost, in ws's perspective, you connected ws://localhost/socket.io?transport=websocket\n" +
+                "2. for socket.io, if you connect https://localhost, in ws's perspective, you connected wss://localhost/socket.io?transport=websocket\n" +
+                "3. for socket.io, if you send a message(eg: {a_key:\"a_value\"}) in an event(eg: \"a_event\"), in ws's perspective, the actual message you send is: 42[\"a_event\",{\"a_key\":\"a_value\"}]\n" +
+                "4. chrome's developer tool is a good tool to view ws connection and messages"
+            });
+        },
         onopen: function (e) {
             this.messages.unshift({
                 moment: moment().format("HH:mm:ss"),
@@ -232,4 +262,8 @@ decoder.on("decoded", function (decodedPacket) {
         type: "message",
         formattedData: JSON.stringify(decodedPacket, null, "    ")
     });
+});
+
+previewDecoder.on("decoded", function (decodedPacket) {
+    vue.previewResult = JSON.stringify(decodedPacket, null, "    ");
 });
