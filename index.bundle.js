@@ -302,6 +302,14 @@
 	    }
 	});
 
+	if (!window.WebSocket) {
+	    vue.messages.unshift({
+	        moment: moment().format("HH:mm:ss"),
+	        type: "tips",
+	        tips: "current browser doesn't support WebSocket"
+	    });
+	}
+
 	decoder.on("decoded", function (decodedPacket) {
 	    vue.messages.unshift({
 	        moment: moment().format("HH:mm:ss"),
