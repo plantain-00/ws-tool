@@ -49,6 +49,8 @@
 	var parser = __webpack_require__(1);
 	var decoder = new parser.Decoder();
 	var previewDecoder = new parser.Decoder();
+	var parameters = localStorage.getItem("parameters");
+	var bookmarks = localStorage.getItem("bookmarks");
 
 	vue = new Vue({
 	    el: "#body",
@@ -58,15 +60,31 @@
 	        isSocketIOInternally: !!localStorage.getItem("isSocketIO"),
 	        ignorePingInternally: !!localStorage.getItem("ignorePing"),
 	        baseUrl: localStorage.getItem("baseUrl") || "ws://localhost",
-	        parameters: localStorage.getItem("parameters") ? JSON.parse(localStorage.getItem("parameters")) : [],
+	        parameters: parameters ? JSON.parse(parameters) : [],
 	        anchor: localStorage.getItem("anchor") || "",
 	        messageInternally: localStorage.getItem("message") || "",
 	        showRawInternally: !!localStorage.getItem("showRaw"),
 	        showFormattedInternally: !!localStorage.getItem("showFormatted"),
 	        previewResult: "",
-	        isPreview: false
+	        isPreview: false,
+	        bookmarks: bookmarks ? JSON.parse(bookmarks) : [],
+	        isEditing: false,
+	        bookmarkName: "",
 	    },
 	    computed: {
+	        canSaveAsBookmark: {
+	            get: function () {
+	                if (this.bookmarkName.trim() === "") {
+	                    return false;
+	                }
+	                for (var i = 0; i > this.bookmarks.length; i++) {
+	                    if (this.bookmarks[i].name === this.bookmarkName) {
+	                        return false;
+	                    }
+	                }
+	                return true;
+	            },
+	        },
 	        isSocketIO: {
 	            get: function () {
 	                return this.isSocketIOInternally;
@@ -170,6 +188,40 @@
 	        }
 	    },
 	    methods: {
+	        saveAsBookmark: function () {
+	            this.isEditing = false;
+	            this.bookmarks.push({
+	                name: this.bookmarkName,
+	                isSocketIO: this.isSocketIO,
+	                ignorePing: this.ignorePing,
+	                baseUrl: this.baseUrl,
+	                parameters: this.parameters,
+	                anchor: this.anchor,
+	                message: this.message,
+	                showRaw: this.showRaw,
+	                showFormatted: this.showFormatted,
+	            });
+	            localStorage.setItem("bookmarks", JSON.stringify(this.bookmarks));
+	        },
+	        deleteBookmark: function (index) {
+	            this.bookmarks.splice(index, 1);
+	            localStorage.setItem("bookmarks", JSON.stringify(this.bookmarks));
+	        },
+	        useBookmark: function (index) {
+	            var bookmark = this.bookmarks[index];
+	            this.isSocketIO = bookmark.isSocketIO;
+	            this.ignorePing = bookmark.ignorePing;
+	            this.showRaw = bookmark.showRaw;
+	            this.showFormatted = bookmark.showFormatted;
+	            this.message = bookmark.message;
+	            this.baseUrl = bookmark.baseUrl;
+	            var parameters = JSON.stringify(bookmark.parameters);
+	            this.parameters = JSON.parse(parameters);
+	            this.anchor = bookmark.anchor;
+	            localStorage.setItem("baseUrl", bookmark.baseUrl);
+	            localStorage.setItem("parameters", parameters);
+	            localStorage.setItem("anchor", bookmark.anchor);
+	        },
 	        setParameter: function (index, key, value) {
 	            this.parameters[index].key = key;
 	            this.parameters[index].value = value;
