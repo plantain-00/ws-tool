@@ -188,6 +188,12 @@
 	        }
 	    },
 	    methods: {
+	        savingAsBookmark: function () {
+	            this.isEditing = !this.isEditing;
+	            Vue.nextTick(function () {
+	                document.getElementById("bookmarkName").focus();
+	            });
+	        },
 	        saveAsBookmark: function () {
 	            this.isEditing = false;
 	            this.bookmarks.push({

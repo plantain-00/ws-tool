@@ -39,6 +39,7 @@
             width: 200px;
             position: fixed;
             z-index: 1;
+            top: 45px;
         }
     </style>
 </head>
@@ -47,9 +48,9 @@
     <a class="github-fork-ribbon right-bottom" href="https://github.com/plantain-00/ws-tool" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
     <ul class="bookmarks list-unstyled">
         <li v-for="bookmark in bookmarks">
+            <button class="btn btn-link btn-xs" onclick="vue.useBookmark({{$index}})">use</button>
+            <button class="btn btn-link btn-xs" onclick="vue.deleteBookmark({{$index}})">delete</button>
             {{bookmark.name}}
-            <button class="btn btn-link" onclick="vue.useBookmark({{$index}})">use</button>
-            <button class="btn btn-link" onclick="vue.deleteBookmark({{$index}})">delete</button>
         </li>
     </ul>
     <div class="main">
@@ -66,19 +67,29 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-default clipboard" data-clipboard-target="#url">copy URL</button>
-                    <button class="btn btn-default" @click="previewMessage()" disabled={{message===""}} v-show="!isPreview">preview message</button>
-                    <button class="btn btn-default" @click="cancelPreview()" disabled={{message===""}} v-else>cancel preview</button>
-                    <button class="btn btn-default" @click="addParameter()">add a parameter</button>
-                    <button class="btn btn-default" @click="isEditing = !isEditing">{{isEditing ? "cancel" : "save as bookmark"}}</button>
+                    <label>
+                        <input type="checkbox" v-model="isSocketIO" disabled={{!!websocket}}> socket.io
+                    </label>
+                    <label v-show="isSocketIO">
+                        <input type="checkbox" v-model="ignorePing" disabled={{!!websocket}}> will hide ping/pong of socket.io
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-primary btn-sm" @click="connect()" disabled={{!!websocket}}>connect</button>
+                    <button class="btn btn-default btn-sm" @click="websocket.close()" disabled={{!websocket}}>disconnect</button>
+                    <button class="btn btn-default btn-sm clipboard" data-clipboard-target="#url">copy URL</button>
+                    <button class="btn btn-default btn-sm" @click="addParameter()">add a parameter</button>
+                    <button class="btn btn-default btn-sm" @click="showTips()">show tips</button>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" v-model="bookmarkName" v-show="isEditing">
+                    <input id="bookmarkName" type="text" class="form-control input-sm" v-model="bookmarkName" v-show="isEditing">
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-default" @click="saveAsBookmark()" disabled={{!canSaveAsBookmark}} v-show="isEditing">save</button>
+                    <button class="btn btn-link btn-sm" @click="saveAsBookmark()" disabled={{!canSaveAsBookmark}} v-show="isEditing">save</button>
                 </div>
             </div>
             <div class="row">
@@ -91,25 +102,19 @@
                 <div class="col-md-6">
                     <div v-for="parameter in parameters">
                         <div class="col-md-3">
-                            <input type="text" class="form-control" value={{parameter.key}} onkeyup="vue.setParameter({{$index}}, this.value, '{{parameter.value}}')">
+                            <input type="text" class="form-control input-sm" value={{parameter.key}} onkeyup="vue.setParameter({{$index}}, this.value, '{{parameter.value}}')">
                         </div>
                         <div class="col-md-7">
-                            <input type="text" class="form-control" value={{parameter.value}} onkeyup="vue.setParameter({{$index}}, '{{parameter.key}}', this.value)">
+                            <input type="text" class="form-control input-sm" value={{parameter.value}} onkeyup="vue.setParameter({{$index}}, '{{parameter.key}}', this.value)">
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-default" onclick="vue.deleteParameter({{$index}})">delete</button>
+                            <button class="btn btn-link btn-sm" onclick="vue.deleteParameter({{$index}})">delete</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <label>
-                        <input type="checkbox" v-model="isSocketIO" disabled={{!!websocket}}> socket.io
-                    </label>
-                    <label v-show="isSocketIO">
-                        <input type="checkbox" v-model="ignorePing" disabled={{!!websocket}}> will hide ping/pong of socket.io
-                    </label>
                     <label>
                         <input type="checkbox" v-model="showRaw"> show raw data
                     </label>
@@ -120,11 +125,11 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-primary" @click="connect()" disabled={{!!websocket}}>connect</button>
-                    <button class="btn btn-default" @click="websocket.close()" disabled={{!websocket}}>disconnect</button>
-                    <button class="btn btn-default" @click="clear()" disabled={{messages.length===0}}>clear</button>
-                    <button class="btn btn-primary" @click="sendMessage()" disabled={{!websocket}}>send message</button>
-                    <button class="btn btn-default" @click="showTips()">show tips</button>
+                    <button class="btn btn-default btn-sm" @click="previewMessage()" disabled={{message===""}} v-show="!isPreview">preview message</button>
+                    <button class="btn btn-default btn-sm" @click="cancelPreview()" disabled={{message===""}} v-else>cancel preview</button>
+                    <button class="btn btn-primary btn-sm" @click="sendMessage()" disabled={{!websocket}}>send message</button>
+                    <button class="btn btn-default btn-sm" @click="clear()" disabled={{messages.length===0}}>clear</button>
+                    <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel" : "save as bookmark"}}</button>
                 </div>
             </div>
             <div class="row">
