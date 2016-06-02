@@ -6,6 +6,93 @@ var previewDecoder = new parser.Decoder();
 var parameters = localStorage.getItem("parameters");
 var bookmarks = localStorage.getItem("bookmarks");
 
+if (!localStorage.getItem("tour")) {
+    var tour = new Shepherd.Tour({
+        defaults: {
+            classes: "shepherd-theme-arrows",
+            showCancelLink: true
+        }
+    });
+
+    tour.addStep("input url", {
+        title: "input url",
+        text: "input url of your websocket services here",
+        attachTo: ".tour-input-url bottom",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next
+            }
+        ]
+    });
+    tour.addStep("check", {
+        title: "check",
+        text: "check this if you are connecting a socket.io service",
+        attachTo: ".tour-check right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next
+            }
+        ]
+    });
+    tour.addStep("connect", {
+        title: "connect",
+        text: "press this button to connect your websocket service",
+        attachTo: ".tour-connect right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next
+            }
+        ]
+    });
+    tour.addStep("input message", {
+        title: "input message",
+        text: "input message that is about to send",
+        attachTo: ".tour-input-message right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next
+            }
+        ]
+    });
+    tour.addStep("send message", {
+        title: "send message",
+        text: "press this button to send the message",
+        attachTo: ".tour-send-message right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next
+            }
+        ]
+    });
+    tour.addStep("view messages", {
+        title: "view messages",
+        text: "all the messages in and out will be here",
+        attachTo: ".tour-view-messages top",
+        buttons: [
+            {
+                text: "Done",
+                action: tour.next
+            }
+        ]
+    });
+
+    tour.start();
+    localStorage.setItem("tour", 1);
+}
+
+function getNow() {
+    var now = new Date();
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var seconds = now.getSeconds();
+    return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+}
+
 vue = new Vue({
     el: "#body",
     data: {
@@ -150,7 +237,7 @@ vue = new Vue({
         },
         saveAsBookmark: function () {
             this.isEditing = false;
-            this.bookmarks.push({
+            this.bookmarks.unshift({
                 name: this.bookmarkName,
                 isSocketIO: this.isSocketIO,
                 ignorePing: this.ignorePing,
@@ -214,7 +301,7 @@ vue = new Vue({
             if (this.websocket) {
                 if (!this.ignorePing || message !== "2") {
                     this.messages.unshift({
-                        moment: moment().format("HH:mm:ss"),
+                        moment: getNow(),
                         type: "out",
                         data: message
                     });
@@ -246,7 +333,7 @@ vue = new Vue({
         },
         showTips: function () {
             this.messages.unshift({
-                moment: moment().format("HH:mm:ss"),
+                moment: getNow(),
                 type: "tips",
                 tips: "Tips: \n" +
                 "1. for socket.io, if you connect http://localhost, in ws's perspective, you connected ws://localhost/socket.io?transport=websocket\n" +
@@ -257,13 +344,13 @@ vue = new Vue({
         },
         onopen: function (e) {
             this.messages.unshift({
-                moment: moment().format("HH:mm:ss"),
+                moment: getNow(),
                 type: e.type
             });
         },
         onclose: function (e) {
             this.messages.unshift({
-                moment: moment().format("HH:mm:ss"),
+                moment: getNow(),
                 type: e.type,
                 reason: e.reason
             });
@@ -277,7 +364,7 @@ vue = new Vue({
 
             if (e.data === "3") {
                 this.messages.unshift({
-                    moment: moment().format("HH:mm:ss"),
+                    moment: getNow(),
                     type: e.type,
                     data: e.data
                 });
@@ -285,7 +372,7 @@ vue = new Vue({
             }
 
             vue.messages.unshift({
-                moment: moment().format("HH:mm:ss"),
+                moment: getNow(),
                 type: e.type,
                 rawData: e.data
             });
@@ -296,7 +383,7 @@ vue = new Vue({
                 try {
                     var json = JSON.parse(e.data);
                     this.messages.unshift({
-                        moment: moment().format("HH:mm:ss"),
+                        moment: getNow(),
                         type: e.type,
                         formattedData: json
                     });
@@ -305,7 +392,7 @@ vue = new Vue({
         },
         onerror: function (e) {
             this.messages.unshift({
-                moment: moment().format("HH:mm:ss"),
+                moment: getNow(),
                 type: e.type
             });
             this.websocket = undefined;
@@ -316,7 +403,7 @@ vue = new Vue({
 
 if (!window.WebSocket) {
     vue.messages.unshift({
-        moment: moment().format("HH:mm:ss"),
+        moment: getNow(),
         type: "tips",
         tips: "current browser doesn't support WebSocket"
     });
@@ -324,7 +411,7 @@ if (!window.WebSocket) {
 
 decoder.on("decoded", function (decodedPacket) {
     vue.messages.unshift({
-        moment: moment().format("HH:mm:ss"),
+        moment: getNow(),
         type: "message",
         formattedData: JSON.stringify(decodedPacket, null, "    ")
     });
