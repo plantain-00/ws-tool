@@ -7,7 +7,10 @@
     <meta name="renderer" content="webkit" />
     <title>WebSocket/Socket.IO Test Tool</title>
     <link href="bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="gh-fork-ribbon.css">
+    <link href="gh-fork-ribbon.css" rel="stylesheet">
+    <link href="tether.min.css" rel="stylesheet">
+    <link href="shepherd-theme-arrows.css" rel="stylesheet">
+    <link href="hint.min.css" rel="stylesheet">
     <style>
         .form-control {
             border-width: 0 0 1px 0;
@@ -48,9 +51,8 @@
     <a class="github-fork-ribbon right-bottom" href="https://github.com/plantain-00/ws-tool" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
     <ul class="bookmarks list-unstyled">
         <li v-for="bookmark in bookmarks">
-            <button class="btn btn-link btn-xs" onclick="vue.useBookmark({{$index}})">use</button>
-            <button class="btn btn-link btn-xs" onclick="vue.deleteBookmark({{$index}})">delete</button>
-            {{bookmark.name}}
+            <button class="btn btn-link btn-xs hint--bottom hint--rounded" onclick="vue.useBookmark({{$index}})" data-hint="set this configuration as current configuration">{{bookmark.name}}</button>
+            <button class="btn btn-link btn-xs hint--bottom hint--rounded" onclick="vue.deleteBookmark({{$index}})" data-hint="delete this configuration">delete</button>
         </li>
     </ul>
     <div class="main">
@@ -61,41 +63,33 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-                    <input id="url" type="url" class="form-control" v-model="url">
+                <div class="col-md-12" class="hint--bottom hint--rounded" data-hint="input url of your websocket services here">
+                    <input id="url" type="url" class="form-control tour-input-url" v-model="url">
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <label>
-                        <input type="checkbox" v-model="isSocketIO" disabled={{!!websocket}}> socket.io
+                    <label class="hint--right hint--rounded" data-hint="check this if you are connecting a socket.io service">
+                        <input type="checkbox" v-model="isSocketIO" disabled={{!!websocket}} class="tour-check"> socket.io
                     </label>
-                    <label v-show="isSocketIO">
+                    <label v-show="isSocketIO" class="hint--right hint--rounded" data-hint="ping/pong is like heartbeat">
                         <input type="checkbox" v-model="ignorePing" disabled={{!!websocket}}> will hide ping/pong of socket.io
                     </label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-primary btn-sm" @click="connect()" disabled={{!!websocket}}>connect</button>
-                    <button class="btn btn-default btn-sm" @click="websocket.close()" disabled={{!websocket}}>disconnect</button>
-                    <button class="btn btn-default btn-sm clipboard" data-clipboard-target="#url">copy URL</button>
-                    <button class="btn btn-default btn-sm" @click="addParameter()">add a parameter</button>
-                    <button class="btn btn-default btn-sm" @click="showTips()">show tips</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <input id="bookmarkName" type="text" class="form-control input-sm" v-model="bookmarkName" v-show="isEditing">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-link btn-sm" @click="saveAsBookmark()" disabled={{!canSaveAsBookmark}} v-show="isEditing">save</button>
+                    <button class="btn btn-primary btn-sm tour-connect hint--right hint--rounded" @click="connect()" disabled={{!!websocket}} data-hint="press this button to connect your websocket service">connect</button>
+                    <button class="btn btn-default btn-sm tour-connect hint--right hint--rounded" @click="websocket.close()" disabled={{!websocket}} data-hint="press this button to disconnect">disconnect</button>
+                    <button class="btn btn-default btn-sm clipboard hint--right hint--rounded" data-clipboard-target="#url" data-hint="press this button to copy the url to your paste board">copy URL</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="addParameter()" data-hint="press this button to add a parameter to the url">add a parameter</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="showTips()" data-hint="press this button to show some tips">show tips</button>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="col-md-12">
-                        <textarea style="width:100%;height:200px;" class="form-control" v-model="message" v-show="!isPreview"></textarea>
+                    <div class="col-md-12 hint--right hint--rounded" data-hint="input message that is about to send">
+                        <textarea style="width:100%;height:200px;" class="form-control tour-input-message" v-model="message" v-show="!isPreview"></textarea>
                         <pre v-else>{{previewResult}}</pre>
                     </div>
                 </div>
@@ -108,32 +102,40 @@
                             <input type="text" class="form-control input-sm" value={{parameter.value}} onkeyup="vue.setParameter({{$index}}, '{{parameter.key}}', this.value)">
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-link btn-sm" onclick="vue.deleteParameter({{$index}})">delete</button>
+                            <button class="btn btn-link btn-sm hint--right hint--rounded" onclick="vue.deleteParameter({{$index}})" data-hint="delete the parameter">delete</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <label>
+                    <label class="hint--right hint--rounded" data-hint="show raw string of the messages">
                         <input type="checkbox" v-model="showRaw"> show raw data
                     </label>
-                    <label>
+                    <label class="hint--right hint--rounded" data-hint="show formatted string of the messages">
                         <input type="checkbox" v-model="showFormatted"> show formatted data
                     </label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-default btn-sm" @click="previewMessage()" disabled={{message===""}} v-show="!isPreview">preview message</button>
-                    <button class="btn btn-default btn-sm" @click="cancelPreview()" disabled={{message===""}} v-else>cancel preview</button>
-                    <button class="btn btn-primary btn-sm" @click="sendMessage()" disabled={{!websocket}}>send message</button>
-                    <button class="btn btn-default btn-sm" @click="clear()" disabled={{messages.length===0}}>clear</button>
-                    <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel" : "save as bookmark"}}</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="previewMessage()" disabled={{message===""}} v-show="!isPreview" data-hint="preview the message to check format">preview message</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="cancelPreview()" disabled={{message===""}} v-else data-hint="cancel the preview of the message">cancel preview</button>
+                    <button class="btn btn-primary btn-sm tour-send-message hint--right hint--rounded" @click="sendMessage()" disabled={{!websocket}} data-hint="press this button to send the message">send message</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="clear()" disabled={{messages.length===0}} data-hint="press this button to clear all the messages below">clear</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="savingAsBookmark()" data-hint="save current configuration as a bookmark">{{isEditing ? "cancel" : "save as bookmark"}}</button>
+                </div>
+            </div>
+            <div class="row" v-show="isEditing">
+                <div class="col-md-4 hint--right hint--rounded" data-hint="input the bookmark name">
+                    <input id="bookmarkName" type="text" class="form-control input-sm" v-model="bookmarkName">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-link btn-sm hint--right hint--rounded" @click="saveAsBookmark()" disabled={{!canSaveAsBookmark}} data-hint="save current configuration as a bookmark">save</button>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 tour-view-messages">
                     <ul v-for="message in messages">
                         <li>
                             <span class="label label-default">{{message.moment}}</span>
@@ -161,9 +163,7 @@
         </div>
     </div>
     
-    <script src="vue.min.js"></script>
-    <script src="clipboard.min.js"></script>
-    <script src="moment.min.js"></script>
+    <script src="common.bundle.js"></script>
     <script src="index.bundle.js"></script>
 </body>
 

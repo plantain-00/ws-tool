@@ -4,7 +4,7 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "bundle": "webpack index.js index.bundle.js"
+    "bundle-common": "uglifyjs ./vue.min.js ./clipboard.min.js ./tether.min.js ./shepherd.min.js -o common.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/plantain-00/ws-tool#readme",
   "dependencies": {
     "socket.io-parser": "^2.2.6"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.1"
   }
 }
