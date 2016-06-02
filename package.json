@@ -4,8 +4,9 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "bundle-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/clipboard/dist/clipboard.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js -o common.bundle.js",
-    "bundle-css": "cat ./node_modules/bootstrap/dist/css/bootstrap.min.css ./gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css | cleancss -o common.bundle.css"
+    "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/clipboard/dist/clipboard.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js -o common.bundle.js",
+    "bundle-common-css": "cat ./node_modules/bootstrap/dist/css/bootstrap.min.css ./gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css | cleancss -o common.bundle.css",
+    "bundle-index-css": "cleancss index.css -o index.bundle.css"
   },
   "repository": {
     "type": "git",
