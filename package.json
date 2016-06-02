@@ -4,7 +4,8 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "bundle-common": "uglifyjs ./vue.min.js ./clipboard.min.js ./tether.min.js ./shepherd.min.js -o common.bundle.js"
+    "bundle-js": "uglifyjs ./vue.min.js ./clipboard.min.js ./tether.min.js ./shepherd.min.js -o common.bundle.js",
+    "bundle-css": "cat bootstrap.min.css gh-fork-ribbon.css tether.min.css shepherd-theme-arrows.css hint.min.css | cleancss -o common.bundle.css"
   },
   "repository": {
     "type": "git",
