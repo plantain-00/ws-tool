@@ -100,7 +100,7 @@ vue = new Vue({
         messages: [],
         isSocketIOInternally: !!localStorage.getItem("isSocketIO"),
         ignorePingInternally: !!localStorage.getItem("ignorePing"),
-        baseUrl: localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io?transport=websocket",
+        baseUrl: localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/?transport=websocket",
         parameters: parameters ? JSON.parse(parameters) : [],
         anchor: localStorage.getItem("anchor") || "",
         messageInternally: localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]",
@@ -336,8 +336,8 @@ vue = new Vue({
                 moment: getNow(),
                 type: "tips",
                 tips: "Tips: \n" +
-                "1. for socket.io, if you connect http://localhost, in ws's perspective, you connected ws://localhost/socket.io?transport=websocket\n" +
-                "2. for socket.io, if you connect https://localhost, in ws's perspective, you connected wss://localhost/socket.io?transport=websocket\n" +
+                "1. for socket.io, if you connect http://localhost, in ws's perspective, you connected ws://localhost/socket.io/?transport=websocket\n" +
+                "2. for socket.io, if you connect https://localhost, in ws's perspective, you connected wss://localhost/socket.io/?transport=websocket\n" +
                 "3. for socket.io, if you send a message(eg: {a_key:\"a_value\"}) in an event(eg: \"a_event\"), in ws's perspective, the actual message you send is: 42[\"a_event\",{\"a_key\":\"a_value\"}]\n" +
                 "4. chrome's developer tool is a good tool to view ws connection and messages"
             });
