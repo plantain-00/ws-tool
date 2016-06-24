@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/clipboard/dist/clipboard.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js -o common.bundle.js",
-    "bundle-common-css": "cat ./node_modules/bootstrap/dist/css/bootstrap.min.css ./gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css | cleancss -o common.bundle.css",
+    "bundle-common-css": "cat ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css | cleancss -o common.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css"
   },
   "repository": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/plantain-00/ws-tool#readme",
   "dependencies": {
+    "github-fork-ribbon-css": "^0.2.1",
     "socket.io-parser": "^2.2.6"
   },
   "devDependencies": {
