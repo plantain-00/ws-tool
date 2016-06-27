@@ -342,6 +342,14 @@ vue = new Vue({
                 "4. chrome's developer tool is a good tool to view ws connection and messages"
             });
         },
+        close: function () {
+            this.messages.unshift({
+                moment: getNow(),
+                type: "tips",
+                tips: "Is going to disconnect manually."
+            });
+            this.websocket.close();
+        },
         onopen: function (e) {
             this.messages.unshift({
                 moment: getNow(),
