@@ -1,24 +1,32 @@
 const ejs = require("ejs");
 const fs = require("fs");
+const crypto = require("crypto");
 
 /**
  * @param {string} str
+ * @returns {string}
  */
 function md5(str) {
     return crypto.createHash("md5").update(str).digest("hex");
 };
 
 /**
- * @type {{ [name: string]: string; }} variables
+ * @param {string} path
  */
-const variables = {};
+function getVersion(path) {
+    const version = md5(fs.readFileSync(path).toString());
+    fs.renameSync(path, path.replace("bundle", version));
+    return version;
+}
 
-ejs.renderFile("index.ejs", {
-    commonCss: "",
-    indexCss: "",
-    commonJs: "",
-    indexJs: ""
-}, {}, (error, file) => {
+const variables = {
+    commonCss: getVersion("common.bundle.css"),
+    indexCss: getVersion("index.bundle.css"),
+    commonJs: getVersion("common.bundle.js"),
+    indexJs: getVersion("index.bundle.js")
+};
+
+ejs.renderFile("index.ejs", variables, {}, (error, file) => {
     if (error) {
         console.log(error);
     } else {
