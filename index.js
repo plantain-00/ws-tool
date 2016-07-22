@@ -395,7 +395,9 @@ vue = new Vue({
                         type: e.type,
                         formattedData: json
                     });
-                } catch (error) { }
+                } catch (error) {
+                    console.log(error);
+                }
             }
         },
         onerror: function (e) {
