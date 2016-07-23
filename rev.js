@@ -26,7 +26,7 @@ const variables = {
     indexJs: getVersion("index.bundle.js")
 };
 
-ejs.renderFile("index.ejs", variables, {}, (error, file) => {
+ejs.renderFile("index.ejs.html", variables, {}, (error, file) => {
     if (error) {
         console.log(error);
     } else {
