@@ -285,7 +285,17 @@ vue = new Vue({
             });
         },
         connect: function () {
-            this.websocket = new WebSocket(this.url);
+            try {
+                this.websocket = new WebSocket(this.url);
+            } catch (error) {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "error",
+                    reason: error.message,
+                });
+                return;
+            }
+
             this.websocket.onopen = this.onopen;
             this.websocket.onclose = this.onclose;
             this.websocket.onmessage = this.onmessage;
@@ -403,7 +413,7 @@ vue = new Vue({
         onerror: function (e) {
             this.messages.unshift({
                 moment: getNow(),
-                type: e.type
+                type: e.type,
             });
             this.websocket = undefined;
             clearInterval(pingId);
