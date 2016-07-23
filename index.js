@@ -93,7 +93,7 @@ function getNow() {
     return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
 }
 
-vue = new Vue({
+var vue = new Vue({
     el: "#body",
     data: {
         websocket: undefined,
@@ -269,9 +269,12 @@ vue = new Vue({
             localStorage.setItem("parameters", parameters);
             localStorage.setItem("anchor", bookmark.anchor);
         },
-        setParameter: function (index, key, value) {
-            this.parameters[index].key = key;
-            this.parameters[index].value = value;
+        setKeyOfParameter: function (index, e) {
+            this.parameters[index].key = e.target.value;
+            localStorage.setItem("parameters", JSON.stringify(this.parameters));
+        },
+        setValueOfParameter: function (index, e) {
+            this.parameters[index].value = e.target.value;
             localStorage.setItem("parameters", JSON.stringify(this.parameters));
         },
         deleteParameter: function (index) {
