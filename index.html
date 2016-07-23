@@ -14,8 +14,8 @@
     <a class="github-fork-ribbon right-bottom" href="https://github.com/plantain-00/ws-tool" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
     <ul class="bookmarks list-unstyled">
         <li v-for="bookmark in bookmarks">
-            <button class="btn btn-link btn-xs hint--bottom hint--rounded" onclick="vue.useBookmark({{$index}})" data-hint="set this configuration as current configuration">{{bookmark.name}}</button>
-            <button class="btn btn-link btn-xs hint--bottom hint--rounded" onclick="vue.deleteBookmark({{$index}})" data-hint="delete this configuration">delete</button>
+            <button class="btn btn-link btn-xs hint--bottom hint--rounded" @click="useBookmark($index)" data-hint="set this configuration as current configuration">{{bookmark.name}}</button>
+            <button class="btn btn-link btn-xs hint--bottom hint--rounded" @click="deleteBookmark($index)" data-hint="delete this configuration">delete</button>
         </li>
     </ul>
     <div class="main">
@@ -59,13 +59,13 @@
                 <div class="col-md-6">
                     <div v-for="parameter in parameters">
                         <div class="col-md-3">
-                            <input type="text" class="form-control input-sm" value={{parameter.key}} onkeyup="vue.setParameter({{$index}}, this.value, '{{parameter.value}}')">
+                            <input type="text" class="form-control input-sm" value={{parameter.key}} @keyup="setKeyOfParameter($index, $event)">
                         </div>
                         <div class="col-md-7">
-                            <input type="text" class="form-control input-sm" value={{parameter.value}} onkeyup="vue.setParameter({{$index}}, '{{parameter.key}}', this.value)">
+                            <input type="text" class="form-control input-sm" value={{parameter.value}} @keyup="setValueOfParameter($index, $event)">
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-link btn-sm hint--right hint--rounded" onclick="vue.deleteParameter({{$index}})" data-hint="delete the parameter">delete</button>
+                            <button class="btn btn-link btn-sm hint--right hint--rounded" @click="deleteParameter($index)" data-hint="delete the parameter">delete</button>
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
     </div>
 
     <script src="common.dda2369e5b95661ab2ad4973e8a42c76.js"></script>
-    <script src="index.3d6c7c9533526a6a45624635f582e3d1.js"></script>
+    <script src="index.ce427407507465ad7e226c62e11ede85.js"></script>
 </body>
 
 </html>
