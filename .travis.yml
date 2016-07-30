@@ -19,4 +19,4 @@ addons:
       - g++-4.8
 branches:
   except:
-    - release
+    - gh-pages

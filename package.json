@@ -4,11 +4,12 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "init": "npm i -g uglify-js clean-css webpack eslint",
+    "init": "npm i -g uglify-js clean-css webpack eslint rev-static",
     "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/clipboard/dist/clipboard.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js -o common.bundle.js",
     "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css -o common.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
-    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && webpack && node rev.js",
+    "rev": "rev-static common.bundle.css index.bundle.css common.bundle.js index.bundle.js index.ejs.html -o index.html",
+    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && webpack && npm run rev",
     "eslint": "eslint index.js rev.js"
   },
   "repository": {
