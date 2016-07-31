@@ -4,12 +4,12 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "init": "npm i -g uglify-js clean-css webpack eslint",
     "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/clipboard/dist/clipboard.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js -o common.bundle.js",
-    "bundle-common-css": "cat ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css | cleancss -o common.bundle.css",
+    "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css -o common.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
-    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && webpack && node rev.js",
-    "eslint": "eslint index.js rev.js"
+    "rev": "rev-static common.bundle.css index.bundle.css common.bundle.js index.bundle.js index.ejs.html -o index.html -- --rmWhitespace",
+    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && webpack && npm run rev",
+    "eslint": "eslint index.js"
   },
   "repository": {
     "type": "git",
@@ -27,13 +27,18 @@
   },
   "devDependencies": {
     "@types/node": "^4.0.30",
-    "bootstrap": "^3.3.6",
-    "clipboard": "^1.5.10",
-    "ejs": "^2.4.2",
-    "hint.css": "^2.3.0",
-    "tether-shepherd": "^1.7.0",
+    "@types/vue": "^1.0.26",
+    "bootstrap": "^3.3.7",
+    "clean-css": "^3.4.19",
+    "clipboard": "^1.5.12",
+    "ejs": "^2.5.1",
+    "eslint": "^3.2.0",
+    "hint.css": "^2.3.1",
+    "rev-static": "^1.0.4",
+    "tether-shepherd": "^1.8.0",
     "typescript": "^2.0.0",
-    "vue": "^1.0.24",
+    "uglify-js": "^2.7.0",
+    "vue": "^1.0.26",
     "webpack": "^1.13.1"
   }
 }
