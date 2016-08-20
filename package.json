@@ -37,6 +37,7 @@
     "hint.css": "^2.3.2",
     "rev-static": "^1.2.0",
     "tether-shepherd": "^1.8.0",
+    "tslint": "^3.14.0",
     "typescript": "^2.0.0",
     "uglify-js": "^2.7.0",
     "vue": "^1.0.26",
