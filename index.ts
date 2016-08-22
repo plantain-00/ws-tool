@@ -1,5 +1,6 @@
-declare const Clipboard: any;
-declare const Shepherd: any;
+/// <reference types="clipboard" />
+/// <reference types="tether-shepherd" />
+
 import Component from "vue-class-component";
 
 new Clipboard(".clipboard");

@@ -27,7 +27,9 @@
     "vue-class-component": "^3.2.0"
   },
   "devDependencies": {
+    "@types/clipboard": "^1.5.28",
     "@types/node": "^6.0.31",
+    "@types/tether-shepherd": "^1.2.26",
     "@types/vue": "^1.0.27",
     "bootstrap": "^3.3.7",
     "clean-css": "^3.4.19",
