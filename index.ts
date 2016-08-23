@@ -1,7 +1,8 @@
 /// <reference types="clipboard" />
 /// <reference types="tether-shepherd" />
+/// <reference types="vue" />
 
-import Component from "vue-class-component";
+import { VueComponent } from "vue-typescript";
 
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
@@ -125,7 +126,7 @@ type Message = {
     formattedData?: any;
 }
 
-@Component({
+@VueComponent({
     template: `
     <div>
         <ul class="bookmarks list-unstyled">
@@ -244,44 +245,22 @@ type Message = {
     </div>
   `,
 })
-class App {
-    public websocket: WebSocket | undefined;
-    public messages: Message[];
-    public isSocketIOInternally: boolean;
-    public ignorePingInternally: boolean;
-    public baseUrl: string;
-    public parameters: Parameter[];
-    public anchor: string;
-    public messageInternally: string;
-    public showRawInternally: boolean;
-    public showFormattedInternally: boolean;
-    public previewResult: string;
-    public isPreview: boolean;
-    public bookmarks: Bookmark[];
-    public isEditing: boolean;
-    public bookmarkName: string;
-
-    constructor(options: any) { /** nothing */ }
-
-    public data() {
-        return {
-            websocket: undefined,
-            messages: [],
-            isSocketIOInternally: !!localStorage.getItem("isSocketIO"),
-            ignorePingInternally: !!localStorage.getItem("ignorePing"),
-            baseUrl: localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/?transport=websocket",
-            parameters: parameters ? JSON.parse(parameters) : [],
-            anchor: localStorage.getItem("anchor") || "",
-            messageInternally: localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]",
-            showRawInternally: !!localStorage.getItem("showRaw"),
-            showFormattedInternally: !!localStorage.getItem("showFormatted"),
-            previewResult: "",
-            isPreview: false,
-            bookmarks: bookmarks ? JSON.parse(bookmarks) : [],
-            isEditing: false,
-            bookmarkName: "",
-        };
-    }
+class App extends Vue {
+    public websocket: WebSocket | undefined = undefined;
+    public messages: Message[] = [];
+    public isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
+    public ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
+    public baseUrl: string = localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/?transport=websocket";
+    public parameters: Parameter[] = parameters ? JSON.parse(parameters) : [];
+    public anchor: string = localStorage.getItem("anchor") || "";
+    public messageInternally: string = localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]";
+    public showRawInternally: boolean = !!localStorage.getItem("showRaw");
+    public showFormattedInternally: boolean = !!localStorage.getItem("showFormatted");
+    public previewResult: string = "";
+    public isPreview: boolean = false;
+    public bookmarks: Bookmark[] = bookmarks ? JSON.parse(bookmarks) : [];
+    public isEditing: boolean = false;
+    public bookmarkName: string = "";
 
     get canSaveAsBookmark() {
         if (this.bookmarkName.trim() === "") {
@@ -385,7 +364,7 @@ class App {
     }
     public savingAsBookmark() {
         this.isEditing = !this.isEditing;
-        Vue.nextTick(function () {
+        Vue.nextTick(() => {
             document.getElementById("bookmarkName") !.focus();
         });
     }

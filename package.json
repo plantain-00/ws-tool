@@ -8,7 +8,7 @@
     "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css -o common.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
     "rev": "rev-static common.bundle.css index.bundle.css common.bundle.js index.bundle.js index.ejs.html -o index.html -- --rmWhitespace",
-    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && tsc && webpack && npm run rev",
+    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && tsc && webpack --display-modules && npm run rev",
     "lint": "tslint index.ts"
   },
   "repository": {
@@ -24,7 +24,7 @@
   "dependencies": {
     "github-fork-ribbon-css": "^0.2.1",
     "socket.io-parser": "^2.2.6",
-    "vue-class-component": "^3.2.0"
+    "vue-typescript": "^0.7.0"
   },
   "devDependencies": {
     "@types/clipboard": "^1.5.28",
