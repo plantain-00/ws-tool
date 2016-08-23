@@ -8,8 +8,8 @@
     "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css -o common.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
     "rev": "rev-static common.bundle.css index.bundle.css common.bundle.js index.bundle.js index.ejs.html -o index.html -- --rmWhitespace",
-    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && webpack && npm run rev",
-    "eslint": "eslint index.js"
+    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && tsc && webpack --display-modules && npm run rev",
+    "lint": "tslint index.ts"
   },
   "repository": {
     "type": "git",
@@ -23,19 +23,23 @@
   "homepage": "https://github.com/plantain-00/ws-tool#readme",
   "dependencies": {
     "github-fork-ribbon-css": "^0.2.1",
-    "socket.io-parser": "^2.2.6"
+    "socket.io-parser": "^2.2.6",
+    "vue-typescript": "^0.7.0"
   },
   "devDependencies": {
-    "@types/node": "^4.0.30",
-    "@types/vue": "^1.0.26",
+    "@types/clipboard": "^1.5.28",
+    "@types/node": "^6.0.31",
+    "@types/tether-shepherd": "^1.2.26",
+    "@types/vue": "^1.0.27",
     "bootstrap": "^3.3.7",
     "clean-css": "^3.4.19",
     "clipboard": "^1.5.12",
     "ejs": "^2.5.1",
-    "eslint": "^3.2.0",
-    "hint.css": "^2.3.1",
-    "rev-static": "^1.0.4",
+    "eslint": "^3.2.2",
+    "hint.css": "^2.3.2",
+    "rev-static": "^1.2.0",
     "tether-shepherd": "^1.8.0",
+    "tslint": "^3.14.0",
     "typescript": "^2.0.0",
     "uglify-js": "^2.7.0",
     "vue": "^1.0.26",

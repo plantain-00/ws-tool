@@ -5,6 +5,9 @@ module.exports = {
     output: {
         filename: "index.bundle.js"
     },
+    externals: {
+        "vue": "Vue"
+    },
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
             compress: {

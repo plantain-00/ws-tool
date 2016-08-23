@@ -6,7 +6,7 @@ before_install:
 before_script:
   - npm i
 script:
-  - npm run eslint
+  - npm run lint
   - npm run build
 env:
   - CXX=g++-4.8
