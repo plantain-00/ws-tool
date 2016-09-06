@@ -12,85 +12,6 @@ const previewDecoder = new parser.Decoder();
 const parameters = localStorage.getItem("parameters");
 const bookmarks = localStorage.getItem("bookmarks");
 
-if (!localStorage.getItem("tour")) {
-    const tour = new Shepherd.Tour({
-        defaults: {
-            classes: "shepherd-theme-arrows",
-            showCancelLink: true,
-        },
-    });
-
-    tour.addStep("input url", {
-        title: "input url",
-        text: "input url of your websocket services here",
-        attachTo: ".tour-input-url bottom",
-        buttons: [
-            {
-                text: "Next",
-                action: tour.next,
-            },
-        ],
-    });
-    tour.addStep("check", {
-        title: "check",
-        text: "check this if you are connecting a socket.io service",
-        attachTo: ".tour-check right",
-        buttons: [
-            {
-                text: "Next",
-                action: tour.next,
-            },
-        ],
-    });
-    tour.addStep("connect", {
-        title: "connect",
-        text: "press this button to connect your websocket service",
-        attachTo: ".tour-connect right",
-        buttons: [
-            {
-                text: "Next",
-                action: tour.next,
-            },
-        ],
-    });
-    tour.addStep("input message", {
-        title: "input message",
-        text: "input message that is about to send",
-        attachTo: ".tour-input-message right",
-        buttons: [
-            {
-                text: "Next",
-                action: tour.next,
-            },
-        ],
-    });
-    tour.addStep("send message", {
-        title: "send message",
-        text: "press this button to send the message",
-        attachTo: ".tour-send-message right",
-        buttons: [
-            {
-                text: "Next",
-                action: tour.next,
-            },
-        ],
-    });
-    tour.addStep("view messages", {
-        title: "view messages",
-        text: "all the messages in and out will be here",
-        attachTo: ".tour-view-messages top",
-        buttons: [
-            {
-                text: "Done",
-                action: tour.next,
-            },
-        ],
-    });
-
-    tour.start();
-    localStorage.setItem("tour", "1");
-}
-
 function getNow() {
     const now = new Date();
     const hours = now.getHours();
@@ -250,8 +171,8 @@ class App extends Vue {
     public messages: Message[] = [];
     public isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
     public ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
-    public baseUrl: string = localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/?transport=websocket";
-    public parameters: Parameter[] = parameters ? JSON.parse(parameters) : [];
+    public baseUrl: string = localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/";
+    public parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }];
     public anchor: string = localStorage.getItem("anchor") || "";
     public messageInternally: string = localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]";
     public showRawInternally: boolean = !!localStorage.getItem("showRaw");
@@ -579,3 +500,82 @@ decoder.on("decoded", (decodedPacket: any) => {
 previewDecoder.on("decoded", (decodedPacket: any) => {
     app.previewResult = JSON.stringify(decodedPacket, null, "    ");
 });
+
+if (!localStorage.getItem("tour")) {
+    const tour = new Shepherd.Tour({
+        defaults: {
+            classes: "shepherd-theme-arrows",
+            showCancelLink: true,
+        },
+    });
+
+    tour.addStep("input url", {
+        title: "input url",
+        text: "input url of your websocket services here",
+        attachTo: ".tour-input-url bottom",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next,
+            },
+        ],
+    });
+    tour.addStep("check", {
+        title: "check",
+        text: "check this if you are connecting a socket.io service",
+        attachTo: ".tour-check right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next,
+            },
+        ],
+    });
+    tour.addStep("connect", {
+        title: "connect",
+        text: "press this button to connect your websocket service",
+        attachTo: ".tour-connect right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next,
+            },
+        ],
+    });
+    tour.addStep("input message", {
+        title: "input message",
+        text: "input message that is about to send",
+        attachTo: ".tour-input-message right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next,
+            },
+        ],
+    });
+    tour.addStep("send message", {
+        title: "send message",
+        text: "press this button to send the message",
+        attachTo: ".tour-send-message right",
+        buttons: [
+            {
+                text: "Next",
+                action: tour.next,
+            },
+        ],
+    });
+    tour.addStep("view messages", {
+        title: "view messages",
+        text: "all the messages in and out will be here",
+        attachTo: ".tour-view-messages top",
+        buttons: [
+            {
+                text: "Done",
+                action: tour.next,
+            },
+        ],
+    });
+
+    tour.start();
+    localStorage.setItem("tour", "1");
+}
