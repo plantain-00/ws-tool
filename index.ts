@@ -45,6 +45,7 @@ type Message = {
     tips?: string;
     rawData?: any;
     formattedData?: any;
+    visible?: boolean;
 }
 
 @VueComponent({
@@ -149,12 +150,26 @@ type Message = {
                                 <span v-if="message.reason">{{message.reason}}</span>
                                 <span v-if="message.data">{{message.data}}</span>
                                 <span v-if="message.formattedData">
-                                    <pre v-if="showFormatted">{{message.formattedData}}</pre>
-                                    <span v-else class="label label-default">formatted</span>
+                                    <template v-if="message.visible !== undefined ? message.visible : showFormatted">
+                                        <button class="btn btn-xs btn-default" @click="hideMessage($index)">hide</button>
+                                        <pre>{{message.formattedData}}</pre>
+                                        <button class="btn btn-xs btn-default" @click="hideMessage($index)">hide</button>
+                                    </template>
+                                    <template v-else>
+                                        <label class="label label-default">formatted</label>
+                                        <button class="btn btn-xs btn-default" @click="showMessage($index)">show</button>
+                                    </template>
                                 </span>
                                 <span v-if="message.rawData">
-                                    <pre v-if="showRaw">{{message.rawData}}</pre>
-                                    <span v-else class="label label-default">raw</span>
+                                    <template v-if="message.visible !== undefined ? message.visible : showRaw">
+                                        <button class="btn btn-xs btn-default" @click="hideMessage($index)">hide</button>
+                                        <pre>{{message.rawData}}</pre>
+                                        <button class="btn btn-xs btn-default" @click="hideMessage($index)">hide</button>
+                                    </template>
+                                    <template v-else>
+                                        <label class="label label-default">raw</label>
+                                        <button class="btn btn-xs btn-default" @click="showMessage($index)">show</button>
+                                    </template>
                                 </span>
                                 <pre v-if="message.tips">{{message.tips}}</pre>
                             </li>
@@ -450,6 +465,7 @@ class App extends Vue {
             moment: getNow(),
             type: e.type,
             rawData: e.data,
+            visible: undefined,
         });
 
         if (this.isSocketIOInternally) {
@@ -475,6 +491,12 @@ class App extends Vue {
         this.websocket = undefined;
         clearInterval(pingId);
     }
+    public showMessage(index: number) {
+        this.messages[index].visible = true;
+    }
+    public hideMessage(index: number) {
+        this.messages[index].visible = false;
+    }
 }
 
 const app = new App({
@@ -494,6 +516,7 @@ decoder.on("decoded", (decodedPacket: any) => {
         moment: getNow(),
         type: "message",
         formattedData: JSON.stringify(decodedPacket, null, "    "),
+        visible: undefined,
     });
 });
 
