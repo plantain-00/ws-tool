@@ -35,7 +35,6 @@
     "clean-css": "^3.4.19",
     "clipboard": "^1.5.12",
     "ejs": "^2.5.2",
-    "eslint": "^3.4.0",
     "hint.css": "^2.3.2",
     "rev-static": "^1.2.0",
     "tether-shepherd": "^1.8.0",
