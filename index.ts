@@ -3,12 +3,12 @@
 /// <reference types="vue" />
 
 import { VueComponent } from "vue-typescript";
+import { Decoder } from "socket.io-parser";
 
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
-const parser = require("socket.io-parser");
-const decoder = new parser.Decoder();
-const previewDecoder = new parser.Decoder();
+const decoder = new Decoder();
+const previewDecoder = new Decoder();
 const parameters = localStorage.getItem("parameters");
 const bookmarks = localStorage.getItem("bookmarks");
 

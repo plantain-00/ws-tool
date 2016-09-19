@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/clipboard": "^1.5.28",
     "@types/node": "^6.0.38",
+    "@types/socket.io-parser": "0.0.1",
     "@types/tether-shepherd": "^1.2.26",
     "@types/vue": "^1.0.29",
     "bootstrap": "^3.3.7",
