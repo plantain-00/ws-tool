@@ -16,8 +16,8 @@
     "build": "npm run bundle-common-css && npm run bundle-index-css && tsc && npm run minifier-template && webpack --display-modules && npm run bundle-common-js && npm run rev && npm run clean",
     "build-debug": "npm run bundle-common-css-debug && npm run bundle-index-css-debug && tsc && npm run minifier-template-debug && webpack --display-modules --config webpack.config.debug.js && npm run bundle-common-js-debug && npm run rev && npm run clean",
     "lint": "tslint index.ts",
-    "minifier-template": "html-minifier --collapse-whitespace template.raw.html -o template.html",
-    "minifier-template-debug": "html-minifier template.raw.html -o template.html"
+    "minifier-template": "html-minifier --collapse-whitespace --case-sensitive template.raw.html -o template.html",
+    "minifier-template-debug": "html-minifier --case-sensitive template.raw.html -o template.html"
   },
   "repository": {
     "type": "git",
