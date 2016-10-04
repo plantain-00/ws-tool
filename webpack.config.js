@@ -1,14 +1,19 @@
 const webpack = require("webpack");
 
 module.exports = {
-    entry: "./index",
+    entry: {
+        index: "./index",
+        vendor: "./vendor"
+    },
     output: {
-        filename: "index.bundle.js"
+        filename: "[name].bundle.js"
     },
     externals: {
         "vue": "Vue"
     },
     plugins: [
+        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false,
@@ -16,6 +21,9 @@ module.exports = {
             output: {
                 comments: false,
             },
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: ["index", "vendor"]
         }),
     ]
 };
