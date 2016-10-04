@@ -1,0 +1,129 @@
+<div>
+    <ul class="bookmarks list-unstyled">
+        <li v-for="(bookmark, index) in bookmarks">
+            <button class="btn btn-link btn-xs hint--bottom hint--rounded" @click="useBookmark(index)" data-hint="set this configuration as current configuration">{{bookmark.name}}</button>
+            <button class="btn btn-link btn-xs hint--bottom hint--rounded" @click="deleteBookmark(index)" data-hint="delete this configuration">delete</button>
+        </li>
+    </ul>
+    <div class="main">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>WebSocket/Socket.IO Test Tool</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 hint--bottom hint--rounded" data-hint="input url of your websocket services here">
+                    <input id="url" type="url" class="form-control tour-input-url" v-model="url">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="hint--right hint--rounded" data-hint="check this if you are connecting a socket.io service">
+                        <input type="checkbox" v-model="isSocketIO" :disabled="!!websocket" class="tour-check"> socket.io
+                    </label>
+                    <label v-show="isSocketIO" class="hint--right hint--rounded" data-hint="ping/pong is like heartbeat">
+                        <input type="checkbox" v-model="ignorePing" :disabled="!!websocket"> will hide ping/pong of socket.io
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-primary btn-sm tour-connect hint--right hint--rounded" @click="connect()" :disabled="!!websocket" data-hint="press this button to connect your websocket service">connect</button>
+                    <button class="btn btn-default btn-sm tour-connect hint--right hint--rounded" @click="close()" :disabled="!websocket" data-hint="press this button to disconnect">disconnect</button>
+                    <button class="btn btn-default btn-sm clipboard hint--right hint--rounded" data-clipboard-target="#url" data-hint="press this button to copy the url to your paste board">copy URL</button>
+                    <button class="btn btn-default btn-sm" @click="addParameter()">add a parameter</button>
+                    <button class="btn btn-default btn-sm" @click="showTips()">show tips</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-md-12 hint--right hint--rounded" data-hint="input message that is about to send">
+                        <textarea style="width:100%;height:200px;" class="form-control tour-input-message" v-model="message" v-show="!isPreview"></textarea>
+                        <pre v-else>{{previewResult}}</pre>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div v-for="(parameter, index) in parameters">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control input-sm" :value="parameter.key" @keyup="setKeyOfParameter(index, $event)">
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control input-sm" :value="parameter.value" @keyup="setValueOfParameter(index, $event)">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-link btn-sm hint--right hint--rounded" @click="deleteParameter(index)" data-hint="delete the parameter">delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="hint--right hint--rounded" data-hint="show raw string of the messages">
+                        <input type="checkbox" v-model="showRaw"> show raw data
+                    </label>
+                    <label class="hint--right hint--rounded" data-hint="show formatted string of the messages">
+                        <input type="checkbox" v-model="showFormatted"> show formatted data
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="previewMessage()" :disabled="message===''" v-show="!isPreview" data-hint="preview the message to check format">preview message</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="cancelPreview()" :disabled="message===''" v-else data-hint="cancel the preview of the message">cancel preview</button>
+                    <button class="btn btn-primary btn-sm tour-send-message hint--right hint--rounded" @click="sendMessage()" :disabled="!websocket" data-hint="press this button to send the message">send message</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="clear()" :disabled="messages.length===0" data-hint="press this button to clear all the messages below">clear</button>
+                    <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel" : "save as bookmark"}}</button>
+                </div>
+            </div>
+            <div class="row" v-show="isEditing">
+                <div class="col-md-4 hint--right hint--rounded" data-hint="input the bookmark name">
+                    <input id="bookmarkName" type="text" class="form-control input-sm" v-model="bookmarkName">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-link btn-sm" @click="saveAsBookmark()" :disabled="!canSaveAsBookmark">save</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 tour-view-messages">
+                    <ul v-for="(message, index) in messages">
+                        <li>
+                            <span class="label label-default">{{message.moment}}</span>
+                            <span v-if="message.type==='open'" class="label label-success">connected</span>
+                            <span v-if="message.type==='close'" class="label label-danger">disconnected</span>
+                            <span v-if="message.type==='error'" class="label label-danger">errored</span>
+                            <span v-if="message.type==='out'" class="label label-info">out</span>
+                            <span v-if="message.type==='message'" class="label label-info">in</span>
+                            <span v-if="message.type==='tips'" class="label label-info">tips</span>
+                            <span v-if="message.reason">{{message.reason}}</span>
+                            <span v-if="message.data">{{message.data}}</span>
+                            <span v-if="message.formattedData">
+                                <template v-if="message.visible !== undefined ? message.visible : showFormatted">
+                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
+                                    <pre>{{message.formattedData}}</pre>
+                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
+                                </template>
+                                <template v-else>
+                                    <label class="label label-default">formatted</label>
+                                    <button class="btn btn-xs btn-default" @click="showMessage(index)">show</button>
+                                </template>
+                            </span>
+                            <span v-if="message.rawData">
+                                <template v-if="message.visible !== undefined ? message.visible : showRaw">
+                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
+                                    <pre>{{message.rawData}}</pre>
+                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
+                                </template>
+                                <template v-else>
+                                    <label class="label label-default">raw</label>
+                                    <button class="btn btn-xs btn-default" @click="showMessage(index)">show</button>
+                                </template>
+                            </span>
+                            <pre v-if="message.tips">{{message.tips}}</pre>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

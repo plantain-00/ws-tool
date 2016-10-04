@@ -10,12 +10,14 @@
     "bundle-common-css-debug": "cat ./node_modules/bootstrap/dist/css/bootstrap.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.css > common.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
     "bundle-index-css-debug": "cat index.css > index.bundle.css",
-    "clean": "rm -f common.bundle.js common.bundle.css index.bundle.js index.bundle.css index.js index.js.map",
+    "clean": "rm -f common.bundle.js common.bundle.css index.bundle.js index.bundle.css index.js index.js.map template.html",
     "clean-rev": "rm -f common.bundle-*.js common.bundle-*.css index.bundle-*.js index.bundle-*.css",
     "rev": "npm run clean-rev && rev-static common.bundle.css index.bundle.css common.bundle.js index.bundle.js index.ejs.html -o index.html -- --rmWhitespace",
-    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && tsc && webpack --display-modules && npm run rev && npm run clean",
-    "build-debug": "npm run bundle-common-js-debug && npm run bundle-common-css-debug && npm run bundle-index-css-debug && tsc && webpack --display-modules --config webpack.config.debug.js && npm run rev && npm run clean",
-    "lint": "tslint index.ts"
+    "build": "npm run bundle-common-js && npm run bundle-common-css && npm run bundle-index-css && tsc && npm run minifier-template && webpack --display-modules && npm run rev && npm run clean",
+    "build-debug": "npm run bundle-common-js-debug && npm run bundle-common-css-debug && npm run bundle-index-css-debug && tsc && npm run minifier-template-debug && webpack --display-modules --config webpack.config.debug.js && npm run rev && npm run clean",
+    "lint": "tslint index.ts",
+    "minifier-template": "html-minifier --collapse-whitespace template.raw.html -o template.html",
+    "minifier-template-debug": "html-minifier template.raw.html -o template.html"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,8 @@
     "clipboard": "^1.5.12",
     "ejs": "^2.5.2",
     "hint.css": "^2.4.0",
+    "html-minifier": "^3.1.0",
+    "raw-loader": "^0.5.1",
     "rev-static": "^1.2.0",
     "tether-shepherd": "^1.8.1",
     "tslint": "^3.15.1",
