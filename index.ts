@@ -49,7 +49,7 @@ type Message = {
 }
 
 @VueComponent({
-    template: require("raw!./template.html"),
+    template: require("raw!./app.html"),
 })
 class App extends Vue {
     public websocket: WebSocket | undefined = undefined;

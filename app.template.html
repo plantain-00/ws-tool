@@ -22,7 +22,7 @@
                     <label class="hint--right hint--rounded" data-hint="check this if you are connecting a socket.io service">
                         <input type="checkbox" v-model="isSocketIO" :disabled="!!websocket" class="tour-check"> socket.io
                     </label>
-                    <label v-show="isSocketIO" class="hint--right hint--rounded" data-hint="ping/pong is like heartbeat">
+                    <label v-if="isSocketIO" class="hint--right hint--rounded" data-hint="ping/pong is like heartbeat">
                         <input type="checkbox" v-model="ignorePing" :disabled="!!websocket"> will hide ping/pong of socket.io
                     </label>
                 </div>
@@ -39,7 +39,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="col-md-12 hint--right hint--rounded" data-hint="input message that is about to send">
-                        <textarea style="width:100%;height:200px;" class="form-control tour-input-message" v-model="message" v-show="!isPreview"></textarea>
+                        <textarea style="width:100%;height:200px;" class="form-control tour-input-message" v-model="message" v-if="!isPreview"></textarea>
                         <pre v-else>{{previewResult}}</pre>
                     </div>
                 </div>
@@ -69,14 +69,14 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="previewMessage()" :disabled="message===''" v-show="!isPreview" data-hint="preview the message to check format">preview message</button>
+                    <button class="btn btn-default btn-sm hint--right hint--rounded" @click="previewMessage()" :disabled="message===''" v-if="!isPreview" data-hint="preview the message to check format">preview message</button>
                     <button class="btn btn-default btn-sm hint--right hint--rounded" @click="cancelPreview()" :disabled="message===''" v-else data-hint="cancel the preview of the message">cancel preview</button>
                     <button class="btn btn-primary btn-sm tour-send-message hint--right hint--rounded" @click="sendMessage()" :disabled="!websocket" data-hint="press this button to send the message">send message</button>
                     <button class="btn btn-default btn-sm hint--right hint--rounded" @click="clear()" :disabled="messages.length===0" data-hint="press this button to clear all the messages below">clear</button>
                     <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel" : "save as bookmark"}}</button>
                 </div>
             </div>
-            <div class="row" v-show="isEditing">
+            <div class="row" v-if="isEditing">
                 <div class="col-md-4 hint--right hint--rounded" data-hint="input the bookmark name">
                     <input id="bookmarkName" type="text" class="form-control input-sm" v-model="bookmarkName">
                 </div>
