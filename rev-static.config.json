@@ -1,0 +1,17 @@
+{
+    "inputFiles": [
+        "common.bundle.css",
+        "index.bundle.css",
+        "common.bundle.js",
+        "index.bundle.js",
+        "index.ejs.html"
+    ],
+    "outputFiles": [
+        "index.html"
+    ],
+    "json": false,
+    "ejsOptions": {
+        "rmWhitespace": true
+    },
+    "sha": 256
+}

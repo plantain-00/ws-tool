@@ -7,15 +7,15 @@
     <meta name="renderer" content="webkit" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WebSocket/Socket.IO Test Tool</title>
-    <link href="<%=commonBundleCss %>" rel="preload" as="style" onload="this.rel='stylesheet'">
-    <link href="<%=indexBundleCss %>" rel="preload" as="style" onload="this.rel='stylesheet'">
+    <link href="<%=commonBundleCss %>" rel="preload" as="style" onload="this.rel='stylesheet'" crossOrigin = "anonymous" integrity="<%=sri.commonBundleCss %>">
+    <link href="<%=indexBundleCss %>" rel="preload" as="style" onload="this.rel='stylesheet'" crossOrigin = "anonymous" integrity="<%=sri.indexBundleCss %>">
 </head>
 
 <body>
     <a class="github-fork-ribbon right-bottom" href="https://github.com/plantain-00/ws-tool" title="Fork me on GitHub" target="_blank">Fork me on GitHub</a>
     <div id="body"></div>
-    <script defer="defer" src="<%=commonBundleJs %>"></script>
-    <script defer="defer" src="<%=indexBundleJs %>"></script>
+    <script defer="defer" src="<%=commonBundleJs %>" crossOrigin = "anonymous" integrity="<%=sri.commonBundleJs %>"></script>
+    <script defer="defer" src="<%=indexBundleJs %>" crossOrigin = "anonymous" integrity="<%=sri.indexBundleJs %>"></script>
 </body>
 
 </html>
