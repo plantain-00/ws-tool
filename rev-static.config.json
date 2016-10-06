@@ -1,8 +1,8 @@
 {
     "inputFiles": [
-        "common.bundle.css",
+        "vendor.bundle.css",
         "index.bundle.css",
-        "common.bundle.js",
+        "vendor.bundle.js",
         "index.bundle.js",
         "index.ejs.html"
     ],
