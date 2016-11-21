@@ -1,9 +1,9 @@
-/// <reference types="clipboard" />
 /// <reference types="tether-shepherd" />
 /// <reference types="vue" />
 
 import { VueComponent } from "vue-typescript";
 import { Decoder } from "socket.io-parser";
+import * as Clipboard from "clipboard";
 
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;

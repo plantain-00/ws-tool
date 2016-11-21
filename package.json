@@ -4,7 +4,7 @@
   "description": "A websocket/socket.io api test tool.",
   "main": "index.js",
   "scripts": {
-    "bundle-vendor-js": "cat ./node_modules/vue/dist/vue.min.js ./node_modules/clipboard/dist/clipboard.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js vendor.bundle.js > vendor.tmp.js && cat vendor.tmp.js > vendor.bundle.js",
+    "bundle-vendor-js": "cat ./node_modules/vue/dist/vue.min.js ./node_modules/tether/dist/js/tether.min.js ./node_modules/tether-shepherd/dist/js/shepherd.min.js vendor.bundle.js > vendor.tmp.js && cat vendor.tmp.js > vendor.bundle.js",
     "bundle-vendor-js-debug": "cat ./node_modules/vue/dist/vue.js ./node_modules/clipboard/dist/clipboard.js ./node_modules/tether/dist/js/tether.js ./node_modules/tether-shepherd/dist/js/shepherd.js vendor.bundle.js > vendor.tmp.js && cat vendor.tmp.js > vendor.bundle.js",
     "bundle-vendor-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.min.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.min.css -o vendor.bundle.css",
     "bundle-vendor-css-debug": "cat ./node_modules/bootstrap/dist/css/bootstrap.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css node_modules/tether/dist/css/tether.css ./node_modules/tether-shepherd/dist/css/shepherd-theme-arrows.css ./node_modules/hint.css/hint.css > vendor.bundle.css",
