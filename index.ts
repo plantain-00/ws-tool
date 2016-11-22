@@ -23,7 +23,7 @@ function getNow() {
 type Parameter = {
     key: string;
     value: string;
-}
+};
 
 type Bookmark = {
     name: string;
@@ -35,7 +35,7 @@ type Bookmark = {
     message: string;
     showRaw: boolean;
     showFormatted: boolean;
-}
+};
 
 type Message = {
     moment: string;
@@ -46,7 +46,7 @@ type Message = {
     rawData?: any;
     formattedData?: any;
     visible?: boolean;
-}
+};
 
 @VueComponent({
     template: require("raw!./app.html"),
@@ -72,8 +72,8 @@ class App extends Vue {
         if (this.bookmarkName.trim() === "") {
             return false;
         }
-        for (let i = 0; i > this.bookmarks.length; i++) {
-            if (this.bookmarks[i].name === this.bookmarkName) {
+        for (const bookmark of this.bookmarks) {
+            if (bookmark.name === this.bookmarkName) {
                 return false;
             }
         }
@@ -118,8 +118,7 @@ class App extends Vue {
         let url = this.baseUrl;
         if (this.parameters.length > 0) {
             url += "?";
-            for (let i = 0; i < this.parameters.length; i++) {
-                const parameter = this.parameters[i];
+            for (const parameter of this.parameters) {
                 url += parameter.key + "=" + parameter.value + "&";
             }
             url = url.substring(0, url.length - 1);
@@ -143,8 +142,7 @@ class App extends Vue {
             this.baseUrl = url.substring(0, index);
             const array = url.substring(index + 1).split("&");
             const newParameters: Parameter[] = [];
-            for (let i = 0; i < array.length; i++) {
-                const tmp = array[i];
+            for (const tmp of array) {
                 index = tmp.indexOf("=");
                 if (index === -1) {
                     newParameters.push({
