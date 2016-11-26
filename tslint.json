@@ -26,6 +26,7 @@
         "no-unused-new": false,
         "arrow-parens": false,
         "array-type": [true, "array"],
-        "max-classes-per-file": [false]
+        "max-classes-per-file": [false],
+        "member-access": false
     }
 }
