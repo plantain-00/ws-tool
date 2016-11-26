@@ -52,22 +52,30 @@ type Message = {
     template: require("raw!./app.html"),
 })
 class App extends Vue {
-    public websocket: WebSocket | undefined = undefined;
-    public messages: Message[] = [];
-    public isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
-    public ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
-    public baseUrl: string = localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/";
-    public parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }];
-    public anchor: string = localStorage.getItem("anchor") || "";
-    public messageInternally: string = localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]";
-    public showRawInternally: boolean = !!localStorage.getItem("showRaw");
-    public showFormattedInternally: boolean = !!localStorage.getItem("showFormatted");
-    public previewResult: string = "";
-    public isPreview: boolean = false;
-    public bookmarks: Bookmark[] = bookmarks ? JSON.parse(bookmarks) : [];
-    public isEditing: boolean = false;
-    public bookmarkName: string = "";
+    websocket: WebSocket | undefined = undefined;
+    messages: Message[] = [];
+    isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
+    ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
+    baseUrl: string = localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/";
+    parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }];
+    anchor: string = localStorage.getItem("anchor") || "";
+    messageInternally: string = localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]";
+    showRawInternally: boolean = !!localStorage.getItem("showRaw");
+    showFormattedInternally: boolean = !!localStorage.getItem("showFormatted");
+    previewResult: string = "";
+    isPreview: boolean = false;
+    bookmarks: Bookmark[] = bookmarks ? JSON.parse(bookmarks) : [];
+    isEditing: boolean = false;
+    bookmarkName: string = "";
+    subprotocolInternally = localStorage.getItem("subprotocol") || "";
 
+    get subprotocol() {
+        return this.subprotocolInternally;
+    }
+    set subprotocol(value) {
+        localStorage.setItem("subprotocol", value);
+        this.subprotocolInternally = value;
+    }
     get canSaveAsBookmark() {
         if (this.bookmarkName.trim() === "") {
             return false;
@@ -128,19 +136,19 @@ class App extends Vue {
         }
         return url;
     }
-    set url(url) {
-        let index = url.indexOf("#");
+    set url(value) {
+        let index = value.indexOf("#");
         if (index > -1) {
-            url = url.substring(0, index);
-            this.anchor = url.substring(index + 1);
+            value = value.substring(0, index);
+            this.anchor = value.substring(index + 1);
         } else {
             this.anchor = "";
         }
 
-        index = url.indexOf("?");
+        index = value.indexOf("?");
         if (index > -1) {
-            this.baseUrl = url.substring(0, index);
-            const array = url.substring(index + 1).split("&");
+            this.baseUrl = value.substring(0, index);
+            const array = value.substring(index + 1).split("&");
             const newParameters: Parameter[] = [];
             for (const tmp of array) {
                 index = tmp.indexOf("=");
@@ -158,7 +166,7 @@ class App extends Vue {
             }
             this.parameters = newParameters;
         } else {
-            this.baseUrl = url;
+            this.baseUrl = value;
             this.parameters = [];
         }
 
@@ -166,13 +174,13 @@ class App extends Vue {
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
         localStorage.setItem("anchor", this.anchor);
     }
-    public savingAsBookmark() {
+    savingAsBookmark() {
         this.isEditing = !this.isEditing;
         Vue.nextTick(() => {
             document.getElementById("bookmarkName") !.focus();
         });
     }
-    public saveAsBookmark() {
+    saveAsBookmark() {
         this.isEditing = false;
         this.bookmarks.unshift({
             name: this.bookmarkName,
@@ -187,11 +195,11 @@ class App extends Vue {
         });
         localStorage.setItem("bookmarks", JSON.stringify(this.bookmarks));
     }
-    public deleteBookmark(index: number) {
+    deleteBookmark(index: number) {
         this.bookmarks.splice(index, 1);
         localStorage.setItem("bookmarks", JSON.stringify(this.bookmarks));
     }
-    public useBookmark(index: number) {
+    useBookmark(index: number) {
         const bookmark = this.bookmarks[index];
         this.isSocketIO = bookmark.isSocketIO;
         this.ignorePing = bookmark.ignorePing;
@@ -206,27 +214,31 @@ class App extends Vue {
         localStorage.setItem("parameters", newParameters);
         localStorage.setItem("anchor", bookmark.anchor);
     }
-    public setKeyOfParameter(index: number, e: KeyboardEvent) {
+    setKeyOfParameter(index: number, e: KeyboardEvent) {
         this.parameters[index].key = (e.target as any).value;
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
     }
-    public setValueOfParameter(index: number, e: KeyboardEvent) {
+    setValueOfParameter(index: number, e: KeyboardEvent) {
         this.parameters[index].value = (e.target as any).value;
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
     }
-    public deleteParameter(index: number) {
+    deleteParameter(index: number) {
         this.parameters.splice(index, 1);
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
     }
-    public addParameter() {
+    addParameter() {
         this.parameters.push({
             key: "",
             value: "",
         });
     }
-    public connect() {
+    connect() {
         try {
-            this.websocket = new WebSocket(this.url);
+            if (this.subprotocol) {
+                this.websocket = new WebSocket(this.url, this.subprotocol);
+            } else {
+                this.websocket = new WebSocket(this.url);
+            }
         } catch (error) {
             this.messages.unshift({
                 moment: getNow(),
@@ -244,10 +256,10 @@ class App extends Vue {
             pingId = setInterval(this.ping, 25000);
         }
     }
-    public sendMessage() {
+    sendMessage() {
         this.send(this.message);
     }
-    public send(message: string) {
+    send(message: string) {
         if (this.websocket) {
             if (!this.ignorePing || message !== "2") {
                 this.messages.unshift({
@@ -259,13 +271,13 @@ class App extends Vue {
             this.websocket.send(message);
         }
     }
-    public ping() {
+    ping() {
         this.send("2");
     }
-    public clear() {
+    clear() {
         this.messages = [];
     }
-    public previewMessage() {
+    previewMessage() {
         this.isPreview = true;
         if (this.isSocketIO) {
             this.previewResult = "";
@@ -278,10 +290,10 @@ class App extends Vue {
             }
         }
     }
-    public cancelPreview() {
+    cancelPreview() {
         this.isPreview = false;
     }
-    public showTips() {
+    showTips() {
         this.messages.unshift({
             moment: getNow(),
             type: "tips",
@@ -292,7 +304,7 @@ class App extends Vue {
             "4. chrome's developer tool is a good tool to view ws connection and messages",
         });
     }
-    public close() {
+    close() {
         this.messages.unshift({
             moment: getNow(),
             type: "tips",
@@ -300,13 +312,13 @@ class App extends Vue {
         });
         this.websocket!.close();
     }
-    public onopen(e: Event) {
+    onopen(e: Event) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
         });
     }
-    public onclose(e: CloseEvent) {
+    onclose(e: CloseEvent) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
@@ -315,7 +327,7 @@ class App extends Vue {
         this.websocket = undefined;
         clearInterval(pingId);
     }
-    public onmessage(e: MessageEvent) {
+    onmessage(e: MessageEvent) {
         if (this.ignorePing && e.data === "3") {
             return;
         }
@@ -351,7 +363,7 @@ class App extends Vue {
             }
         }
     }
-    public onerror(e: ErrorEvent) {
+    onerror(e: ErrorEvent) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
@@ -359,10 +371,10 @@ class App extends Vue {
         this.websocket = undefined;
         clearInterval(pingId);
     }
-    public showMessage(index: number) {
+    showMessage(index: number) {
         this.messages[index].visible = true;
     }
-    public hideMessage(index: number) {
+    hideMessage(index: number) {
         this.messages[index].visible = false;
     }
 }
