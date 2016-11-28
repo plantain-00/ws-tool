@@ -1,7 +1,6 @@
 /// <reference types="tether-shepherd" />
-/// <reference types="vue" />
-
-import { VueComponent } from "vue-typescript";
+import * as Vue from "vue";
+import Component from "vue-class-component";
 import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 
@@ -48,11 +47,11 @@ type Message = {
     visible?: boolean;
 };
 
-@VueComponent({
+@Component({
     template: require("raw!./app.html"),
 })
 class App extends Vue {
-    websocket: WebSocket | undefined = undefined;
+    websocket: WebSocket | null = null;
     messages: Message[] = [];
     isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
     ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
@@ -324,7 +323,7 @@ class App extends Vue {
             type: e.type,
             reason: e.reason,
         });
-        this.websocket = undefined;
+        this.websocket = null;
         clearInterval(pingId);
     }
     onmessage(e: MessageEvent) {
@@ -368,7 +367,7 @@ class App extends Vue {
             moment: getNow(),
             type: e.type,
         });
-        this.websocket = undefined;
+        this.websocket = null;
         clearInterval(pingId);
     }
     showMessage(index: number) {
