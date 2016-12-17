@@ -5,9 +5,20 @@
 [![Downloads](https://img.shields.io/npm/dm/ws-tool.svg)](https://www.npmjs.com/package/ws-tool)
 
 # ws-tool
-A websocket/socket.io api test tool.
+
+A websocket/socket.io/stomp api test tool.
 
 This tool to websocket protocol, just like postman to http protocol.
+
+#### features
+
++ connect to a websocket server
++ connect to a socket.io server
++ connect to a stomp server
++ show raw or formatted messages recieved from the server
++ send messages to the server
++ save your form automatically
++ save your form as bookmarks, and you can reuse it later
 
 #### install
 
