@@ -9,7 +9,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h4>WebSocket/Socket.IO Test Tool</h4>
+                    <h4>WebSocket/Socket.IO/Stomp Test Tool</h4>
                 </div>
             </div>
             <div class="row">
@@ -37,6 +37,8 @@
                     <button class="btn btn-default btn-sm clipboard hint--right hint--rounded" data-clipboard-target="#url" data-hint="press this button to copy the url to your paste board">copy URL</button>
                     <button class="btn btn-default btn-sm" @click="addParameter()">add a parameter</button>
                     <button class="btn btn-default btn-sm" @click="showTips()">show tips</button>
+                    <button class="btn btn-default btn-sm" @click="useStompConnectionMessage()">use stomp connection message</button>
+                    <button class="btn btn-default btn-sm" @click="useStompSubscriptionMessage()">use stomp subscription message</button>
                 </div>
             </div>
             <div class="row">
