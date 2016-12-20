@@ -78,7 +78,8 @@
                     <button class="btn btn-default btn-sm hint--right hint--rounded" @click="cancelPreview()" :disabled="message===''" v-else data-hint="cancel the preview of the message">cancel preview</button>
                     <button class="btn btn-primary btn-sm tour-send-message hint--right hint--rounded" @click="sendMessage()" :disabled="!websocket" data-hint="press this button to send the message">send message</button>
                     <button class="btn btn-default btn-sm hint--right hint--rounded" @click="clear()" :disabled="messages.length===0" data-hint="press this button to clear all the messages below">clear</button>
-                    <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel" : "save as bookmark"}}</button>
+                    <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel bookmark" : "save as bookmark"}}</button>
+                    <button class="btn btn-default btn-sm" @click="toggleFilter()">{{filterIsHidden ? "show filter" : "hide filter"}}</button>
                 </div>
             </div>
             <div class="row" v-if="isEditing">
@@ -89,16 +90,21 @@
                     <button class="btn btn-link btn-sm" @click="saveAsBookmark()" :disabled="!canSaveAsBookmark">save</button>
                 </div>
             </div>
+            <div class="row" v-if="!filterIsHidden">
+                <div class="col-md-6">
+                    <input id="filter" type="text" class="form-control input-sm" v-model="filter">
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12 tour-view-messages">
-                    <ul v-for="(message, index) in messages">
+                    <ul v-for="(message, index) in filteredMessages">
                         <li>
                             <span class="label label-default">{{message.moment}}</span>
-                            <span v-if="message.type==='open'" class="label label-success">connected</span>
-                            <span v-if="message.type==='close'" class="label label-danger">disconnected</span>
-                            <span v-if="message.type==='error'" class="label label-danger">errored</span>
+                            <span v-if="message.type==='open'" class="label label-success">open</span>
+                            <span v-if="message.type==='close'" class="label label-danger">close</span>
+                            <span v-if="message.type==='error'" class="label label-danger">error</span>
                             <span v-if="message.type==='out'" class="label label-info">out</span>
-                            <span v-if="message.type==='message'" class="label label-info">in</span>
+                            <span v-if="message.type==='in'" class="label label-info">in</span>
                             <span v-if="message.type==='tips'" class="label label-info">tips</span>
                             <span v-if="message.reason">{{message.reason}}</span>
                             <span v-if="message.data">{{message.data}}</span>
