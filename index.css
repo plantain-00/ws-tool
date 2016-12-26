@@ -11,6 +11,10 @@ input, textarea {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+li {
+    margin-bottom: 10px;
+}
+
 pre {
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;

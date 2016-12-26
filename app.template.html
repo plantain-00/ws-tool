@@ -103,8 +103,8 @@
             </div>
             <div class="row">
                 <div class="col-md-12 tour-view-messages">
-                    <ul v-for="(message, index) in filteredMessages">
-                        <li>
+                    <ul>
+                        <li v-for="(message, index) in filteredMessages">
                             <span class="label label-default">{{message.moment}}</span>
                             <span v-if="message.type==='open'" class="label label-success">open</span>
                             <span v-if="message.type==='close'" class="label label-danger">close</span>
