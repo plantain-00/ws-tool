@@ -11,6 +11,10 @@ input, textarea {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+li {
+    margin-bottom: 10px;
+}
+
 pre {
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
@@ -33,4 +37,8 @@ pre {
     position: fixed;
     z-index: 1;
     top: 45px;
+}
+
+.visibility-button-container {
+    position: relative;
 }
