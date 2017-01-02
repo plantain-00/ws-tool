@@ -2,6 +2,7 @@ import * as Vue from "vue";
 import Component from "vue-class-component";
 import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
+import * as protobuf from "protobufjs";
 import { stompConnectionMessage, stompSubscriptionMessage, stompSendMessage } from "./messages";
 
 new Clipboard(".clipboard");
@@ -46,6 +47,7 @@ type Message = {
     formattedData?: string;
     visible?: boolean;
     visibilityButtonExtraBottom?: number;
+    isBinary?: boolean;
 };
 
 @Component({
@@ -71,7 +73,29 @@ class App extends Vue {
     filter = "";
     filterIsHidden: boolean = true;
     stompIsHidden = true;
+    protobufType: protobuf.Type | null = null;
+    protobufContentInternally = localStorage.getItem("protobufContent") || `package testPackage;
+syntax = "proto3";
+message Test {
+    required string data = 1;
+}`;
+    protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
+    protobufIsHidden = true;
 
+    get protobufContent() {
+        return this.protobufContentInternally;
+    }
+    set protobufContent(value: string) {
+        localStorage.setItem("protobufContent", value);
+        this.protobufContentInternally = value;
+    }
+    get protobufTypePath() {
+        return this.protobufTypePathInternally;
+    }
+    set protobufTypePath(value: string) {
+        localStorage.setItem("protobufTypePath", value);
+        this.protobufTypePathInternally = value;
+    }
     get filteredMessages() {
         return this.messages.filter(m => {
             if (this.filter) {
@@ -192,6 +216,24 @@ class App extends Vue {
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
         localStorage.setItem("anchor", this.anchor);
     }
+    loadProtobuf() {
+        if (this.protobufContent && this.protobufTypePath) {
+            try {
+                this.protobufType = protobuf.parse(this.protobufContent).root.lookup(this.protobufTypePath) as protobuf.Type;
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "tips",
+                    tips: "The protobuf is applied successfully.",
+                });
+            } catch (error) {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "error",
+                    reason: error.message,
+                });
+            }
+        }
+    }
     savingAsBookmark() {
         this.isEditing = !this.isEditing;
         Vue.nextTick(() => {
@@ -212,6 +254,9 @@ class App extends Vue {
     }
     toggleStomp() {
         this.stompIsHidden = !this.stompIsHidden;
+    }
+    toggleProtobuf() {
+        this.protobufIsHidden = !this.protobufIsHidden;
     }
     saveAsBookmark() {
         this.isEditing = false;
@@ -281,6 +326,7 @@ class App extends Vue {
             return;
         }
 
+        this.websocket.binaryType = "arraybuffer";
         this.websocket.onopen = this.onopen;
         this.websocket.onclose = this.onclose;
         this.websocket.onmessage = this.onmessage;
@@ -375,32 +421,63 @@ class App extends Vue {
             return;
         }
 
+        const isBinary = typeof e.data !== "string";
+
         if (e.data === "3") {
             this.messages.unshift({
                 moment: getNow(),
                 type: e.type,
                 data: e.data,
+                isBinary,
             });
             return;
         }
 
+        const type = "in";
+        let typedArray: Uint8Array | undefined;
+        let rawData: string;
+        if (isBinary) {
+            typedArray = new Uint8Array(e.data);
+            rawData = typedArray.toString();
+        } else {
+            typedArray = undefined;
+            rawData = e.data;
+        }
         this.messages.unshift({
             moment: getNow(),
-            type: e.type,
-            rawData: e.data,
+            type,
+            rawData,
             visible: undefined,
             visibilityButtonExtraBottom: 0,
+            isBinary,
         });
 
         if (this.isSocketIOInternally) {
             decoder.add(e.data);
-        } else {
+        } else if (!isBinary) {
             try {
                 const json = JSON.parse(e.data);
                 this.messages.unshift({
                     moment: getNow(),
-                    type: e.type,
+                    type,
                     formattedData: JSON.stringify(json, null, "    "),
+                    isBinary,
+                    visible: undefined,
+                    visibilityButtonExtraBottom: 0,
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (this.protobufType) {
+            try {
+                const json = this.protobufType.decode(typedArray!).asJSON();
+                this.messages.unshift({
+                    moment: getNow(),
+                    type,
+                    formattedData: JSON.stringify(json, null, "    "),
+                    isBinary,
+                    visible: undefined,
+                    visibilityButtonExtraBottom: 0,
                 });
             } catch (error) {
                 console.log(error);
