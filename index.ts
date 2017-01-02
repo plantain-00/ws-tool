@@ -45,6 +45,7 @@ type Message = {
     rawData?: string;
     formattedData?: string;
     visible?: boolean;
+    visibilityButtonExtraBottom?: number;
 };
 
 @Component({
@@ -388,6 +389,7 @@ class App extends Vue {
             type: e.type,
             rawData: e.data,
             visible: undefined,
+            visibilityButtonExtraBottom: 0,
         });
 
         if (this.isSocketIOInternally) {
@@ -413,11 +415,23 @@ class App extends Vue {
         this.websocket = null;
         clearInterval(pingId);
     }
-    showMessage(index: number) {
-        this.messages[index].visible = true;
+    toggleMessageVisibility(message: Message) {
+        message.visible = !this.messageVisibility(message);
     }
-    hideMessage(index: number) {
-        this.messages[index].visible = false;
+    resultId(index: number) {
+        return `result-${index}`;
+    }
+    messageVisibility(message: Message) {
+        return message.visible !== undefined
+            ? message.visible
+            : (message.formattedData ? this.showFormatted : this.showRaw);
+    }
+    visibilityButtonStyle(message: Message) {
+        return {
+            position: "absolute",
+            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom) : 0) + "px",
+            right: 10 + "px",
+        };
     }
 }
 
@@ -439,9 +453,23 @@ decoder.on("decoded", (decodedPacket: any) => {
         type: "in",
         formattedData: JSON.stringify(decodedPacket, null, "    "),
         visible: undefined,
+        visibilityButtonExtraBottom: 0,
     });
 });
 
 previewDecoder.on("decoded", (decodedPacket: any) => {
     app.previewResult = JSON.stringify(decodedPacket, null, "    ");
 });
+
+window.onscroll = () => {
+    const innerHeight = (window.innerHeight || document.documentElement.clientHeight);
+    for (let i = 0; i < app.messages.length; i++) {
+        const message = app.messages[i];
+        const element = document.getElementById(app.resultId(i));
+        if (element) {
+            const rect = element.getBoundingClientRect();
+            message.visibilityButtonExtraBottom = (rect.top < innerHeight - 40 && rect.top + rect.height > innerHeight)
+                ? (rect.top + rect.height - innerHeight) : 0;
+        }
+    }
+};

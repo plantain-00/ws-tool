@@ -38,3 +38,7 @@ pre {
     z-index: 1;
     top: 45px;
 }
+
+.visibility-button-container {
+    position: relative;
+}

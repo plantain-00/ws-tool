@@ -104,7 +104,7 @@
             <div class="row">
                 <div class="col-md-12 tour-view-messages">
                     <ul>
-                        <li v-for="(message, index) in filteredMessages">
+                        <li v-for="(message, index) in filteredMessages" class="visibility-button-container">
                             <span class="label label-default">{{message.moment}}</span>
                             <span v-if="message.type==='open'" class="label label-success">open</span>
                             <span v-if="message.type==='close'" class="label label-danger">close</span>
@@ -114,28 +114,16 @@
                             <span v-if="message.type==='tips'" class="label label-info">tips</span>
                             <span v-if="message.reason">{{message.reason}}</span>
                             <span v-if="message.data">{{message.data}}</span>
-                            <span v-if="message.formattedData">
-                                <template v-if="message.visible !== undefined ? message.visible : showFormatted">
-                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
-                                    <pre>{{message.formattedData}}</pre>
-                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
-                                </template>
-                                <template v-else>
-                                    <label class="label label-default">formatted</label>
-                                    <button class="btn btn-xs btn-default" @click="showMessage(index)">show</button>
-                                </template>
-                            </span>
-                            <span v-if="message.rawData">
-                                <template v-if="message.visible !== undefined ? message.visible : showRaw">
-                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
-                                    <pre>{{message.rawData}}</pre>
-                                    <button class="btn btn-xs btn-default" @click="hideMessage(index)">hide</button>
-                                </template>
-                                <template v-else>
-                                    <label class="label label-default">raw</label>
-                                    <button class="btn btn-xs btn-default" @click="showMessage(index)">show</button>
-                                </template>
-                            </span>
+                            <template v-if="message.formattedData">
+                                <pre :id="resultId(index)"  v-if="message.visible !== undefined ? message.visible : showFormatted">{{message.formattedData}}</pre>
+                                <label v-else class="label label-default">formatted</label>
+                                <button class="btn btn-xs btn-default" @click="toggleMessageVisibility(message)" :style="visibilityButtonStyle(message)">{{messageVisibility(message) ? "hide" : "show"}}</button>
+                            </template>
+                            <template v-if="message.rawData">
+                                <pre :id="resultId(index)" v-if="message.visible !== undefined ? message.visible : showRaw">{{message.rawData}}</pre>
+                                <label v-else class="label label-default">raw</label>
+                                <button class="btn btn-xs btn-default" @click="toggleMessageVisibility(message)" :style="visibilityButtonStyle(message)">{{messageVisibility(message) ? "hide" : "show"}}</button>
+                            </template>
                             <pre v-if="message.tips">{{message.tips}}</pre>
                         </li>
                     </ul>
