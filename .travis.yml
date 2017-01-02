@@ -8,7 +8,6 @@ before_script:
 script:
   - npm run lint
   - npm run build
-  - npm run build-debug
 env:
   - CXX=g++-4.8
 addons:
