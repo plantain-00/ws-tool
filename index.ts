@@ -81,7 +81,15 @@ message Test {
 }`;
     protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
     protobufIsHidden = true;
+    messageTypeInternally = localStorage.getItem("messageType") || "string";
 
+    get messageType() {
+        return this.messageTypeInternally;
+    }
+    set messageType(value: string) {
+        localStorage.setItem("messageType", value);
+        this.messageTypeInternally = value;
+    }
     get protobufContent() {
         return this.protobufContentInternally;
     }
@@ -349,14 +357,63 @@ message Test {
     }
     send(message: string) {
         if (this.websocket) {
+            let data: Uint8Array | string | undefined;
+            let isBinary = true;
+            let formattedData: string | undefined = undefined;
+            try {
+                if (this.messageType === "Uint8Array") {
+                    data = new Uint8Array(this.message.split(",").map(m => +m));
+                } else if (this.messageType === "protobuf") {
+                    if (this.protobufType) {
+                        const object = JSON.parse(this.message);
+                        data = this.protobufType.encode(object).finish();
+                        formattedData = data.toString();
+                    } else {
+                        this.messages.unshift({
+                            moment: getNow(),
+                            type: "error",
+                            reason: "Protobuf file content is not loaded.",
+                        });
+                        return;
+                    }
+                } else {
+                    data = this.message;
+                    isBinary = false;
+                }
+            } catch (error) {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "error",
+                    reason: error.message,
+                });
+                return;
+            }
+
             if (!this.ignorePing || message !== "2") {
                 this.messages.unshift({
                     moment: getNow(),
                     type: "out",
-                    data: message,
+                    rawData: message,
+                    visible: undefined,
+                    visibilityButtonExtraBottom: 0,
+                    isBinary,
                 });
             }
-            this.websocket.send(message);
+
+            if (formattedData) {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "out",
+                    formattedData,
+                    visible: undefined,
+                    visibilityButtonExtraBottom: 0,
+                    isBinary,
+                });
+            }
+
+            if (data) {
+                this.websocket.send(data);
+            }
         }
     }
     ping() {
@@ -515,6 +572,8 @@ message Test {
 const app = new App({
     el: "#body",
 });
+
+app.loadProtobuf();
 
 if (!WebSocket) {
     app.messages.unshift({
