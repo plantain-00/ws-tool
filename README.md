@@ -15,8 +15,8 @@ This tool to websocket protocol, just like postman to http protocol.
 + connect to a websocket server
 + connect to a socket.io server
 + connect to a stomp server
-+ show raw or formatted messages recieved from the server
-+ send messages to the server
++ show raw or formatted messages(string or binary) recieved from the server
++ send string or binary messages to the server
 + save your form automatically
 + save your form as bookmarks, and you can reuse it later
 

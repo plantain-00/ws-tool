@@ -8,10 +8,12 @@ module.exports = {
     output: {
         filename: "[name].bundle.js"
     },
-    externals: {
-        "vue": "Vue"
-    },
     plugins: [
+        new webpack.DefinePlugin({
+            "process.env": {
+                "NODE_ENV": JSON.stringify("production")
+            }
+        }),
         new webpack.NoErrorsPlugin(),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
@@ -25,5 +27,11 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin({
             name: ["index", "vendor"]
         }),
-    ]
+    ],
+    resolve: {
+        alias: {
+            "vue$": "vue/dist/vue.js",
+            "protobufjs": "protobufjs/dist/protobuf.min.js"
+        }
+    }
 };
