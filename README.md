@@ -8,9 +8,9 @@ A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP API.
 
 #### features
 
-+ connect to a websocket, socket.io stomp or TCP server
-+ send HTTP request or UDP message
-+ show and show raw or formatted messages(string or binary) recieved from the server
++ connect to a websocket, socket.io, stomp or TCP server
++ send and show raw or formatted messages(string or binary) recieved from the server
++ send and show HTTP request or UDP message
 + save your form automatically, or as bookmarks, and you can reuse it later
 
 #### install
