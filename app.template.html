@@ -13,6 +13,28 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-12">
+                    <label>
+                        <input type="radio" v-model="protocol" value="WebSocket"> WebSocket
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isSocketIO" :disabled="!!websocket || protocol !== 'WebSocket'"> socket.io
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="ignorePing" :disabled="!!websocket || protocol !== 'WebSocket' || !isSocketIO"> will hide ping/pong of socket.io
+                    </label>
+                    <label>
+                        <input type="radio" v-model="protocol" value="HTTP"> HTTP
+                    </label>
+                    <label>
+                        <input type="radio" v-model="protocol" value="TCP"> TCP
+                    </label>
+                    <label>
+                        <input type="radio" v-model="protocol" value="UDP"> HTTP
+                    </label>
+                </div>
+            </div>
+            <div class="row" v-if="protocol === 'WebSocket'">
                 <div class="col-md-10">
                     <input id="url" type="url" class="form-control" v-model="url" placeholder="url">
                 </div>
@@ -20,14 +42,12 @@
                     <input type="text" class="form-control" placeholder="subprotocol" v-model="subprotocol">
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <label>
-                        <input type="checkbox" v-model="isSocketIO" :disabled="!!websocket"> socket.io
-                    </label>
-                    <label v-if="isSocketIO">
-                        <input type="checkbox" v-model="ignorePing" :disabled="!!websocket"> will hide ping/pong of socket.io
-                    </label>
+            <div class="row" v-if="protocol === 'TCP'">
+                <div class="col-md-3">
+                    <input class="form-control" v-model="host" placeholder="host">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" placeholder="port" v-model="port">
                 </div>
             </div>
             <div class="row">
@@ -83,24 +103,21 @@
             <div class="row">
                 <div class="col-md-12">
                     <label>
-                        <input type="checkbox" v-model="showRaw"> show raw data
+                        <input type="radio" v-model="messageType" value="string"> string
                     </label>
                     <label>
-                        <input type="checkbox" v-model="showFormatted"> show formatted data
+                        <input type="radio" v-model="messageType" value="Uint8Array"> Uint8Array
                     </label>
-                    <label>message type:</label>
-                    <select class="form-control message-type" v-model="messageType">
-                        <option>string</option>
-                        <option>Uint8Array</option>
-                        <option>protobuf</option>
-                    </select>
+                    <label>
+                        <input type="radio" v-model="messageType" value="protobuf"> protobuf
+                    </label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <button class="btn btn-default btn-sm" @click="previewMessage()" :disabled="message===''" v-if="!isPreview">preview message</button>
                     <button class="btn btn-default btn-sm" @click="cancelPreview()" :disabled="message===''" v-else>cancel preview</button>
-                    <button class="btn btn-primary btn-sm" @click="sendMessage()" :disabled="!websocket">send message</button>
+                    <button class="btn btn-primary btn-sm" @click="sendMessage()" :disabled="!websocket && protocol === 'WebSocket'">send message</button>
                     <button class="btn btn-default btn-sm" @click="clear()" :disabled="messages.length===0">clear</button>
                     <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel bookmark" : "save as bookmark"}}</button>
                     <button class="btn btn-default btn-sm" @click="toggleFilter()">{{filterIsHidden ? "show filter" : "hide filter"}}</button>
@@ -117,6 +134,16 @@
             <div class="row" v-if="!filterIsHidden">
                 <div class="col-md-6">
                     <input id="filter" type="text" class="form-control input-sm" v-model="filter" placeholder="filter">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>
+                        <input type="checkbox" v-model="showRaw"> show raw data
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="showFormatted"> show formatted data
+                    </label>
                 </div>
             </div>
             <div class="row">

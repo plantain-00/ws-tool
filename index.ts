@@ -4,6 +4,7 @@ import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
 import { stompConnectionMessage, stompSubscriptionMessage, stompSendMessage } from "./messages";
+import * as types from "./types";
 
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
@@ -11,6 +12,7 @@ const decoder = new Decoder();
 const previewDecoder = new Decoder();
 const parameters = localStorage.getItem("parameters");
 const bookmarks = localStorage.getItem("bookmarks");
+let proxyWebSocket: WebSocket;
 
 function getNow() {
     const now = new Date();
@@ -58,10 +60,10 @@ class App extends Vue {
     messages: Message[] = [];
     isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
     ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
-    baseUrl: string = localStorage.getItem("baseUrl") || "ws://slack.socket.io/socket.io/";
-    parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }];
+    baseUrl: string = localStorage.getItem("baseUrl") || "wss://copy.yorkyao.xyz/socket.io/";
+    parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }, { key: "room", value: "test" }];
     anchor: string = localStorage.getItem("anchor") || "";
-    messageInternally: string = localStorage.getItem("message") || "42[\"new message\",{\"username\":\"hello\",\"message\":\"world\"}]";
+    messageInternally: string = localStorage.getItem("message") || "42[\"copy\",{\"username\":\"hello\",\"message\":\"world\"}]";
     showRawInternally: boolean = !!localStorage.getItem("showRaw");
     showFormattedInternally: boolean = !!localStorage.getItem("showFormatted");
     previewResult: string = "";
@@ -82,7 +84,31 @@ message Test {
     protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
     protobufIsHidden = true;
     messageTypeInternally = localStorage.getItem("messageType") || "string";
+    protocolInternally = localStorage.getItem("protocol") || "WebSocket";
+    hostInternally = localStorage.getItem("host") || "localhost";
+    portInternally = localStorage.getItem("port") || "9999";
 
+    get host() {
+        return this.hostInternally;
+    }
+    set host(value: string) {
+        localStorage.setItem("host", value);
+        this.hostInternally = value;
+    }
+    get port() {
+        return this.portInternally;
+    }
+    set port(value: string) {
+        localStorage.setItem("port", value);
+        this.portInternally = value;
+    }
+    get protocol() {
+        return this.protocolInternally;
+    }
+    set protocol(value: string) {
+        localStorage.setItem("protocol", value);
+        this.protocolInternally = value;
+    }
     get messageType() {
         return this.messageTypeInternally;
     }
@@ -319,28 +345,39 @@ message Test {
         });
     }
     connect() {
-        try {
-            if (this.subprotocol) {
-                this.websocket = new WebSocket(this.url, this.subprotocol);
-            } else {
-                this.websocket = new WebSocket(this.url);
+        if (this.protocol === "WebSocket") {
+            try {
+                if (this.subprotocol) {
+                    this.websocket = new WebSocket(this.url, this.subprotocol);
+                } else {
+                    this.websocket = new WebSocket(this.url);
+                }
+            } catch (error) {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "error",
+                    reason: error.message,
+                });
+                return;
             }
-        } catch (error) {
-            this.messages.unshift({
-                moment: getNow(),
-                type: "error",
-                reason: error.message,
-            });
-            return;
-        }
 
-        this.websocket.binaryType = "arraybuffer";
-        this.websocket.onopen = this.onopen;
-        this.websocket.onclose = this.onclose;
-        this.websocket.onmessage = this.onmessage;
-        this.websocket.onerror = this.onerror;
-        if (this.isSocketIO) {
-            pingId = setInterval(this.ping, 25000);
+            this.websocket.binaryType = "arraybuffer";
+            this.websocket.onopen = this.onopen;
+            this.websocket.onclose = this.onclose;
+            this.websocket.onmessage = this.onmessage;
+            this.websocket.onerror = this.onerror;
+            if (this.isSocketIO) {
+                pingId = setInterval(this.ping, 25000);
+            }
+        } else if (this.protocol === "TCP") {
+            if (proxyWebSocket && !isNaN(+this.port)) {
+                const protocol: types.Protocol = {
+                    kind: "tcp:connect",
+                    host: this.host,
+                    port: +this.port,
+                };
+                proxyWebSocket.send(JSON.stringify(protocol));
+            }
         }
     }
     sendMessage() {
@@ -356,63 +393,69 @@ message Test {
         this.message = stompSendMessage;
     }
     send(message: string) {
-        if (this.websocket) {
-            let data: Uint8Array | string | undefined;
-            let isBinary = true;
-            let formattedData: string | undefined = undefined;
-            try {
-                if (this.messageType === "Uint8Array") {
-                    data = new Uint8Array(this.message.split(",").map(m => +m));
-                } else if (this.messageType === "protobuf") {
-                    if (this.protobufType) {
-                        const object = JSON.parse(this.message);
-                        data = this.protobufType.encode(object).finish();
-                        formattedData = data.toString();
-                    } else {
-                        this.messages.unshift({
-                            moment: getNow(),
-                            type: "error",
-                            reason: "Protobuf file content is not loaded.",
-                        });
-                        return;
-                    }
+        let data: Uint8Array | string | undefined;
+        let isBinary = true;
+        let formattedData: string | undefined = undefined;
+        try {
+            if (this.messageType === "Uint8Array") {
+                data = new Uint8Array(this.message.split(",").map(m => +m));
+            } else if (this.messageType === "protobuf") {
+                if (this.protobufType) {
+                    const object = JSON.parse(this.message);
+                    data = this.protobufType.encode(object).finish();
+                    formattedData = data.toString();
                 } else {
-                    data = this.message;
-                    isBinary = false;
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "error",
+                        reason: "Protobuf file content is not loaded.",
+                    });
+                    return;
                 }
-            } catch (error) {
-                this.messages.unshift({
-                    moment: getNow(),
-                    type: "error",
-                    reason: error.message,
-                });
-                return;
+            } else {
+                data = this.message;
+                isBinary = false;
             }
+        } catch (error) {
+            this.messages.unshift({
+                moment: getNow(),
+                type: "error",
+                reason: error.message,
+            });
+            return;
+        }
 
-            if (!this.ignorePing || message !== "2") {
-                this.messages.unshift({
-                    moment: getNow(),
-                    type: "out",
-                    rawData: message,
-                    visible: undefined,
-                    visibilityButtonExtraBottom: 0,
-                    isBinary,
-                });
-            }
+        if (!this.ignorePing || message !== "2") {
+            this.messages.unshift({
+                moment: getNow(),
+                type: "out",
+                rawData: message,
+                visible: undefined,
+                visibilityButtonExtraBottom: 0,
+                isBinary,
+            });
+        }
 
-            if (formattedData) {
-                this.messages.unshift({
-                    moment: getNow(),
-                    type: "out",
-                    formattedData,
-                    visible: undefined,
-                    visibilityButtonExtraBottom: 0,
-                    isBinary,
-                });
-            }
+        if (formattedData) {
+            this.messages.unshift({
+                moment: getNow(),
+                type: "out",
+                formattedData,
+                visible: undefined,
+                visibilityButtonExtraBottom: 0,
+                isBinary,
+            });
+        }
 
-            if (data) {
-                this.websocket.send(data);
+        if (data) {
+            if (this.protocol === "WebSocket") {
+                if (this.websocket) {
+                    this.websocket.send(data);
+                }
+            } else if (this.protocol === "TCP") {
+                if (proxyWebSocket) {
+                    proxyWebSocket.send(data);
+                }
             }
         }
     }
@@ -608,4 +651,11 @@ window.onscroll = () => {
                 ? (rect.top + rect.height - innerHeight) : 0;
         }
     }
+};
+
+const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
+proxyWebSocket = new WebSocket(`${wsProtocol}//${location.host}`);
+proxyWebSocket.binaryType = "arraybuffer";
+proxyWebSocket.onmessage = data => {
+    app.onmessage(data);
 };

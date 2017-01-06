@@ -43,11 +43,6 @@ pre {
     position: relative;
 }
 
-.message-type {
-    width: 120px;
-    display: inline-block;
-}
-
 label {
     margin-left: 10px;
 }
