@@ -15,8 +15,10 @@ A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP API.
 
 #### install
 
-`git clone -b gh-pages https://github.com/plantain-00/ws-tool.git . --depth=1 && npm i --production`
+Just use the online one: [https://plantain-00.github.io/ws-tool/](https://plantain-00.github.io/ws-tool/)
 
-if you want to test HTTP, TCP and UDP feature, you should enable the nodejs proxy with `node proxy.js`, then open `http://localhost:12345` in your browser.
+Or host your own one by: `git clone -b gh-pages https://github.com/plantain-00/ws-tool.git . --depth=1`
 
-otherwise, use a static file server(like nginx) to host the html,js,css files, then open `http://localhost:{your_static_file_server_listen_port}` in your browser.
+If you want to test HTTP, TCP and UDP feature, you should enable the nodejs proxy with `npm i --production && node proxy.js`, then open `http://localhost:12345` in your browser.
+
+Otherwise, use a static file server(eg nginx) to host the html/js/css files, then open `http://localhost:{your_static_file_server_listen_port}` in your browser.
