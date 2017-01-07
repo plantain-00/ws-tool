@@ -9,7 +9,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h4>WebSocket/Socket.IO/Stomp Test Tool</h4>
+                    <h4>WebSocket/Socket.IO/Stomp/HTTP/TCP/UDP Test Tool</h4>
                 </div>
             </div>
             <div class="row">
@@ -18,10 +18,10 @@
                         <input type="radio" v-model="protocol" value="WebSocket" :disabled="isConnected"> WebSocket
                     </label>
                     <label>
-                        <input type="checkbox" v-model="isSocketIO" :disabled="isConnected"> socket.io
+                        <input type="checkbox" v-model="isSocketIO" :disabled="isConnected || protocol !== 'WebSocket'"> socket.io
                     </label>
                     <label>
-                        <input type="checkbox" v-model="ignorePing" :disabled="isConnected || !isSocketIO"> will hide ping/pong of socket.io
+                        <input type="checkbox" v-model="ignorePing" :disabled="isConnected || protocol !== 'WebSocket' || !isSocketIO"> will hide ping/pong of socket.io
                     </label>
                     <label>
                         <input type="radio" v-model="protocol" value="HTTP" :disabled="isConnected"> HTTP
@@ -62,7 +62,7 @@
                     <input class="form-control" v-model="host" placeholder="host">
                 </div>
                 <div class="col-md-2">
-                    <input type="text" class="form-control" placeholder="port" v-model="port">
+                    <input type="number" class="form-control" placeholder="port" v-model="port">
                 </div>
             </div>
             <div class="row">
@@ -70,10 +70,11 @@
                     <button class="btn btn-primary btn-sm" @click="connect()" :disabled="cannotConnect">connect</button>
                     <button class="btn btn-default btn-sm" @click="close()" :disabled="cannotDisconnect">disconnect</button>
                     <button class="btn btn-default btn-sm clipboard" data-clipboard-target="#url" v-if="protocol === 'WebSocket' || protocol === 'HTTP'">copy URL</button>
-                    <button class="btn btn-default btn-sm" @click="addParameter()" v-if="protocol === 'WebSocket'">add a parameter</button>
+                    <button class="btn btn-default btn-sm" @click="addParameter()" v-if="protocol === 'WebSocket' || protocol === 'HTTP'">add a parameter</button>
+                    <button class="btn btn-default btn-sm" @click="addHeader()" v-if="protocol === 'HTTP'">add a header</button>
                     <button class="btn btn-default btn-sm" @click="showTips()">show tips</button>
                     <button class="btn btn-default btn-sm" @click="toggleStomp()" v-if="protocol === 'WebSocket' || protocol === 'TCP'">{{ stompIsHidden ? "show stomp" : "hide stomp"}}</button>
-                    <button class="btn btn-default btn-sm" @click="toggleProtobuf()">{{ protobufIsHidden ? "show protobuf" : "hide protobuf"}}</button>
+                    <button class="btn btn-default btn-sm" @click="toggleProtobuf()" v-if="protocol !== 'HTTP'">{{ protobufIsHidden ? "show protobuf" : "hide protobuf"}}</button>
                 </div>
             </div>
             <div class="row" v-if="!stompIsHidden">
@@ -81,6 +82,19 @@
                     <button class="btn btn-link btn-sm" @click="useStompConnectionMessage()">use stomp connection message</button>
                     <button class="btn btn-link btn-sm" @click="useStompSubscriptionMessage()">use stomp subscription message</button>
                     <button class="btn btn-link btn-sm" @click="useStompSendMessage()">use stomp send message</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" v-if="protocol !== 'HTTP' || shouldContainBody">
+                    <label>
+                        <input type="radio" v-model="messageType" value="string"> string
+                    </label>
+                    <label>
+                        <input type="radio" v-model="messageType" value="Uint8Array"> Uint8Array
+                    </label>
+                    <label>
+                        <input type="radio" v-model="messageType" value="protobuf"> protobuf
+                    </label>
                 </div>
             </div>
             <div class="row" v-if="!protobufIsHidden">
@@ -96,36 +110,34 @@
             </div>
             <div class="row" v-else>
                 <div class="col-md-6">
-                    <div class="col-md-12">
+                    <div class="col-md-12" v-if="protocol !== 'HTTP' || shouldContainBody">
                         <textarea style="width:100%;height:200px;" class="form-control" v-model="message" v-if="!isPreview"></textarea>
                         <pre v-else>{{previewResult}}</pre>
                     </div>
                 </div>
                 <div class="col-md-6" v-if="protocol === 'WebSocket' || protocol === 'HTTP'">
-                    <div v-for="(parameter, index) in parameters">
+                    <div v-for="(parameter, index) in parameters" class="row">
                         <div class="col-md-3">
-                            <input type="text" class="form-control input-sm" :value="parameter.key" @keyup="setKeyOfParameter(index, $event)" placeholder="key">
+                            <input type="text" class="form-control input-sm" :value="parameter.key" @keyup="setKeyOfParameter(index, $event)" placeholder="parameter name">
                         </div>
                         <div class="col-md-7">
-                            <input type="text" class="form-control input-sm" :value="parameter.value" @keyup="setValueOfParameter(index, $event)" placeholder="value">
+                            <input type="text" class="form-control input-sm" :value="parameter.value" @keyup="setValueOfParameter(index, $event)" placeholder="parameter value">
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-link btn-sm" @click="deleteParameter(index)">delete</button>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <label>
-                        <input type="radio" v-model="messageType" value="string"> string
-                    </label>
-                    <label>
-                        <input type="radio" v-model="messageType" value="Uint8Array"> Uint8Array
-                    </label>
-                    <label>
-                        <input type="radio" v-model="messageType" value="protobuf"> protobuf
-                    </label>
+                    <div v-for="(header, index) in headers" v-if="protocol === 'HTTP'" class="row">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control input-sm" :value="header.key" @keyup="setKeyOfHeader(index, $event)" placeholder="header name">
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control input-sm" :value="header.value" @keyup="setValueOfHeader(index, $event)" placeholder="header value">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-link btn-sm" @click="deleteHeader(index)">delete</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">

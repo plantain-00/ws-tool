@@ -36,5 +36,11 @@ export type Protocol =
         method: string;
         url: string;
         headers: { [name: string]: string };
+        body?: string;
+    }
+    |
+    {
+        kind: "http:receive";
+        headers: { [name: string]: string };
         body: string;
     };

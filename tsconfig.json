@@ -9,7 +9,12 @@
         "strictNullChecks": true,
         "noImplicitReturns": true,
         "skipLibCheck": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "lib": [
+            "dom",
+            "es2015",
+            "es2015"
+        ]
     },
     "exclude": [
         "node_modules",

@@ -3,6 +3,7 @@ import { Server as WebSocketServer } from "uws";
 import * as http from "http";
 import * as net from "net";
 import * as dgram from "dgram";
+import fetch from "node-fetch";
 import * as types from "./types";
 
 const server = http.createServer();
@@ -54,6 +55,27 @@ wss.on("connection", ws => {
                 const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
                 tcpClient.write(message);
             }
+        } else if (protocol.kind === "http:send") {
+            fetch(protocol.url, {
+                headers: protocol.headers,
+                body: protocol.body,
+                method: protocol.method,
+            }).then(response => {
+                const headers: { [name: string]: string } = {};
+                response.headers.forEach((value, name) => {
+                    headers[name] = value;
+                });
+                response.text().then(body => {
+                    const responseProtocol: types.Protocol = {
+                        kind: "http:receive",
+                        headers,
+                        body,
+                    };
+                    ws.send(JSON.stringify(responseProtocol));
+                }, error => {
+                    ws.send(`errored: ${error.stack}`);
+                });
+            });
         } else if (protocol.kind === "udp:send") {
             const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
             udpClient.send(message, protocol.port, protocol.address);
