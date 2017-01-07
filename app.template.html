@@ -52,8 +52,8 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-primary btn-sm" @click="connect()" :disabled="!!websocket">connect</button>
-                    <button class="btn btn-default btn-sm" @click="close()" :disabled="!websocket">disconnect</button>
+                    <button class="btn btn-primary btn-sm" @click="connect()" :disabled="isConnected">connect</button>
+                    <button class="btn btn-default btn-sm" @click="close()" :disabled="isDisconnected">disconnect</button>
                     <button class="btn btn-default btn-sm clipboard" data-clipboard-target="#url">copy URL</button>
                     <button class="btn btn-default btn-sm" @click="addParameter()">add a parameter</button>
                     <button class="btn btn-default btn-sm" @click="showTips()">show tips</button>
@@ -117,7 +117,7 @@
                 <div class="col-md-12">
                     <button class="btn btn-default btn-sm" @click="previewMessage()" :disabled="message===''" v-if="!isPreview">preview message</button>
                     <button class="btn btn-default btn-sm" @click="cancelPreview()" :disabled="message===''" v-else>cancel preview</button>
-                    <button class="btn btn-primary btn-sm" @click="sendMessage()" :disabled="!websocket && protocol === 'WebSocket'">send message</button>
+                    <button class="btn btn-primary btn-sm" @click="sendMessage()" :disabled="isDisconnected">send message</button>
                     <button class="btn btn-default btn-sm" @click="clear()" :disabled="messages.length===0">clear</button>
                     <button class="btn btn-default btn-sm" @click="savingAsBookmark()">{{isEditing ? "cancel bookmark" : "save as bookmark"}}</button>
                     <button class="btn btn-default btn-sm" @click="toggleFilter()">{{filterIsHidden ? "show filter" : "hide filter"}}</button>

@@ -6,4 +6,4 @@ net.createServer(socket => {
         socket.write(data);
     });
 }).listen(port);
-console.log("listening ${port}");
+console.log(`listening ${port}`);

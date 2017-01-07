@@ -6,6 +6,18 @@ export type Protocol =
     }
     |
     {
+        kind: "tcp:connected";
+    }
+    |
+    {
+        kind: "tcp:disconnect";
+    }
+    |
+    {
+        kind: "tcp:disconnected";
+    }
+    |
+    {
         kind: "tcp:send";
         message: string;
     }

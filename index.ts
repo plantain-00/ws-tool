@@ -87,6 +87,7 @@ message Test {
     protocolInternally = localStorage.getItem("protocol") || "WebSocket";
     hostInternally = localStorage.getItem("host") || "localhost";
     portInternally = localStorage.getItem("port") || "9999";
+    tcpConnected = false;
 
     get host() {
         return this.hostInternally;
@@ -249,6 +250,14 @@ message Test {
         localStorage.setItem("baseUrl", this.baseUrl);
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
         localStorage.setItem("anchor", this.anchor);
+    }
+    get isConnected() {
+        return (this.protocol === "WebSocket" && this.websocket)
+            || (this.protocol === "TCP" && this.tcpConnected);
+    }
+    get isDisconnected() {
+        return (this.protocol === "WebSocket" && !this.websocket)
+            || (this.protocol === "TCP" && !this.tcpConnected);;
     }
     loadProtobuf() {
         if (this.protobufContent && this.protobufTypePath) {
@@ -499,7 +508,14 @@ message Test {
             type: "tips",
             tips: "Is going to disconnect manually.",
         });
-        this.websocket!.close();
+        if (this.protocol === "WebSocket") {
+            this.websocket!.close();
+        } else if (this.protocol === "TCP") {
+            const protocol: types.Protocol = {
+                kind: "tcp:disconnect",
+            };
+            proxyWebSocket.send(JSON.stringify(protocol));
+        }
     }
     onopen(e: Event) {
         this.messages.unshift({
@@ -552,15 +568,22 @@ message Test {
             isBinary,
         });
 
-        if (this.isSocketIOInternally) {
+        if (this.protocol === "WebSocket" && this.isSocketIOInternally) {
             decoder.add(e.data);
         } else if (!isBinary) {
             try {
-                const json = JSON.parse(e.data);
+                const protocol: types.Protocol = JSON.parse(e.data);
+                if (this.protocol !== "WebSocket") {
+                    if (protocol.kind === "tcp:connected") {
+                        this.tcpConnected = true;
+                    } else if (protocol.kind === "tcp:disconnected") {
+                        this.tcpConnected = false;
+                    }
+                }
                 this.messages.unshift({
                     moment: getNow(),
                     type,
-                    formattedData: JSON.stringify(json, null, "    "),
+                    formattedData: JSON.stringify(protocol, null, "    "),
                     isBinary,
                     visible: undefined,
                     visibilityButtonExtraBottom: 0,
@@ -656,6 +679,6 @@ window.onscroll = () => {
 const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
 proxyWebSocket = new WebSocket(`${wsProtocol}//${location.host}`);
 proxyWebSocket.binaryType = "arraybuffer";
-proxyWebSocket.onmessage = data => {
-    app.onmessage(data);
+proxyWebSocket.onmessage = event => {
+    app.onmessage(event);
 };

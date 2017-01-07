@@ -32,10 +32,16 @@ wss.on("connection", ws => {
                     tcpClient.destroy();
                 }
                 tcpClient = net.connect(protocol.port, protocol.host, () => {
-                    ws.send("connected");
+                    const protocol: types.Protocol = {
+                        kind: "tcp:connected",
+                    };
+                    ws.send(JSON.stringify(protocol));
                 });
                 tcpClient.on("close", hadError => {
-                    ws.send("closed");
+                    const protocol: types.Protocol = {
+                        kind: "tcp:disconnected",
+                    };
+                    ws.send(JSON.stringify(protocol));
                 });
                 tcpClient.on("error", error => {
                     ws.send(`errored: ${error.stack}`);
@@ -46,6 +52,10 @@ wss.on("connection", ws => {
                 tcpClient.on("data", (tcpData: Buffer) => {
                     ws.send(tcpData, { binary: true });
                 });
+            } else if (protocol.kind === "tcp:disconnect") {
+                if (tcpClient) {
+                    tcpClient.destroy();
+                }
             } else if (protocol.kind === "tcp:send") {
                 if (tcpClient) {
                     tcpClient.write(protocol.message);
