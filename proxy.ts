@@ -13,68 +13,50 @@ app.use("/", express.static(__dirname));
 
 wss.on("connection", ws => {
     let tcpClient: net.Socket | undefined;
-    let udpClient: dgram.Socket;
-    let udpPort: number | undefined;
-    let udpAddress: string | undefined;
-    ws.on("message", (data: string | ArrayBuffer) => {
-        if (typeof data !== "string") {
-            const buffer = new Buffer(data);
+    const udpClient = dgram.createSocket("udp4");
+    udpClient.on("message", (msg: Buffer, rinfo: dgram.AddressInfo) => {
+        ws.send(msg);
+    });
+
+    ws.on("message", data => {
+        const protocol: types.Protocol = JSON.parse(data);
+        if (protocol.kind === "tcp:connect") {
             if (tcpClient) {
-                tcpClient.write(buffer);
+                tcpClient.destroy();
             }
-            if (udpClient && udpPort && udpAddress) {
-                udpClient.send(buffer, udpPort, udpAddress);
+            tcpClient = net.connect(protocol.port, protocol.host, () => {
+                const responseProtocol: types.Protocol = {
+                    kind: "tcp:connected",
+                };
+                ws.send(JSON.stringify(responseProtocol));
+            });
+            tcpClient.on("close", hadError => {
+                const responseProtocol: types.Protocol = {
+                    kind: "tcp:disconnected",
+                };
+                ws.send(JSON.stringify(responseProtocol));
+            });
+            tcpClient.on("error", error => {
+                ws.send(`errored: ${error.stack}`);
+            });
+            tcpClient.on("timeout", () => {
+                ws.send("timeout");
+            });
+            tcpClient.on("data", (tcpData: Buffer) => {
+                ws.send(tcpData, { binary: true });
+            });
+        } else if (protocol.kind === "tcp:disconnect") {
+            if (tcpClient) {
+                tcpClient.destroy();
             }
-        } else {
-            const protocol: types.Protocol = JSON.parse(data);
-            if (protocol.kind === "tcp:connect") {
-                if (tcpClient) {
-                    tcpClient.destroy();
-                }
-                tcpClient = net.connect(protocol.port, protocol.host, () => {
-                    const protocol: types.Protocol = {
-                        kind: "tcp:connected",
-                    };
-                    ws.send(JSON.stringify(protocol));
-                });
-                tcpClient.on("close", hadError => {
-                    const protocol: types.Protocol = {
-                        kind: "tcp:disconnected",
-                    };
-                    ws.send(JSON.stringify(protocol));
-                });
-                tcpClient.on("error", error => {
-                    ws.send(`errored: ${error.stack}`);
-                });
-                tcpClient.on("timeout", () => {
-                    ws.send("timeout");
-                });
-                tcpClient.on("data", (tcpData: Buffer) => {
-                    ws.send(tcpData, { binary: true });
-                });
-            } else if (protocol.kind === "tcp:disconnect") {
-                if (tcpClient) {
-                    tcpClient.destroy();
-                }
-            } else if (protocol.kind === "tcp:send") {
-                if (tcpClient) {
-                    tcpClient.write(protocol.message);
-                }
-            } else if (protocol.kind === "udp:config") {
-                if (udpClient) {
-                    udpClient.close();
-                }
-                udpClient = dgram.createSocket("udp4");
-                udpPort = protocol.port;
-                udpAddress = protocol.address;
-                udpClient.on("message", (msg, rinfo) => {
-                    ws.send(msg);
-                });
-            } else if (protocol.kind === "udp:send") {
-                if (udpClient && udpPort && udpAddress) {
-                    udpClient.send(protocol.message, udpPort, udpAddress);
-                }
+        } else if (protocol.kind === "tcp:send") {
+            if (tcpClient) {
+                const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
+                tcpClient.write(message);
             }
+        } else if (protocol.kind === "udp:send") {
+            const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
+            udpClient.send(message, protocol.port, protocol.address);
         }
     });
 });

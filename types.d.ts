@@ -19,17 +19,15 @@ export type Protocol =
     |
     {
         kind: "tcp:send";
+        isBinary: boolean;
         message: string;
     }
     |
     {
-        kind: "udp:config";
+        kind: "udp:send";
         address: string;
         port: number;
-    }
-    |
-    {
-        kind: "udp:send";
+        isBinary: boolean;
         message: string;
     }
     |

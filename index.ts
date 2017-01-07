@@ -6,6 +6,11 @@ import * as protobuf from "protobufjs";
 import { stompConnectionMessage, stompSubscriptionMessage, stompSendMessage } from "./messages";
 import * as types from "./types";
 
+declare class TextDecoder {
+    constructor(encoding: string);
+    decode(typedArray: Uint8Array): string;
+}
+
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
 const decoder = new Decoder();
@@ -88,7 +93,15 @@ message Test {
     hostInternally = localStorage.getItem("host") || "localhost";
     portInternally = localStorage.getItem("port") || "9999";
     tcpConnected = false;
+    httpMethodInternally = localStorage.getItem("httpMethod") || "GET";
 
+    get httpMethod() {
+        return this.httpMethodInternally;
+    }
+    set httpMethod(value: string) {
+        localStorage.setItem("httpMethod", value);
+        this.httpMethodInternally = value;
+    }
     get host() {
         return this.hostInternally;
     }
@@ -255,9 +268,15 @@ message Test {
         return (this.protocol === "WebSocket" && this.websocket)
             || (this.protocol === "TCP" && this.tcpConnected);
     }
+    get cannotConnect() {
+        return this.isConnected || this.protocol === "HTTP" || this.protocol === "UDP";
+    }
     get isDisconnected() {
         return (this.protocol === "WebSocket" && !this.websocket)
-            || (this.protocol === "TCP" && !this.tcpConnected);;
+            || (this.protocol === "TCP" && !this.tcpConnected);
+    }
+    get cannotDisconnect() {
+        return this.isDisconnected || this.protocol === "HTTP" || this.protocol === "UDP";
     }
     loadProtobuf() {
         if (this.protobufContent && this.protobufTypePath) {
@@ -463,7 +482,23 @@ message Test {
                 }
             } else if (this.protocol === "TCP") {
                 if (proxyWebSocket) {
-                    proxyWebSocket.send(data);
+                    const protocol: types.Protocol = {
+                        kind: "tcp:send",
+                        isBinary,
+                        message: typeof data === "string" ? data : data.toString(),
+                    };
+                    proxyWebSocket.send(JSON.stringify(protocol));
+                }
+            } else if (this.protocol === "UDP") {
+                if (proxyWebSocket) {
+                    const protocol: types.Protocol = {
+                        kind: "udp:send",
+                        address: this.host,
+                        port: +this.port,
+                        isBinary,
+                        message: typeof data === "string" ? data : data.toString(),
+                    };
+                    proxyWebSocket.send(JSON.stringify(protocol));
                 }
             }
         }
@@ -591,19 +626,35 @@ message Test {
             } catch (error) {
                 console.log(error);
             }
-        } else if (this.protobufType) {
+        } else {
             try {
-                const json = this.protobufType.decode(typedArray!).asJSON();
+                const formattedData = new TextDecoder("utf-8").decode(typedArray!);
                 this.messages.unshift({
                     moment: getNow(),
                     type,
-                    formattedData: JSON.stringify(json, null, "    "),
+                    formattedData,
                     isBinary,
                     visible: undefined,
                     visibilityButtonExtraBottom: 0,
                 });
             } catch (error) {
                 console.log(error);
+            }
+
+            if (this.protobufType) {
+                try {
+                    const json = this.protobufType.decode(typedArray!).asJSON();
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type,
+                        formattedData: JSON.stringify(json, null, "    "),
+                        isBinary,
+                        visible: undefined,
+                        visibilityButtonExtraBottom: 0,
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
     }
