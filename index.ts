@@ -575,10 +575,9 @@ message Test {
             }
         } else if (this.protocol === "HTTP") {
             const request = new XMLHttpRequest();
-            request.onload = e => {
-                if (request.responseType === "text" || request.responseType === "") {
-                    this.onmessageAccepted(request.responseText, request.responseType);
-                }
+            request.onloadend = e => {
+                this.onmessageAccepted(`${request.status} ${request.statusText}\n${request.getAllResponseHeaders()}`, "");
+                this.onmessageAccepted(request.response, "");
             };
             request.open(this.httpMethod, "/proxy");
             request.setRequestHeader(toUrlHeaderName, this.url);

@@ -36,10 +36,13 @@ app.all("/proxy", (request, proxyResponse) => {
                 body: buffer,
                 method: request.method,
             }).then(response => {
-                response.text().then(body => {
-                    proxyResponse.send(body);
+                response.headers.forEach((value, name) => {
+                    proxyResponse.setHeader(name, value);
+                });
+                response.buffer().then(buffer => {
+                    proxyResponse.status(response.status).send(buffer);
                 }, (error: Error) => {
-                    proxyResponse.send(error.message);
+                    proxyResponse.status(response.status).send(error.message);
                 });
             }, (error: Error) => {
                 proxyResponse.send(error.message);

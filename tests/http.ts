@@ -13,7 +13,9 @@ app.all("*", (request, response) => {
     request.on("end", () => {
         const buffer = Buffer.concat(chunks);
         console.log(buffer);
-        response.send("success");
+        response.setHeader("x-a", "b");
+        // response.json({ a: 1 });
+        response.send(new Uint8Array([1, 2]));
     });
 });
 
