@@ -27,7 +27,6 @@ app.all("/proxy", (request, proxyResponse) => {
             chunks.push(chunk as Buffer);
         });
         request.on("end", () => {
-            const buffer = Buffer.concat(chunks);
             const headerArray: types.Header[] = JSON.parse(request.header(headersName));
             const headers: { [name: string]: string } = {};
             for (const header of headerArray) {
@@ -35,7 +34,7 @@ app.all("/proxy", (request, proxyResponse) => {
             }
             fetch(url, {
                 headers,
-                body: buffer,
+                body: Buffer.concat(chunks),
                 method: request.method,
                 compress: false,
             }).then(response => {
