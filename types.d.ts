@@ -29,18 +29,9 @@ export type Protocol =
         port: number;
         isBinary: boolean;
         message: string;
-    }
-    |
-    {
-        kind: "http:send";
-        method: string;
-        url: string;
-        headers: { [name: string]: string };
-        body?: string;
-    }
-    |
-    {
-        kind: "http:receive";
-        headers: { [name: string]: string };
-        body: string;
     };
+
+export type Header = {
+    key: string;
+    value: string;
+};

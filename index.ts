@@ -19,6 +19,8 @@ const parameters = localStorage.getItem("parameters");
 const headers = localStorage.getItem("headers");
 const bookmarks = localStorage.getItem("bookmarks");
 let proxyWebSocket: WebSocket;
+const toUrlHeaderName = "x-to-url";
+const headersName = "x-headers";
 
 function getNow() {
     const now = new Date();
@@ -33,9 +35,10 @@ type Parameter = {
     value: string;
 };
 
-type Header = {
+type FormData = {
     key: string;
-    value: string;
+    value: string | File;
+    type: "text" | "file";
 };
 
 type Bookmark = {
@@ -56,7 +59,7 @@ type Bookmark = {
     host: string;
     port: number;
     httpMethod: string;
-    headers: Header[];
+    headers: types.Header[];
 };
 
 type Message = {
@@ -109,7 +112,9 @@ message Test {
     portInternally = +localStorage.getItem("port") || 9999;
     tcpConnected = false;
     httpMethodInternally = localStorage.getItem("httpMethod") || "GET";
-    headers: Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
+    headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
+    socketIOIsHidden: boolean = true;
+    formDatas: FormData[] = [];
 
     get httpMethod() {
         return this.httpMethodInternally;
@@ -136,7 +141,7 @@ message Test {
         return this.protocolInternally;
     }
     set protocol(value: string) {
-        if (value === "HTTP") {
+        if (value === "HTTP" || this.messageType === "FormData") {
             this.messageType = "string";
         }
         localStorage.setItem("protocol", value);
@@ -287,15 +292,9 @@ message Test {
         return (this.protocol === "WebSocket" && this.websocket)
             || (this.protocol === "TCP" && this.tcpConnected);
     }
-    get cannotConnect() {
-        return this.isConnected || this.protocol === "HTTP" || this.protocol === "UDP";
-    }
     get isDisconnected() {
         return (this.protocol === "WebSocket" && !this.websocket)
             || (this.protocol === "TCP" && !this.tcpConnected);
-    }
-    get cannotDisconnect() {
-        return this.isDisconnected || this.protocol === "HTTP" || this.protocol === "UDP";
     }
     get shouldContainBody() {
         return this.httpMethod === "POST"
@@ -340,6 +339,9 @@ message Test {
                 filterElement.focus();
             }
         });
+    }
+    toggleSocketIO() {
+        this.socketIOIsHidden = !this.socketIOIsHidden;
     }
     toggleStomp() {
         this.stompIsHidden = !this.stompIsHidden;
@@ -401,20 +403,34 @@ message Test {
         localStorage.setItem("headers", JSON.stringify(bookmark.headers));
     }
     setKeyOfParameter(index: number, e: KeyboardEvent) {
-        this.parameters[index].key = (e.target as any).value;
+        this.parameters[index].key = (e.target as HTMLInputElement).value;
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
     }
     setKeyOfHeader(index: number, e: KeyboardEvent) {
-        this.headers[index].key = (e.target as any).value;
+        this.headers[index].key = (e.target as HTMLInputElement).value;
         localStorage.setItem("headers", JSON.stringify(this.headers));
     }
+    setKeyOfFormData(index: number, e: KeyboardEvent) {
+        this.formDatas[index].key = (e.target as HTMLInputElement).value;
+    }
     setValueOfParameter(index: number, e: KeyboardEvent) {
-        this.parameters[index].value = (e.target as any).value;
+        this.parameters[index].value = (e.target as HTMLInputElement).value;
         localStorage.setItem("parameters", JSON.stringify(this.parameters));
     }
     setValueOfHeader(index: number, e: KeyboardEvent) {
-        this.headers[index].value = (e.target as any).value;
+        this.headers[index].value = (e.target as HTMLInputElement).value;
         localStorage.setItem("headers", JSON.stringify(this.headers));
+    }
+    setValueOfFormData(index: number, e: KeyboardEvent) {
+        const element = e.target as HTMLInputElement;
+        if (element.files && element.files.length > 0) {
+            this.formDatas[index].value = element.files[0];
+        } else {
+            this.formDatas[index].value = element.value;
+        }
+    }
+    setTypeOfFormData(index: number, e: KeyboardEvent) {
+        this.formDatas[index].type = (e.target as HTMLSelectElement).value as "text" | "file";
     }
     deleteParameter(index: number) {
         this.parameters.splice(index, 1);
@@ -423,6 +439,9 @@ message Test {
     deleteHeader(index: number) {
         this.headers.splice(index, 1);
         localStorage.setItem("headers", JSON.stringify(this.headers));
+    }
+    deleteFormData(index: number) {
+        this.formDatas.splice(index, 1);
     }
     addParameter() {
         this.parameters.push({
@@ -434,6 +453,13 @@ message Test {
         this.headers.push({
             key: "",
             value: "",
+        });
+    }
+    addFormData() {
+        this.formDatas.push({
+            key: "",
+            value: "",
+            type: "text",
         });
     }
     connect() {
@@ -548,22 +574,30 @@ message Test {
                 proxyWebSocket.send(JSON.stringify(protocol));
             }
         } else if (this.protocol === "HTTP") {
-            if (proxyWebSocket) {
-                const headersObject: { [name: string]: string } = {};
-                for (const header of this.headers) {
-                    if (header.key) {
-                        headersObject[header.key] = header.value;
-                    }
+            const request = new XMLHttpRequest();
+            request.onload = e => {
+                if (request.responseType === "text" || request.responseType === "") {
+                    this.onmessageAccepted(request.responseText, request.responseType);
                 }
-                const protocol: types.Protocol = {
-                    kind: "http:send",
-                    method: this.httpMethod,
-                    url: this.url,
-                    headers: headersObject,
-                    body: this.shouldContainBody ? this.message : undefined,
-                };
-                formattedData = JSON.stringify(protocol, null, "  ");
-                proxyWebSocket.send(JSON.stringify(protocol));
+            };
+            request.open(this.httpMethod, "/proxy");
+            request.setRequestHeader(toUrlHeaderName, this.url);
+            request.setRequestHeader(headersName, JSON.stringify(this.headers.filter(h => h.key)));
+
+            if (this.shouldContainBody) {
+                if (this.messageType === "FormData") {
+                    const formData = new FormData();
+                    for (const {key, value} of this.formDatas) {
+                        if (key) {
+                            formData.append(key, value);
+                        }
+                    }
+                    request.send(formData);
+                } else {
+                    request.send(this.message);
+                }
+            } else {
+                request.send();
             }
         }
 
@@ -660,17 +694,20 @@ message Test {
         clearInterval(pingId);
     }
     onmessage(e: MessageEvent) {
-        if (this.ignorePing && e.data === "3") {
+        this.onmessageAccepted(e.data, e.type);
+    }
+    onmessageAccepted(eventData: any, eventType: string) {
+        if (this.ignorePing && eventData === "3") {
             return;
         }
 
-        const isBinary = typeof e.data !== "string";
+        const isBinary = typeof eventData !== "string";
 
-        if (e.data === "3") {
+        if (eventData === "3") {
             this.messages.unshift({
                 moment: getNow(),
-                type: e.type,
-                data: e.data,
+                type: eventType,
+                data: eventData,
                 isBinary,
             });
             return;
@@ -680,11 +717,11 @@ message Test {
         let typedArray: Uint8Array | undefined;
         let rawData: string;
         if (isBinary) {
-            typedArray = new Uint8Array(e.data);
+            typedArray = new Uint8Array(eventData);
             rawData = typedArray.toString();
         } else {
             typedArray = undefined;
-            rawData = e.data;
+            rawData = eventData;
         }
         this.messages.unshift({
             moment: getNow(),
@@ -696,22 +733,15 @@ message Test {
         });
 
         if (this.protocol === "WebSocket" && this.isSocketIOInternally) {
-            decoder.add(e.data);
+            decoder.add(eventData);
         } else if (!isBinary) {
             try {
-                const protocol: types.Protocol = JSON.parse(e.data);
+                const protocol: types.Protocol = JSON.parse(eventData);
                 if (this.protocol !== "WebSocket") {
                     if (protocol.kind === "tcp:connected") {
                         this.tcpConnected = true;
                     } else if (protocol.kind === "tcp:disconnected") {
                         this.tcpConnected = false;
-                    }
-                }
-                if (protocol.kind === "http:receive" && protocol.body) {
-                    try {
-                        protocol.body = JSON.parse(protocol.body);
-                    } catch (error) {
-                        console.log(error);
                     }
                 }
 
@@ -789,8 +819,6 @@ message Test {
 const app = new App({
     el: "#body",
 });
-
-app.loadProtobuf();
 
 if (!WebSocket) {
     app.messages.unshift({

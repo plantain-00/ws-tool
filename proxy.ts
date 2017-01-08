@@ -12,6 +12,42 @@ const app = express();
 
 app.use("/", express.static(__dirname));
 
+const toUrlHeaderName = "x-to-url";
+const headersName = "x-headers";
+
+app.all("/proxy", (request, proxyResponse) => {
+    const url = request.header(toUrlHeaderName);
+    if (!url) {
+        proxyResponse.send(`No header: ${toUrlHeaderName}`);
+    } else {
+        const chunks: Buffer[] = [];
+        request.on("data", chunk => {
+            chunks.push(chunk as Buffer);
+        });
+        request.on("end", () => {
+            const buffer = Buffer.concat(chunks);
+            const headerArray: types.Header[] = JSON.parse(request.header(headersName));
+            const headers: { [name: string]: string } = {};
+            for (const header of headerArray) {
+                headers[header.key] = header.value;
+            }
+            fetch(url, {
+                headers,
+                body: buffer,
+                method: request.method,
+            }).then(response => {
+                response.text().then(body => {
+                    proxyResponse.send(body);
+                }, (error: Error) => {
+                    proxyResponse.send(error.message);
+                });
+            }, (error: Error) => {
+                proxyResponse.send(error.message);
+            });
+        });
+    }
+});
+
 wss.on("connection", ws => {
     let tcpClient: net.Socket | undefined;
     const udpClient = dgram.createSocket("udp4");
@@ -55,27 +91,6 @@ wss.on("connection", ws => {
                 const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
                 tcpClient.write(message);
             }
-        } else if (protocol.kind === "http:send") {
-            fetch(protocol.url, {
-                headers: protocol.headers,
-                body: protocol.body,
-                method: protocol.method,
-            }).then(response => {
-                const headers: { [name: string]: string } = {};
-                response.headers.forEach((value, name) => {
-                    headers[name] = value;
-                });
-                response.text().then(body => {
-                    const responseProtocol: types.Protocol = {
-                        kind: "http:receive",
-                        headers,
-                        body,
-                    };
-                    ws.send(JSON.stringify(responseProtocol));
-                }, error => {
-                    ws.send(`errored: ${error.stack}`);
-                });
-            });
         } else if (protocol.kind === "udp:send") {
             const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
             udpClient.send(message, protocol.port, protocol.address);
