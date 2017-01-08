@@ -5,13 +5,15 @@ import * as net from "net";
 import * as dgram from "dgram";
 import fetch from "node-fetch";
 import * as types from "./types";
+import * as  compression from "compression";
 
 const server = http.createServer();
 const wss = new WebSocketServer({ server });
 const app = express();
 
 app.use("/", express.static(__dirname));
-
+app.disable("x-powered-by");
+app.use(compression());
 const toUrlHeaderName = "x-to-url";
 const headersName = "x-headers";
 
@@ -35,6 +37,7 @@ app.all("/proxy", (request, proxyResponse) => {
                 headers,
                 body: buffer,
                 method: request.method,
+                compress: false,
             }).then(response => {
                 response.headers.forEach((value, name) => {
                     proxyResponse.setHeader(name, value);
