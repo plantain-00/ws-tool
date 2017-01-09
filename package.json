@@ -51,6 +51,7 @@
     "typescript": "2.1.4",
     "vue": "2.1.4",
     "vue-class-component": "4.3.1",
-    "webpack": "1.14.0"
+    "webpack": "1.14.0",
+    "webrtc-adapter": "2.1.0"
   }
 }

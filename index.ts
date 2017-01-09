@@ -75,6 +75,33 @@ type Message = {
     isBinary?: boolean;
 };
 
+declare class RTCDataChannel {
+    readyState: "open" | "close";
+    onopen: (event: any) => void;
+    onclose: (event: any) => void;
+    onmessage: (event: MessageEvent) => void;
+    send(message: string): void;
+    close(): void;
+}
+declare class RTCPeerConnection {
+    localDescription: RTCSessionDescription;
+    ondatachannel: (event: { channel: RTCDataChannel }) => void;
+    onicecandidate: (event: { candidate: RTCIceCandidate }) => void;
+    createDataChannel(channel: string): RTCDataChannel;
+    addIceCandidate(candidate: RTCIceCandidate): Promise<void>;
+    createOffer(): Promise<RTCSessionDescription>;
+    setLocalDescription(offer: RTCSessionDescription): Promise<void>;
+    setRemoteDescription(offer: RTCSessionDescription): Promise<void>;
+    createAnswer(): Promise<RTCSessionDescription>;
+    close(): void;
+}
+declare class RTCSessionDescription {
+    type: "offer" | "answer";
+    sdp: string;
+    constructor(description: { type: "offer", sdp: string; });
+    toJSON(): { type: "offer" | "answer"; sdp: string };
+}
+
 @Component({
     template: require("raw!./app.html"),
 })
@@ -115,6 +142,34 @@ message Test {
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
+    peerConnection = new RTCPeerConnection();
+    dataChannel: RTCDataChannel | null = null;
+    dataChannelName = "my_test_channel";
+    sessionDescription = "";
+
+    constructor(options?: Vue.ComponentOptions<Vue>) {
+        super(options);
+        this.peerConnection.ondatachannel = event => {
+            event.channel.onopen = e => {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "tips",
+                    tips: "peer connection opened.",
+                });
+            };
+            event.channel.onclose = e => {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "tips",
+                    tips: "peer connection closed.",
+                });
+            };
+            event.channel.onmessage = e => {
+                this.onmessage(e);
+            };
+        };
+        this.peerConnection.onicecandidate = e => !e.candidate;
+    }
 
     get httpMethod() {
         return this.httpMethodInternally;
@@ -294,7 +349,8 @@ message Test {
     }
     get isDisconnected() {
         return (this.protocol === "WebSocket" && !this.websocket)
-            || (this.protocol === "TCP" && !this.tcpConnected);
+            || (this.protocol === "TCP" && !this.tcpConnected)
+            || (this.protocol === "WebRTC" && !this.dataChannel);
     }
     get shouldContainBody() {
         return this.httpMethod === "POST"
@@ -303,6 +359,83 @@ message Test {
             || this.httpMethod === "DELETE"
             || this.httpMethod === "LINK"
             || this.httpMethod === "UNLINK";
+    }
+    createDataChannel() {
+        this.dataChannel = this.peerConnection.createDataChannel(this.dataChannelName);
+        this.messages.unshift({
+            moment: getNow(),
+            type: "tips",
+            tips: `create data channel successfully: ${this.dataChannelName}`,
+        });
+    }
+    createOffer() {
+        this.peerConnection.createOffer()
+            .then(offer => this.peerConnection.setLocalDescription(offer))
+            .then(() => {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "tips",
+                    tips: JSON.stringify(this.peerConnection.localDescription.toJSON()),
+                });
+            }, (error: Error) => {
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "error",
+                    reason: error.message,
+                });
+            });
+    }
+    answerOffer() {
+        try {
+            const offer = new RTCSessionDescription(JSON.parse(this.sessionDescription));
+            this.peerConnection.setRemoteDescription(offer)
+                .then(() => this.peerConnection.createAnswer())
+                .then(answer => this.peerConnection.setLocalDescription(answer))
+                .then(() => {
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "tips",
+                        tips: JSON.stringify(this.peerConnection.localDescription.toJSON()),
+                    });
+                }, (error: Error) => {
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "error",
+                        reason: error.message,
+                    });
+                });
+        } catch (error) {
+            this.messages.unshift({
+                moment: getNow(),
+                type: "error",
+                reason: error.message,
+            });
+        }
+    }
+    setAnswer() {
+        try {
+            const answer = new RTCSessionDescription(JSON.parse(this.sessionDescription));
+            this.peerConnection.setRemoteDescription(answer)
+                .then(() => {
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "tips",
+                        tips: "set answer successfully.",
+                    });
+                }, (error: Error) => {
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "error",
+                        reason: error.message,
+                    });
+                });
+        } catch (error) {
+            this.messages.unshift({
+                moment: getNow(),
+                type: "error",
+                reason: error.message,
+            });
+        }
     }
     loadProtobuf() {
         if (this.protobufContent && this.protobufTypePath) {
@@ -597,6 +730,11 @@ message Test {
                 }
             } else {
                 request.send();
+            }
+        } else if (this.protocol === "WebRTC") {
+            if (this.dataChannel) {
+                rawData = message;
+                this.dataChannel.send(message);
             }
         }
 
