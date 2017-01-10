@@ -146,11 +146,14 @@ message Test {
     dataChannel: RTCDataChannel | null = null;
     dataChannelName = "my_test_channel";
     sessionDescription = "";
+    isDataChannelConnected = false;
+    dataChannelStatus: "none" | "init" | "created offer" | "answered offer" | "set answer" = "none";
 
     constructor(options?: Vue.ComponentOptions<Vue>) {
         super(options);
         this.peerConnection.ondatachannel = event => {
             event.channel.onopen = e => {
+                app.isDataChannelConnected = true;
                 this.messages.unshift({
                     moment: getNow(),
                     type: "tips",
@@ -158,6 +161,7 @@ message Test {
                 });
             };
             event.channel.onclose = e => {
+                app.isDataChannelConnected = false;
                 this.messages.unshift({
                     moment: getNow(),
                     type: "tips",
@@ -350,7 +354,7 @@ message Test {
     get isDisconnected() {
         return (this.protocol === "WebSocket" && !this.websocket)
             || (this.protocol === "TCP" && !this.tcpConnected)
-            || (this.protocol === "WebRTC" && !this.dataChannel);
+            || (this.protocol === "WebRTC" && !(this.dataChannel && this.isDataChannelConnected));
     }
     get shouldContainBody() {
         return this.httpMethod === "POST"
@@ -362,6 +366,7 @@ message Test {
     }
     createDataChannel() {
         this.dataChannel = this.peerConnection.createDataChannel(this.dataChannelName);
+        this.dataChannelStatus = "init";
         this.messages.unshift({
             moment: getNow(),
             type: "tips",
@@ -377,6 +382,7 @@ message Test {
                     type: "tips",
                     tips: JSON.stringify(this.peerConnection.localDescription.toJSON()),
                 });
+                this.dataChannelStatus = "created offer";
             }, (error: Error) => {
                 this.messages.unshift({
                     moment: getNow(),
@@ -397,6 +403,7 @@ message Test {
                         type: "tips",
                         tips: JSON.stringify(this.peerConnection.localDescription.toJSON()),
                     });
+                    this.dataChannelStatus = "answered offer";
                 }, (error: Error) => {
                     this.messages.unshift({
                         moment: getNow(),
@@ -422,6 +429,7 @@ message Test {
                         type: "tips",
                         tips: "set answer successfully.",
                     });
+                    this.dataChannelStatus = "set answer";
                 }, (error: Error) => {
                     this.messages.unshift({
                         moment: getNow(),
