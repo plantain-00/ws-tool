@@ -4,7 +4,7 @@
 
 # ws-tool
 
-A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP API.
+A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP, WebRTC API.
 
 #### features
 
