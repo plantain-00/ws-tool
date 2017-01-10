@@ -67,7 +67,7 @@
                     <input type="text" class="form-control" placeholder="data channel" v-model="dataChannelName">
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-primary btn-sm" @click="createDataChannel()" :disabled="!dataChannelName || dataChannelStatus !== 'none'">create data channel</button>
+                    <button class="btn btn-primary btn-sm" @click="createDataChannel()" :disabled="!dataChannelName || dataChannelStatus !== 'none' || !peerConnection">create data channel</button>
                 </div>
             </div>
             <div class="row" v-if="protocol === 'WebRTC'">

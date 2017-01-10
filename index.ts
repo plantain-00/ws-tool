@@ -142,7 +142,7 @@ message Test {
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
-    peerConnection = new RTCPeerConnection();
+    peerConnection = RTCPeerConnection ? new RTCPeerConnection() : null;
     dataChannel: RTCDataChannel | null = null;
     dataChannelName = "my_test_channel";
     sessionDescription = "";
@@ -151,28 +151,29 @@ message Test {
 
     constructor(options?: Vue.ComponentOptions<Vue>) {
         super(options);
-        this.peerConnection.ondatachannel = event => {
-            event.channel.onopen = e => {
-                app.isDataChannelConnected = true;
-                this.messages.unshift({
-                    moment: getNow(),
-                    type: "tips",
-                    tips: "peer connection opened.",
-                });
+        if (this.peerConnection) {
+            this.peerConnection.ondatachannel = event => {
+                event.channel.onopen = e => {
+                    app.isDataChannelConnected = true;
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "tips",
+                        tips: "peer connection opened.",
+                    });
+                };
+                event.channel.onclose = e => {
+                    app.isDataChannelConnected = false;
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type: "tips",
+                        tips: "peer connection closed.",
+                    });
+                };
+                event.channel.onmessage = e => {
+                    this.onmessage(e);
+                };
             };
-            event.channel.onclose = e => {
-                app.isDataChannelConnected = false;
-                this.messages.unshift({
-                    moment: getNow(),
-                    type: "tips",
-                    tips: "peer connection closed.",
-                });
-            };
-            event.channel.onmessage = e => {
-                this.onmessage(e);
-            };
-        };
-        this.peerConnection.onicecandidate = e => !e.candidate;
+        }
     }
 
     get httpMethod() {
@@ -365,6 +366,9 @@ message Test {
             || this.httpMethod === "UNLINK";
     }
     createDataChannel() {
+        if (!this.peerConnection) {
+            return;
+        }
         this.dataChannel = this.peerConnection.createDataChannel(this.dataChannelName);
         this.dataChannelStatus = "init";
         this.messages.unshift({
@@ -374,13 +378,16 @@ message Test {
         });
     }
     createOffer() {
+        if (!this.peerConnection) {
+            return;
+        }
         this.peerConnection.createOffer()
-            .then(offer => this.peerConnection.setLocalDescription(offer))
+            .then(offer => this.peerConnection!.setLocalDescription(offer))
             .then(() => {
                 this.messages.unshift({
                     moment: getNow(),
                     type: "tips",
-                    tips: JSON.stringify(this.peerConnection.localDescription.toJSON()),
+                    tips: JSON.stringify(this.peerConnection!.localDescription.toJSON()),
                 });
                 this.dataChannelStatus = "created offer";
             }, (error: Error) => {
@@ -393,15 +400,18 @@ message Test {
     }
     answerOffer() {
         try {
+            if (!this.peerConnection) {
+                return;
+            }
             const offer = new RTCSessionDescription(JSON.parse(this.sessionDescription));
             this.peerConnection.setRemoteDescription(offer)
-                .then(() => this.peerConnection.createAnswer())
-                .then(answer => this.peerConnection.setLocalDescription(answer))
+                .then(() => this.peerConnection!.createAnswer())
+                .then(answer => this.peerConnection!.setLocalDescription(answer))
                 .then(() => {
                     this.messages.unshift({
                         moment: getNow(),
                         type: "tips",
-                        tips: JSON.stringify(this.peerConnection.localDescription.toJSON()),
+                        tips: JSON.stringify(this.peerConnection!.localDescription.toJSON()),
                     });
                     this.dataChannelStatus = "answered offer";
                 }, (error: Error) => {
@@ -421,6 +431,9 @@ message Test {
     }
     setAnswer() {
         try {
+            if (!this.peerConnection) {
+                return;
+            }
             const answer = new RTCSessionDescription(JSON.parse(this.sessionDescription));
             this.peerConnection.setRemoteDescription(answer)
                 .then(() => {
