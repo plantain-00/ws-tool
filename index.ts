@@ -143,7 +143,7 @@ message Test {
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
-    peerConnection = RTCPeerConnection ? new RTCPeerConnection() : null;
+    peerConnection = (window as any).RTCPeerConnection ? new RTCPeerConnection() : null;
     dataChannel: RTCDataChannel | null = null;
     dataChannelName = "my_test_channel";
     sessionDescription = "";
