@@ -73,6 +73,7 @@ type Message = {
     visible?: boolean;
     visibilityButtonExtraBottom?: number;
     isBinary?: boolean;
+    id: number;
 };
 
 declare class RTCDataChannel {
@@ -148,6 +149,7 @@ message Test {
     sessionDescription = "";
     isDataChannelConnected = false;
     dataChannelStatus: "none" | "init" | "created offer" | "answered offer" | "set answer" = "none";
+    id = 1;
 
     constructor(options?: Vue.ComponentOptions<Vue>) {
         super(options);
@@ -159,6 +161,7 @@ message Test {
                         moment: getNow(),
                         type: "tips",
                         tips: "peer connection opened.",
+                        id: app.id++,
                     });
                 };
                 event.channel.onclose = e => {
@@ -167,6 +170,7 @@ message Test {
                         moment: getNow(),
                         type: "tips",
                         tips: "peer connection closed.",
+                        id: app.id++,
                     });
                 };
                 event.channel.onmessage = e => {
@@ -350,7 +354,8 @@ message Test {
     }
     get isConnected() {
         return (this.protocol === "WebSocket" && this.websocket)
-            || (this.protocol === "TCP" && this.tcpConnected);
+            || (this.protocol === "TCP" && this.tcpConnected)
+            || (this.protocol === "WebRTC" && this.dataChannel && this.isDataChannelConnected);
     }
     get isDisconnected() {
         return (this.protocol === "WebSocket" && !this.websocket)
@@ -375,6 +380,7 @@ message Test {
             moment: getNow(),
             type: "tips",
             tips: `create data channel successfully: ${this.dataChannelName}`,
+            id: this.id++,
         });
     }
     createOffer() {
@@ -388,6 +394,7 @@ message Test {
                     moment: getNow(),
                     type: "tips",
                     tips: JSON.stringify(this.peerConnection!.localDescription.toJSON()),
+                    id: this.id++,
                 });
                 this.dataChannelStatus = "created offer";
             }, (error: Error) => {
@@ -395,6 +402,7 @@ message Test {
                     moment: getNow(),
                     type: "error",
                     reason: error.message,
+                    id: this.id++,
                 });
             });
     }
@@ -412,6 +420,7 @@ message Test {
                         moment: getNow(),
                         type: "tips",
                         tips: JSON.stringify(this.peerConnection!.localDescription.toJSON()),
+                        id: this.id++,
                     });
                     this.dataChannelStatus = "answered offer";
                 }, (error: Error) => {
@@ -419,6 +428,7 @@ message Test {
                         moment: getNow(),
                         type: "error",
                         reason: error.message,
+                        id: this.id++,
                     });
                 });
         } catch (error) {
@@ -426,6 +436,7 @@ message Test {
                 moment: getNow(),
                 type: "error",
                 reason: error.message,
+                id: this.id++,
             });
         }
     }
@@ -441,6 +452,7 @@ message Test {
                         moment: getNow(),
                         type: "tips",
                         tips: "set answer successfully.",
+                        id: this.id++,
                     });
                     this.dataChannelStatus = "set answer";
                 }, (error: Error) => {
@@ -448,6 +460,7 @@ message Test {
                         moment: getNow(),
                         type: "error",
                         reason: error.message,
+                        id: this.id++,
                     });
                 });
         } catch (error) {
@@ -455,6 +468,7 @@ message Test {
                 moment: getNow(),
                 type: "error",
                 reason: error.message,
+                id: this.id++,
             });
         }
     }
@@ -466,12 +480,14 @@ message Test {
                     moment: getNow(),
                     type: "tips",
                     tips: "The protobuf definitions is loaded successfully.",
+                    id: this.id++,
                 });
             } catch (error) {
                 this.messages.unshift({
                     moment: getNow(),
                     type: "error",
                     reason: error.message,
+                    id: this.id++,
                 });
             }
         }
@@ -629,6 +645,7 @@ message Test {
                     moment: getNow(),
                     type: "error",
                     reason: error.message,
+                    id: this.id++,
                 });
                 return;
             }
@@ -679,6 +696,7 @@ message Test {
                         moment: getNow(),
                         type: "error",
                         reason: "Protobuf file content is not loaded.",
+                        id: this.id++,
                     });
                     return;
                 }
@@ -691,6 +709,7 @@ message Test {
                 moment: getNow(),
                 type: "error",
                 reason: error.message,
+                id: this.id++,
             });
             return;
         }
@@ -767,6 +786,7 @@ message Test {
                 visible: undefined,
                 visibilityButtonExtraBottom: 0,
                 isBinary,
+                id: this.id++,
             });
         }
 
@@ -778,6 +798,7 @@ message Test {
                 visible: undefined,
                 visibilityButtonExtraBottom: 0,
                 isBinary,
+                id: this.id++,
             });
         }
     }
@@ -819,6 +840,7 @@ message Test {
             `3. for socket.io, if you send a message(eg: {a_key:"a_value"}) in an event(eg: "a_event"), in ws's perspective, the actual message you send is: 42["a_event",{"a_key":"a_value"}]\n` +
             "4. chrome's developer tool is a good tool to view ws connection and messages\n" +
             "5. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'",
+            id: this.id++,
         });
     }
     close() {
@@ -826,6 +848,7 @@ message Test {
             moment: getNow(),
             type: "tips",
             tips: "Is going to disconnect manually.",
+            id: this.id++,
         });
         if (this.protocol === "WebSocket") {
             this.websocket!.close();
@@ -840,6 +863,7 @@ message Test {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
+            id: this.id++,
         });
     }
     onclose(e: CloseEvent) {
@@ -847,6 +871,7 @@ message Test {
             moment: getNow(),
             type: e.type,
             reason: e.reason,
+            id: this.id++,
         });
         this.websocket = null;
         clearInterval(pingId);
@@ -867,6 +892,7 @@ message Test {
                 type: eventType,
                 data: eventData,
                 isBinary,
+                id: this.id++,
             });
             return;
         }
@@ -888,6 +914,7 @@ message Test {
             visible: undefined,
             visibilityButtonExtraBottom: 0,
             isBinary,
+            id: this.id++,
         });
 
         if (this.protocol === "WebSocket" && this.isSocketIOInternally) {
@@ -910,6 +937,7 @@ message Test {
                     isBinary,
                     visible: undefined,
                     visibilityButtonExtraBottom: 0,
+                    id: this.id++,
                 });
             } catch (error) {
                 console.log(error);
@@ -924,6 +952,7 @@ message Test {
                     isBinary,
                     visible: undefined,
                     visibilityButtonExtraBottom: 0,
+                    id: this.id++,
                 });
             } catch (error) {
                 console.log(error);
@@ -939,6 +968,7 @@ message Test {
                         isBinary,
                         visible: undefined,
                         visibilityButtonExtraBottom: 0,
+                        id: this.id++,
                     });
                 } catch (error) {
                     console.log(error);
@@ -950,6 +980,7 @@ message Test {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
+            id: this.id++,
         });
         this.websocket = null;
         clearInterval(pingId);
@@ -983,6 +1014,7 @@ if (!WebSocket) {
         moment: getNow(),
         type: "tips",
         tips: "current browser doesn't support WebSocket",
+        id: app.id++,
     });
 }
 
@@ -993,6 +1025,7 @@ decoder.on("decoded", (decodedPacket: any) => {
         formattedData: JSON.stringify(decodedPacket, null, "    "),
         visible: undefined,
         visibilityButtonExtraBottom: 0,
+        id: app.id++,
     });
 });
 
