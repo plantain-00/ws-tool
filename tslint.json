@@ -25,8 +25,14 @@
         "no-bitwise": false,
         "no-unused-new": false,
         "arrow-parens": false,
-        "array-type": [true, "array"],
-        "max-classes-per-file": [false],
-        "member-access": false
+        "array-type": [
+            true,
+            "array"
+        ],
+        "max-classes-per-file": [
+            false
+        ],
+        "member-access": false,
+        "interface-over-type-literal": false
     }
 }

@@ -475,7 +475,7 @@ message Test {
     loadProtobuf() {
         if (this.protobufContent && this.protobufTypePath) {
             try {
-                this.protobufType = protobuf.parse(this.protobufContent).root.lookup(this.protobufTypePath) as protobuf.Type;
+                this.protobufType = (protobuf.parse(this.protobufContent)["root"] as protobuf.Root).lookup(this.protobufTypePath) as protobuf.Type;
                 this.messages.unshift({
                     moment: getNow(),
                     type: "tips",
