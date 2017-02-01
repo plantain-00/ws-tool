@@ -104,7 +104,7 @@ declare class RTCSessionDescription {
 }
 
 @Component({
-    template: require("raw!./app.html"),
+    template: require("raw-loader!./app.html"),
 })
 class App extends Vue {
     websocket: WebSocket | null = null;
@@ -714,8 +714,8 @@ message Test {
             return;
         }
 
-        let rawData: string | undefined = undefined;
-        let formattedData: string | undefined = undefined;
+        let rawData: string | undefined;
+        let formattedData: string | undefined;
         if (this.protocol === "WebSocket") {
             if (this.websocket && data) {
                 if (!(this.ignorePing && message === "2")) {
@@ -960,7 +960,7 @@ message Test {
 
             if (this.protobufType) {
                 try {
-                    const json = this.protobufType.decode(typedArray!).asJSON();
+                    const json = this.protobufType.decode(typedArray!).toObject();
                     this.messages.unshift({
                         moment: getNow(),
                         type,
