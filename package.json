@@ -38,7 +38,7 @@
     "@types/socket.io-parser": "0.0.2",
     "@types/uws": "0.0.0",
     "bootstrap": "3.3.7",
-    "clean-css": "4.0.3",
+    "clean-css-cli": "4.0.0",
     "clipboard": "1.5.16",
     "ejs": "2.5.5",
     "github-fork-ribbon-css": "0.2.1",
