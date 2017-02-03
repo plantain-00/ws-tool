@@ -3,7 +3,6 @@ import Component from "vue-class-component";
 import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
-import { stompConnectionMessage, stompSubscriptionMessage, stompSendMessage } from "./messages";
 import * as types from "./types";
 
 declare class TextDecoder {
@@ -103,6 +102,63 @@ declare class RTCSessionDescription {
     toJSON(): { type: "offer" | "answer"; sdp: string };
 }
 
+const stompConnectionMessage = `CONNECT
+login:admin
+passcode:admin
+accept-version:1.2,1.1,1.0
+heart-beat:0,0
+
+` + "\0";
+
+const stompSubscriptionMessage = `SUBSCRIBE
+id:sub-0
+destination:/topic/test_topic
+
+` + "\0";
+
+const stompSendMessage = `SEND
+destination:/queue/test
+content-type:text/plain
+
+hello queue test
+` + "\0";
+
+const socketIOSendMessage = `42["a_event",{
+    "a_key":"a_value"
+}]`;
+
+const bayeuxHandshakeMessage = `[{
+    "advice":{ "timeout":60000, "interval":0 },
+    "channel":"/meta/handshake",
+    "ext":{},
+    "id":"1",
+    "minimumVersion": "0.9",
+    "supportedConnectionTypes": ["websocket"],
+    "version": "1.0"
+}]`;
+
+const bayeuxSubscribeMessage = `[{
+    "channel": "/meta/subscribe",
+    "clientId": "",
+    "id": "2",
+    "subscription": "/test_channel"
+}]`;
+
+const bayeuxPublishMessage = `[{
+    "channel": "/test_channel",
+    "clientId": "",
+    "data": {},
+    "id": "3"
+}]`;
+
+const bayeuxPingMessage = `[{
+    "advice": { "timeout": 0 },
+    "channel": "/meta/connect",
+    "clientId": "",
+    "connectionType": "websocket",
+    "id": "4"
+}]`;
+
 @Component({
     template: require("raw-loader!./app.html"),
 })
@@ -150,6 +206,7 @@ message Test {
     isDataChannelConnected = false;
     dataChannelStatus: "none" | "init" | "created offer" | "answered offer" | "set answer" = "none";
     id = 1;
+    bayeuxIsHidden: boolean = true;
 
     constructor(options?: Vue.ComponentOptions<Vue>) {
         super(options);
@@ -516,6 +573,9 @@ message Test {
     toggleStomp() {
         this.stompIsHidden = !this.stompIsHidden;
     }
+    toggleBayeux() {
+        this.bayeuxIsHidden = !this.bayeuxIsHidden;
+    }
     toggleProtobuf() {
         this.protobufIsHidden = !this.protobufIsHidden;
     }
@@ -681,6 +741,21 @@ message Test {
     useStompSendMessage() {
         this.message = stompSendMessage;
     }
+    useSocketIOSendMessage() {
+        this.message = socketIOSendMessage;
+    }
+    useBayeuxHandshakeMessage() {
+        this.message = bayeuxHandshakeMessage;
+    }
+    useBayeuxSubscribeMessage() {
+        this.message = bayeuxSubscribeMessage;
+    }
+    useBayeuxPublishMessage() {
+        this.message = bayeuxPublishMessage;
+    }
+    useBayeuxPingMessage() {
+        this.message = bayeuxPingMessage;
+    }
     send(message: string) {
         let data: Uint8Array | string | undefined;
         let isBinary = true;
@@ -805,6 +880,9 @@ message Test {
     ping() {
         this.send("2");
     }
+    pingBayeux() {
+        this.send("2");
+    }
     clear() {
         this.messages = [];
     }
@@ -837,9 +915,8 @@ message Test {
             tips: "Tips: \n" +
             "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
             "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
-            `3. for socket.io, if you send a message(eg: {a_key:"a_value"}) in an event(eg: "a_event"), in ws's perspective, the actual message you send is: 42["a_event",{"a_key":"a_value"}]\n` +
-            "4. chrome's developer tool is a good tool to view ws connection and messages\n" +
-            "5. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'",
+            "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
+            "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'",
             id: this.id++,
         });
     }
