@@ -108,20 +108,20 @@ passcode:admin
 accept-version:1.2,1.1,1.0
 heart-beat:0,0
 
-` + "\0";
+\0`;
 
 const stompSubscriptionMessage = `SUBSCRIBE
 id:sub-0
 destination:/topic/test_topic
 
-` + "\0";
+\0`;
 
 const stompSendMessage = `SEND
 destination:/queue/test
 content-type:text/plain
 
 hello queue test
-` + "\0";
+\0`;
 
 const socketIOSendMessage = `42["a_event",{
     "a_key":"a_value"
