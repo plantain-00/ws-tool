@@ -9,7 +9,7 @@
     "outputFiles": [
         "index.html"
     ],
-    "json": false,
+    "json": "version.json",
     "ejsOptions": {
         "rmWhitespace": true
     },

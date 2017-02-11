@@ -1,2 +1,12 @@
 node_modules/
 .vscode
+*bundle*
+*.js.map
+app.html
+index.html
+index.js
+proxy.js
+service-worker.js
+tests/*.js
+vendor.js
+version.json
