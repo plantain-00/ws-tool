@@ -32,19 +32,20 @@ declare const caches: {
 
 const versions = require("./version.json");
 
-const version = "v1";
+const rootPath = "/";
+const version = "v2";
 
 function run(this: any) {
     this.addEventListener("install", (event: InstallEvent) => {
         event.waitUntil(
             caches.open(version).then(cache => {
                 return cache.addAll([
-                    "/",
-                    "/index.html",
-                    "/" + versions.vendorBundleCss,
-                    "/" + versions.indexBundleCss,
-                    "/" + versions.vendorBundleJs,
-                    "/" + versions.indexBundleJs,
+                    rootPath,
+                    rootPath + "index.html",
+                    rootPath + versions.vendorBundleCss,
+                    rootPath + versions.indexBundleCss,
+                    rootPath + versions.vendorBundleJs,
+                    rootPath + versions.indexBundleJs,
                 ]);
             }),
         );
