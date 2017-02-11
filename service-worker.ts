@@ -32,7 +32,7 @@ declare const caches: {
 
 const versions = require("./version.json");
 
-const rootPath = "/";
+const rootPath = "/ws-tool/";
 const version = "v2";
 
 function run(this: any) {
