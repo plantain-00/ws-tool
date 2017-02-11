@@ -33,7 +33,7 @@ declare const caches: {
 const versions = require("./version.json");
 
 const rootPath = "/ws-tool/";
-const version = "v2";
+const version = "v3";
 
 function run(this: any) {
     this.addEventListener("install", (event: InstallEvent) => {
