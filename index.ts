@@ -1137,7 +1137,7 @@ declare class ServiceWorkerRegistration {
 }
 
 declare class ServiceWorker {
-    register(scriptUrl: string, options: { scope: string }): Promise<ServiceWorkerRegistration>;
+    register(scriptUrl: string, options?: { scope?: string }): Promise<ServiceWorkerRegistration>;
 }
 
 declare const navigator: {
@@ -1145,7 +1145,7 @@ declare const navigator: {
 };
 
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.bundle.js", { scope: "./" }).catch(error => {
+    navigator.serviceWorker.register("service-worker.bundle.js").catch(error => {
         console.log("registration failed with error: " + error);
     });
 }

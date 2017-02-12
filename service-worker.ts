@@ -30,27 +30,26 @@ declare const caches: {
     match(request: Request | string, options?: Partial<{ ignoreSearch: boolean; ignoreMethod: boolean; ignoreVary: boolean; cacheName: string }>): Promise<Response>;
 };
 
-const versions = require("./version.json");
+const versions: {
+    indexBundleCss: string;
+    vendorBundleCss: string;
+    indexBundleJs: string;
+    vendorBundleJs: string;
+    indexHtml: string;
+} = require("./version.json");
 
-const rootPath = "/ws-tool/";
-const version = "v3";
+const rootPath = location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
+const rootUrl = location.origin + rootPath;
+
+const cacheNames = [
+    location.origin + rootPath + versions.indexHtml,
+    location.origin + rootPath + versions.indexBundleCss,
+    location.origin + rootPath + versions.vendorBundleCss,
+    location.origin + rootPath + versions.indexBundleJs,
+    location.origin + rootPath + versions.vendorBundleJs,
+];
 
 function run(this: any) {
-    this.addEventListener("install", (event: InstallEvent) => {
-        event.waitUntil(
-            caches.open(version).then(cache => {
-                return cache.addAll([
-                    rootPath,
-                    rootPath + "index.html",
-                    rootPath + versions.vendorBundleCss,
-                    rootPath + versions.indexBundleCss,
-                    rootPath + versions.vendorBundleJs,
-                    rootPath + versions.indexBundleJs,
-                ]);
-            }),
-        );
-    });
-
     this.addEventListener("fetch", (event: FetchEvent) => {
         if (!event.request.url.startsWith("http")) {
             return;
@@ -61,7 +60,12 @@ function run(this: any) {
                     return responseInCache;
                 }
                 return fetch(event.request).then(response => {
-                    caches.open(version).then(cache => {
+                    if (event.request.url !== rootUrl && cacheNames.indexOf(event.request.url) === -1) {
+                        return response;
+                    }
+
+                    const cacheName = event.request.url === rootUrl ? cacheNames[0] : event.request.url;
+                    caches.open(cacheName).then(cache => {
                         cache.put(event.request, response);
                     });
                     return response.clone();
@@ -75,7 +79,7 @@ function run(this: any) {
     this.addEventListener("activate", (event: ActivateEvent) => {
         event.waitUntil(
             caches.keys().then(keyList => {
-                return Promise.all(keyList.filter(key => key !== version).map(key => caches.delete(key)));
+                return Promise.all(keyList.filter(key => cacheNames.indexOf(key) === -1).map(key => caches.delete(key)));
             }),
         );
     });
