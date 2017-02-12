@@ -38,15 +38,15 @@ const versions: {
     indexHtml: string;
 } = require("./version.json");
 
-const rootPath = location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
-const rootUrl = location.origin + rootPath;
+const rootUrl = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
 
-const cacheNames = [
-    location.origin + rootPath + versions.indexHtml,
-    location.origin + rootPath + versions.indexBundleCss,
-    location.origin + rootPath + versions.vendorBundleCss,
-    location.origin + rootPath + versions.indexBundleJs,
-    location.origin + rootPath + versions.vendorBundleJs,
+const cacheMappers = [
+    { cacheName: rootUrl + versions.indexHtml, url: rootUrl },
+    { cacheName: rootUrl + versions.indexHtml, url: rootUrl + "index.html" },
+    { cacheName: rootUrl + versions.indexBundleCss, url: rootUrl + versions.indexBundleCss },
+    { cacheName: rootUrl + versions.vendorBundleCss, url: rootUrl + versions.vendorBundleCss },
+    { cacheName: rootUrl + versions.indexBundleJs, url: rootUrl + versions.indexBundleJs },
+    { cacheName: rootUrl + versions.vendorBundleJs, url: rootUrl + versions.vendorBundleJs },
 ];
 
 function run(this: any) {
@@ -60,12 +60,12 @@ function run(this: any) {
                     return responseInCache;
                 }
                 return fetch(event.request).then(response => {
-                    if (event.request.url !== rootUrl && cacheNames.indexOf(event.request.url) === -1) {
+                    const cacheMapper = cacheMappers.find(c => c.url === event.request.url);
+                    if (!cacheMapper) {
                         return response;
                     }
 
-                    const cacheName = event.request.url === rootUrl ? cacheNames[0] : event.request.url;
-                    caches.open(cacheName).then(cache => {
+                    caches.open(cacheMapper.cacheName).then(cache => {
                         cache.put(event.request, response);
                     });
                     return response.clone();
@@ -79,7 +79,7 @@ function run(this: any) {
     this.addEventListener("activate", (event: ActivateEvent) => {
         event.waitUntil(
             caches.keys().then(keyList => {
-                return Promise.all(keyList.filter(key => cacheNames.indexOf(key) === -1).map(key => caches.delete(key)));
+                return Promise.all(keyList.filter(key => cacheMappers.findIndex(c => c.cacheName === key) === -1).map(key => caches.delete(key)));
             }),
         );
     });
