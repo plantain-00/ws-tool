@@ -302,7 +302,7 @@ message Test {
             } else {
                 return true;
             }
-        });
+        }).slice(0, 100);
     }
     get subprotocol() {
         return this.subprotocolInternally;
