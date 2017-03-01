@@ -193,7 +193,7 @@ message Test {
     messageTypeInternally = localStorage.getItem("messageType") || "string";
     protocolInternally = localStorage.getItem("protocol") || "WebSocket";
     hostInternally = localStorage.getItem("host") || "localhost";
-    portInternally = +localStorage.getItem("port") || 9999;
+    portInternally = +localStorage.getItem("port")! || 9999;
     tcpConnected = false;
     httpMethodInternally = localStorage.getItem("httpMethod") || "GET";
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
@@ -1076,7 +1076,7 @@ message Test {
     visibilityButtonStyle(message: Message) {
         return {
             position: "absolute",
-            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom) : 0) + "px",
+            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom!) : 0) + "px",
             right: 10 + "px",
         };
     }

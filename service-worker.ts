@@ -1,9 +1,3 @@
-declare class Request {
-    url: string;
-}
-declare class Response {
-    clone(): Response;
-}
 declare function fetch(url: string | Request): Promise<Response>;
 
 declare class ExtendableEvent extends Event {
@@ -16,19 +10,6 @@ declare class FetchEvent extends ExtendableEvent {
     respondWith(promise: Promise<Response>): void;
 }
 declare class ActivateEvent extends ExtendableEvent { }
-
-declare class Cache {
-    addAll(requests: string[]): Promise<void>;
-    put(request: Request, response: Response): void;
-}
-
-declare const caches: {
-    delete: (cacheName: string) => Promise<boolean>;
-    has: (cacheName: string) => Promise<boolean>;
-    open: (cacheName: string) => Promise<Cache>;
-    keys: () => Promise<string[]>;
-    match(request: Request | string, options?: Partial<{ ignoreSearch: boolean; ignoreMethod: boolean; ignoreVary: boolean; cacheName: string }>): Promise<Response>;
-};
 
 const versions: {
     indexBundleCss: string;
@@ -78,7 +59,7 @@ function run(this: any) {
 
     this.addEventListener("activate", (event: ActivateEvent) => {
         event.waitUntil(
-            caches.keys().then(keyList => {
+            caches.keys().then((keyList: string[]) => {
                 return Promise.all(keyList.filter(key => cacheMappers.findIndex(c => c.cacheName === key) === -1).map(key => caches.delete(key)));
             }),
         );
