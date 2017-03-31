@@ -10,6 +10,7 @@ declare class TextDecoder {
     decode(typedArray: Uint8Array): string;
 }
 
+/* tslint:disable:no-unused-expression */
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
 const decoder = new Decoder();
