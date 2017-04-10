@@ -6,7 +6,7 @@
   "scripts": {
     "bundle-vendor-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css -o vendor.bundle.css",
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
-    "clean-rev": "rm -f vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css",
+    "clean-rev": "rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css",
     "rev": "npm run clean-rev && rev-static",
     "build": "npm run bundle-vendor-css && npm run bundle-index-css && tsc && npm run minifier-template && webpack --display-modules && npm run rev && webpack --display-modules --config webpack.config.worker.js",
     "lint": "tslint \"*.ts\"",
@@ -46,6 +46,7 @@
     "protobufjs": "6.6.5",
     "raw-loader": "0.5.1",
     "rev-static": "2.1.2",
+    "rimraf": "2.6.1",
     "socket.io-parser": "2.3.2",
     "tslint": "5.0.0",
     "typescript": "2.2.2",
