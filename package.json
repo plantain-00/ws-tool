@@ -27,6 +27,7 @@
     "compression": "1.6.2",
     "express": "4.15.2",
     "node-fetch": "1.6.3",
+    "tslib": "1.6.1",
     "uws": "0.14.1"
   },
   "devDependencies": {
@@ -49,7 +50,7 @@
     "rimraf": "2.6.1",
     "socket.io-parser": "2.3.2",
     "tslint": "5.0.0",
-    "typescript": "2.2.2",
+    "typescript": "2.3.2",
     "vue": "2.2.6",
     "vue-class-component": "5.0.1",
     "webpack": "2.3.2",
