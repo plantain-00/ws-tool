@@ -4,6 +4,7 @@ import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
 import * as types from "./types";
+import { appTemplateHtml } from "./variables";
 
 declare class TextDecoder {
     constructor(encoding: string);
@@ -161,7 +162,7 @@ const bayeuxPingMessage = `[{
 }]`;
 
 @Component({
-    template: require("raw-loader!./app.html"),
+    template: appTemplateHtml,
 })
 class App extends Vue {
     websocket: WebSocket | null = null;
@@ -835,7 +836,7 @@ message Test {
             if (this.shouldContainBody) {
                 if (this.messageType === "FormData") {
                     const formData = new FormData();
-                    for (const {key, value} of this.formDatas) {
+                    for (const { key, value } of this.formDatas) {
                         if (key) {
                             formData.append(key, value);
                         }

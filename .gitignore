@@ -10,3 +10,4 @@ service-worker.js
 tests/*.js
 vendor.js
 version.json
+variables.js
