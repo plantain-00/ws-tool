@@ -8,10 +8,12 @@
     "bundle-index-css": "cleancss index.css -o index.bundle.css",
     "clean-rev": "rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css",
     "rev": "npm run clean-rev && rev-static",
-    "build": "npm run bundle-vendor-css && npm run bundle-index-css && npm run file2variable && tsc && webpack --display-modules && npm run rev && webpack --display-modules --config webpack.config.worker.js",
+    "build": "npm run bundle-vendor-css && npm run bundle-index-css && npm run file2variable && tsc && webpack && npm run rev && npm run sw-precache",
     "lint": "tslint \"*.ts\"",
     "file2variable": "file2variable-cli app.template.html -o variables.ts --html-minify",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "sw-precache": "sw-precache --config sw-precache.config.js && npm run uglifyjs",
+    "uglifyjs": "uglifyjs service-worker.js -o service-worker.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -48,8 +50,10 @@
     "rev-static": "2.1.2",
     "rimraf": "2.6.1",
     "socket.io-parser": "3.1.2",
+    "sw-precache": "5.1.1",
     "tslint": "5.1.0",
     "typescript": "2.3.2",
+    "uglify-js": "3.0.11",
     "vue": "2.3.0",
     "vue-class-component": "5.0.1",
     "webpack": "2.4.1",

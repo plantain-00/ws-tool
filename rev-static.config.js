@@ -6,7 +6,7 @@ module.exports = {
         "*.ejs.html",
     ],
     outputFiles: file => file.replace(".ejs", ""),
-    json: "version.json",
+    json: false,
     ejsOptions: {
         rmWhitespace: true
     },
