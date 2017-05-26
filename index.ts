@@ -554,7 +554,7 @@ message Test {
     savingAsBookmark() {
         this.isEditing = !this.isEditing;
         Vue.nextTick(() => {
-            const bookmarkNameElement = document.getElementById("bookmarkName");
+            const bookmarkNameElement = this.$refs.bookmarkName as HTMLElement;
             if (bookmarkNameElement) {
                 bookmarkNameElement.focus();
             }
@@ -563,7 +563,7 @@ message Test {
     toggleFilter() {
         this.filterIsHidden = !this.filterIsHidden;
         Vue.nextTick(() => {
-            const filterElement = document.getElementById("filter");
+            const filterElement = this.$refs.filter as HTMLElement;
             if (filterElement) {
                 filterElement.focus();
             }
