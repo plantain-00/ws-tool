@@ -1132,21 +1132,7 @@ proxyWebSocket.onmessage = event => {
     app.onmessage(event);
 };
 
-declare class ServiceWorkerRegistration {
-    installing: boolean;
-    waiting: boolean;
-    active: boolean;
-}
-
-declare class ServiceWorker {
-    register(scriptUrl: string, options?: { scope?: string }): Promise<ServiceWorkerRegistration>;
-}
-
-declare const navigator: {
-    serviceWorker: ServiceWorker;
-};
-
-if ("serviceWorker" in navigator) {
+if (navigator.serviceWorker) {
     navigator.serviceWorker.register("service-worker.bundle.js").catch(error => {
         console.log("registration failed with error: " + error);
     });
