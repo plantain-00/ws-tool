@@ -655,11 +655,7 @@ message Test {
     }
     setValueOfFormData(index: number, e: KeyboardEvent) {
         const element = e.target as HTMLInputElement;
-        if (element.files && element.files.length > 0) {
-            this.formDatas[index].value = element.files[0];
-        } else {
-            this.formDatas[index].value = element.value;
-        }
+        this.formDatas[index].value = element.files && element.files.length > 0 ? element.files[0] : element.value;
     }
     setTypeOfFormData(index: number, e: KeyboardEvent) {
         this.formDatas[index].type = (e.target as HTMLSelectElement).value as "text" | "file";
@@ -697,11 +693,7 @@ message Test {
     connect() {
         if (this.protocol === "WebSocket") {
             try {
-                if (this.subprotocol) {
-                    this.websocket = new WebSocket(this.url, this.subprotocol);
-                } else {
-                    this.websocket = new WebSocket(this.url);
-                }
+                this.websocket = this.subprotocol ? new WebSocket(this.url, this.subprotocol) : new WebSocket(this.url);
             } catch (error) {
                 this.messages.unshift({
                     moment: getNow(),
