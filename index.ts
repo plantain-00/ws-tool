@@ -11,7 +11,7 @@ declare class TextDecoder {
     decode(typedArray: Uint8Array): string;
 }
 
-/* tslint:disable:no-unused-expression */
+// tslint:disable-next-line:no-unused-expression
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
 const decoder = new Decoder();
@@ -534,7 +534,7 @@ message Test {
     loadProtobuf() {
         if (this.protobufContent && this.protobufTypePath) {
             try {
-                this.protobufType = (protobuf.parse(this.protobufContent)["root"] as protobuf.Root).lookup(this.protobufTypePath) as protobuf.Type;
+                this.protobufType = (protobuf.parse(this.protobufContent).root as protobuf.Root).lookup(this.protobufTypePath) as protobuf.Type;
                 this.messages.unshift({
                     moment: getNow(),
                     type: "tips",
@@ -1011,6 +1011,7 @@ message Test {
                     id: this.id++,
                 });
             } catch (error) {
+                // tslint:disable-next-line:no-console
                 console.log(error);
             }
         } else {
@@ -1026,6 +1027,7 @@ message Test {
                     id: this.id++,
                 });
             } catch (error) {
+                // tslint:disable-next-line:no-console
                 console.log(error);
             }
 
@@ -1042,6 +1044,7 @@ message Test {
                         id: this.id++,
                     });
                 } catch (error) {
+                    // tslint:disable-next-line:no-console
                     console.log(error);
                 }
             }
@@ -1126,6 +1129,7 @@ proxyWebSocket.onmessage = event => {
 
 if (navigator.serviceWorker) {
     navigator.serviceWorker.register("service-worker.bundle.js").catch(error => {
+        // tslint:disable-next-line:no-console
         console.log("registration failed with error: " + error);
     });
 }
