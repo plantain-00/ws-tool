@@ -824,6 +824,10 @@ class App extends Vue {
                 this.onmessageAccepted(`${request.status} ${request.statusText}\n${request.getAllResponseHeaders()}`, "");
                 this.onmessageAccepted(request.response, "");
             };
+            request.upload.onprogress = e => {
+                const percent = Math.round(e.loaded * 100 / e.total);
+                this.onmessageAccepted(`${e.loaded} / ${e.total} (${percent}%)`, "");
+            };
             if (this.useProxy) {
                 request.open(this.httpMethod, "/proxy");
                 request.setRequestHeader(toUrlHeaderName, this.url);
@@ -920,7 +924,8 @@ class App extends Vue {
             "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
             "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
             "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
-            "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'",
+            "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
+            "5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight",
             id: this.id++,
         });
     }
