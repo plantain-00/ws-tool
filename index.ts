@@ -161,6 +161,12 @@ const bayeuxPingMessage = `[{
     "id": "4"
 }]`;
 
+const defaultProtobufContent = `package testPackage;
+syntax = "proto3";
+message Test {
+    required string data = 1;
+}`;
+
 @Component({
     template: appTemplateHtml,
 })
@@ -185,11 +191,7 @@ class App extends Vue {
     filterIsHidden: boolean = true;
     stompIsHidden = true;
     protobufType: protobuf.Type | null = null;
-    protobufContentInternally = localStorage.getItem("protobufContent") || `package testPackage;
-syntax = "proto3";
-message Test {
-    required string data = 1;
-}`;
+    protobufContentInternally = localStorage.getItem("protobufContent") || defaultProtobufContent;
     protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
     protobufIsHidden = true;
     messageTypeInternally = localStorage.getItem("messageType") || "string";
@@ -209,6 +211,7 @@ message Test {
     dataChannelStatus: "none" | "init" | "created offer" | "answered offer" | "set answer" = "none";
     id = 1;
     bayeuxIsHidden: boolean = true;
+    useProxy = true;
 
     constructor(options?: Vue.ComponentOptions<Vue>) {
         super(options);
@@ -821,9 +824,16 @@ message Test {
                 this.onmessageAccepted(`${request.status} ${request.statusText}\n${request.getAllResponseHeaders()}`, "");
                 this.onmessageAccepted(request.response, "");
             };
-            request.open(this.httpMethod, "/proxy");
-            request.setRequestHeader(toUrlHeaderName, this.url);
-            request.setRequestHeader(headersName, JSON.stringify(this.headers.filter(h => h.key)));
+            if (this.useProxy) {
+                request.open(this.httpMethod, "/proxy");
+                request.setRequestHeader(toUrlHeaderName, this.url);
+                request.setRequestHeader(headersName, JSON.stringify(this.headers.filter(h => h.key)));
+            } else {
+                request.open(this.httpMethod, this.url);
+                for (const header of this.headers) {
+                    request.setRequestHeader(header.key, header.value);
+                }
+            }
 
             if (this.shouldContainBody) {
                 if (this.messageType === "FormData") {
@@ -1125,6 +1135,11 @@ proxyWebSocket = new WebSocket(`${wsProtocol}//${location.host}`);
 proxyWebSocket.binaryType = "arraybuffer";
 proxyWebSocket.onmessage = event => {
     app.onmessage(event);
+};
+proxyWebSocket.onerror = event => {
+    // tslint:disable-next-line:no-console
+    console.log(event);
+    app.useProxy = false;
 };
 
 if (navigator.serviceWorker) {

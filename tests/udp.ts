@@ -6,4 +6,5 @@ server.on("message", (msg, rinfo) => {
     server.send(msg, rinfo.port, rinfo.address);
 });
 server.bind(port);
+// tslint:disable-next-line:no-console
 console.log(`listening ${port}`);

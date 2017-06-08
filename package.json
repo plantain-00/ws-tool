@@ -9,7 +9,7 @@
     "clean-rev": "rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css",
     "rev": "npm run clean-rev && rev-static",
     "build": "npm run bundle-vendor-css && npm run bundle-index-css && npm run file2variable && tsc && webpack && npm run rev && npm run sw-precache",
-    "lint": "tslint \"*.ts\"",
+    "lint": "tslint \"*.ts\" \"tests/*.ts\"",
     "file2variable": "file2variable-cli app.template.html -o variables.ts --html-minify",
     "tsc": "tsc",
     "sw-precache": "sw-precache --config sw-precache.config.js && npm run uglifyjs",

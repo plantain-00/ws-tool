@@ -6,4 +6,5 @@ net.createServer(socket => {
         socket.write(data);
     });
 }).listen(port);
+// tslint:disable-next-line:no-console
 console.log(`listening ${port}`);
