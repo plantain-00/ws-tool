@@ -62,19 +62,19 @@ wss.on("connection", ws => {
 
     ws.on("message", data => {
         const protocol: types.Protocol = JSON.parse(data);
-        if (protocol.kind === "tcp:connect") {
+        if (protocol.kind === types.ProtocolKind.tcpConnect) {
             if (tcpClient) {
                 tcpClient.destroy();
             }
             tcpClient = net.connect(protocol.port, protocol.host, () => {
                 const responseProtocol: types.Protocol = {
-                    kind: "tcp:connected",
+                    kind: types.ProtocolKind.tcpConnected,
                 };
                 ws.send(JSON.stringify(responseProtocol));
             });
             tcpClient.on("close", hadError => {
                 const responseProtocol: types.Protocol = {
-                    kind: "tcp:disconnected",
+                    kind: types.ProtocolKind.tcpDisconnected,
                 };
                 ws.send(JSON.stringify(responseProtocol));
             });
@@ -87,16 +87,16 @@ wss.on("connection", ws => {
             tcpClient.on("data", (tcpData: Buffer) => {
                 ws.send(tcpData, { binary: true });
             });
-        } else if (protocol.kind === "tcp:disconnect") {
+        } else if (protocol.kind === types.ProtocolKind.tcpDisconnect) {
             if (tcpClient) {
                 tcpClient.destroy();
             }
-        } else if (protocol.kind === "tcp:send") {
+        } else if (protocol.kind === types.ProtocolKind.tcpSend) {
             if (tcpClient) {
                 const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
                 tcpClient.write(message);
             }
-        } else if (protocol.kind === "udp:send") {
+        } else if (protocol.kind === types.ProtocolKind.udpSend) {
             const message = protocol.isBinary ? new Buffer(protocol.message.split(",")) : protocol.message;
             udpClient.send(message, protocol.port, protocol.address);
         }

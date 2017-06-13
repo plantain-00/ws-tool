@@ -718,7 +718,7 @@ class App extends Vue {
         } else if (this.protocol === "TCP") {
             if (proxyWebSocket && !isNaN(+this.port)) {
                 const protocol: types.Protocol = {
-                    kind: "tcp:connect",
+                    kind: types.ProtocolKind.tcpConnect,
                     host: this.host,
                     port: +this.port,
                 };
@@ -799,7 +799,7 @@ class App extends Vue {
         } else if (this.protocol === "TCP") {
             if (proxyWebSocket && data) {
                 const protocol: types.Protocol = {
-                    kind: "tcp:send",
+                    kind: types.ProtocolKind.tcpSend,
                     isBinary,
                     message: typeof data === "string" ? data : data.toString(),
                 };
@@ -809,7 +809,7 @@ class App extends Vue {
         } else if (this.protocol === "UDP") {
             if (proxyWebSocket && data) {
                 const protocol: types.Protocol = {
-                    kind: "udp:send",
+                    kind: types.ProtocolKind.udpSend,
                     address: this.host,
                     port: +this.port,
                     isBinary,
@@ -940,7 +940,7 @@ class App extends Vue {
             this.websocket!.close();
         } else if (this.protocol === "TCP") {
             const protocol: types.Protocol = {
-                kind: "tcp:disconnect",
+                kind: types.ProtocolKind.tcpDisconnect,
             };
             proxyWebSocket.send(JSON.stringify(protocol));
         }
@@ -1009,9 +1009,9 @@ class App extends Vue {
             try {
                 const protocol: types.Protocol = JSON.parse(eventData);
                 if (this.protocol !== "WebSocket") {
-                    if (protocol.kind === "tcp:connected") {
+                    if (protocol.kind === types.ProtocolKind.tcpConnected) {
                         this.tcpConnected = true;
-                    } else if (protocol.kind === "tcp:disconnected") {
+                    } else if (protocol.kind === types.ProtocolKind.tcpDisconnected) {
                         this.tcpConnected = false;
                     }
                 }
