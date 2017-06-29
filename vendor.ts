@@ -4,3 +4,4 @@ import "vue-class-component";
 import "protobufjs";
 import "vue";
 import "webrtc-adapter/out/adapter_no_edge_no_global";
+import "date-fns/format";

@@ -1,8 +1,9 @@
-import Vue from "vue";
+import * as Vue from "vue";
 import Component from "vue-class-component";
 import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
+import * as format from "date-fns/format";
 import * as types from "./types";
 import { appTemplateHtml } from "./variables";
 
@@ -24,11 +25,7 @@ const toUrlHeaderName = "x-to-url";
 const headersName = "x-headers";
 
 function getNow() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    return format(new Date(), "HH:mm:ss");
 }
 
 type Parameter = {
