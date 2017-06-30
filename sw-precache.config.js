@@ -4,6 +4,6 @@ module.exports = {
     'index.bundle-*.js',
     'vendor.bundle-*.css',
     'vendor.bundle-*.js',
-    'index.html',
-  ],
-};
+    'index.html'
+  ]
+}

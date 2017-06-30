@@ -9,11 +9,13 @@
     "clean-rev": "rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css",
     "rev": "npm run clean-rev && rev-static",
     "build": "npm run bundle-vendor-css && npm run bundle-index-css && npm run file2variable && tsc && webpack && npm run rev && npm run sw-precache",
-    "lint": "tslint \"*.ts\" \"tests/*.ts\"",
+    "lint": "tslint \"*.ts\" \"tests/*.ts\" && npm run standard",
     "file2variable": "file2variable-cli app.template.html -o variables.ts --html-minify",
     "tsc": "tsc",
     "sw-precache": "sw-precache --config sw-precache.config.js && npm run uglifyjs",
-    "uglifyjs": "uglifyjs service-worker.js -o service-worker.bundle.js"
+    "uglifyjs": "uglifyjs service-worker.js -o service-worker.bundle.js",
+    "standard": "standard \"**/*.config.js\"",
+    "fix": "standard --fix \"**/*.config.js\""
   },
   "repository": {
     "type": "git",
@@ -51,6 +53,7 @@
     "rev-static": "2.4.2",
     "rimraf": "2.6.1",
     "socket.io-parser": "3.1.2",
+    "standard": "10.0.2",
     "sw-precache": "5.1.1",
     "tslint": "5.4.0",
     "typescript": "2.4.0",
