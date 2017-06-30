@@ -1045,7 +1045,7 @@ class App extends Vue {
 
             if (this.protobufType) {
                 try {
-                    const json = this.protobufType.decode(typedArray!).toObject();
+                    const json = this.protobufType.decode(typedArray!).toJSON();
                     this.messages.unshift({
                         moment: getNow(),
                         type,
