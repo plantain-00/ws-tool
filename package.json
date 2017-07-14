@@ -16,7 +16,8 @@
     "uglifyjs": "uglifyjs service-worker.js -o service-worker.bundle.js",
     "standard": "standard \"**/*.config.js\"",
     "fix": "standard --fix \"**/*.config.js\"",
-    "test": "tsc -p spec && karma start spec/karma.config.js"
+    "test": "tsc -p spec && karma start spec/karma.config.js",
+    "release": "clean-release"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "@types/uws": "0.13.0",
     "bootstrap": "3.3.7",
     "clean-css-cli": "4.1.6",
+    "clean-release": "1.1.1",
     "clipboard": "1.7.1",
     "date-fns": "2.0.0-alpha.1",
     "ejs": "2.5.6",

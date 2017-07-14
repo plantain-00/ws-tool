@@ -17,7 +17,7 @@ A Develop Tool to Test WebSocket, Socket.IO, Stomp, Bayeux, HTTP, TCP, UDP, WebR
 
 Just use the online one: [https://plantain-00.github.io/ws-tool/](https://plantain-00.github.io/ws-tool/)
 
-Or host your own one by: `git clone https://github.com/plantain-00/ws-tool.git . --depth=1`
+Or host your own one by: `git clone https://github.com/plantain-00/ws-tool-release.git . --depth=1`
 
 If you want to test HTTP, TCP and UDP feature, you should enable the nodejs proxy with `npm i --production && node proxy.js`, then open `http://localhost:12345` in your browser.
 
