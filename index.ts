@@ -1045,11 +1045,11 @@ class App extends Vue {
 
             if (this.protobufType) {
                 try {
-                    const json = this.protobufType.decode(typedArray!).toJSON();
+                    const object = this.protobufType.toObject(this.protobufType.decode(typedArray!));
                     this.messages.unshift({
                         moment: getNow(),
                         type,
-                        formattedData: JSON.stringify(json, null, "    "),
+                        formattedData: JSON.stringify(object, null, "    "),
                         isBinary,
                         visible: undefined,
                         visibilityButtonExtraBottom: 0,
