@@ -4,20 +4,11 @@
   "description": "A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP API.",
   "main": "index.js",
   "scripts": {
-    "bundle-vendor-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css -o vendor.bundle.css",
-    "bundle-index-css": "cleancss index.css -o index.bundle.css",
-    "clean-rev": "rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css",
-    "rev": "npm run clean-rev && rev-static",
-    "build": "npm run bundle-vendor-css && npm run bundle-index-css && npm run file2variable && tsc && webpack && npm run rev && npm run sw-precache",
-    "lint": "tslint \"*.ts\" \"tests/*.ts\" && npm run standard",
-    "file2variable": "file2variable-cli app.template.html -o variables.ts --html-minify",
-    "tsc": "tsc",
-    "sw-precache": "sw-precache --config sw-precache.config.js && npm run uglifyjs",
-    "uglifyjs": "uglifyjs service-worker.js -o service-worker.bundle.js",
-    "standard": "standard \"**/*.config.js\"",
-    "fix": "standard --fix \"**/*.config.js\"",
-    "test": "tsc -p spec && karma start spec/karma.config.js",
-    "release": "clean-release"
+    "build": "clean-scripts build",
+    "lint": " && npm run standard",
+    "test": "clean-scripts test",
+    "fix": "clean-scripts fix",
+    "release": "clean-scripts release"
   },
   "repository": {
     "type": "git",
@@ -48,6 +39,7 @@
     "bootstrap": "3.3.7",
     "clean-css-cli": "4.1.6",
     "clean-release": "1.1.1",
+    "clean-scripts": "1.0.0",
     "clipboard": "1.7.1",
     "date-fns": "2.0.0-alpha.1",
     "ejs": "2.5.6",
