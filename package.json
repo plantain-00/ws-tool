@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "clean-scripts build",
-    "lint": " && npm run standard",
+    "lint": " clean-scripts lint",
     "test": "clean-scripts test",
     "fix": "clean-scripts fix",
     "release": "clean-scripts release"
