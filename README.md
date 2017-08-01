@@ -1,6 +1,7 @@
 [![Dependency Status](https://david-dm.org/plantain-00/ws-tool.svg)](https://david-dm.org/plantain-00/ws-tool)
 [![devDependency Status](https://david-dm.org/plantain-00/ws-tool/dev-status.svg)](https://david-dm.org/plantain-00/ws-tool#info=devDependencies)
-[![Build Status](https://travis-ci.org/plantain-00/ws-tool.svg?branch=master)](https://travis-ci.org/plantain-00/ws-tool)
+[![Build Status: Linux](https://travis-ci.org/plantain-00/ws-tool.svg?branch=master)](https://travis-ci.org/plantain-00/ws-tool)
+[![Build Status: Windows](https://ci.appveyor.com/api/projects/status/github/plantain-00/ws-tool?branch=master&svg=true)](https://ci.appveyor.com/project/plantain-00/ws-tool/branch/master)
 
 # ws-tool
 

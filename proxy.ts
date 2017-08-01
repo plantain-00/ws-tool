@@ -27,7 +27,11 @@ app.all("/proxy", (request, proxyResponse) => {
             chunks.push(chunk as Buffer);
         });
         request.on("end", () => {
-            const headerArray: types.Header[] = JSON.parse(request.header(headersName));
+            const headerString = request.header(headersName);
+            if (!headerString) {
+                return;
+            }
+            const headerArray: types.Header[] = JSON.parse(headerString);
             const headers: { [name: string]: string } = {};
             for (const header of headerArray) {
                 headers[header.key] = header.value;

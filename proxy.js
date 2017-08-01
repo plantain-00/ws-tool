@@ -27,7 +27,11 @@ app.all("/proxy", function (request, proxyResponse) {
             chunks_1.push(chunk);
         });
         request.on("end", function () {
-            var headerArray = JSON.parse(request.header(headersName));
+            var headerString = request.header(headersName);
+            if (!headerString) {
+                return;
+            }
+            var headerArray = JSON.parse(headerString);
             var headers = {};
             for (var _i = 0, headerArray_1 = headerArray; _i < headerArray_1.length; _i++) {
                 var header = headerArray_1[_i];
