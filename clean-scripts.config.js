@@ -4,7 +4,7 @@ module.exports = {
     `cleancss index.css -o index.bundle.css`,
     `file2variable-cli app.template.html -o variables.ts --html-minify`,
     `tsc`,
-    `webpack`,
+    `webpack --display-modules`,
     `rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css`,
     `rev-static`,
     `sw-precache --config sw-precache.config.js`,
