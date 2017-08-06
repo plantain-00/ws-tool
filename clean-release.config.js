@@ -1,10 +1,11 @@
 module.exports = {
   include: [
-    'dist/*.js',
     '*.bundle-*.js',
     '*.bundle-*.css',
     'service-worker.bundle.js',
     'index.html',
+    'proxy.js',
+    'types.js',
     'LICENSE',
     'package.json',
     'README.md'
