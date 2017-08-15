@@ -74,33 +74,6 @@ type Message = {
     id: number;
 };
 
-declare class RTCDataChannel {
-    readyState: "open" | "close";
-    onopen: (event: any) => void;
-    onclose: (event: any) => void;
-    onmessage: (event: MessageEvent) => void;
-    send(message: string): void;
-    close(): void;
-}
-declare class RTCPeerConnection {
-    localDescription: RTCSessionDescription;
-    ondatachannel: (event: { channel: RTCDataChannel }) => void;
-    onicecandidate: (event: { candidate: RTCIceCandidate }) => void;
-    createDataChannel(channel: string): RTCDataChannel;
-    addIceCandidate(candidate: RTCIceCandidate): Promise<void>;
-    createOffer(): Promise<RTCSessionDescription>;
-    setLocalDescription(offer: RTCSessionDescription): Promise<void>;
-    setRemoteDescription(offer: RTCSessionDescription): Promise<void>;
-    createAnswer(): Promise<RTCSessionDescription>;
-    close(): void;
-}
-declare class RTCSessionDescription {
-    type: "offer" | "answer";
-    sdp: string;
-    constructor(description: { type: "offer", sdp: string; });
-    toJSON(): { type: "offer" | "answer"; sdp: string };
-}
-
 const stompConnectionMessage = `CONNECT
 login:admin
 passcode:admin
@@ -200,7 +173,7 @@ class App extends Vue {
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
-    peerConnection = (window as any).RTCPeerConnection ? new RTCPeerConnection() : null;
+    peerConnection = window.RTCPeerConnection ? new RTCPeerConnection({}) : null;
     dataChannel: RTCDataChannel | null = null;
     dataChannelName = "my_test_channel";
     sessionDescription = "";
@@ -452,7 +425,7 @@ class App extends Vue {
                 this.messages.unshift({
                     moment: getNow(),
                     type: "tips",
-                    tips: JSON.stringify(this.peerConnection!.localDescription.toJSON()),
+                    tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
                     id: this.id++,
                 });
                 this.dataChannelStatus = "created offer";
@@ -466,10 +439,10 @@ class App extends Vue {
             });
     }
     answerOffer() {
+        if (!this.peerConnection) {
+            return;
+        }
         try {
-            if (!this.peerConnection) {
-                return;
-            }
             const offer = new RTCSessionDescription(JSON.parse(this.sessionDescription));
             this.peerConnection.setRemoteDescription(offer)
                 .then(() => this.peerConnection!.createAnswer())
@@ -478,7 +451,7 @@ class App extends Vue {
                     this.messages.unshift({
                         moment: getNow(),
                         type: "tips",
-                        tips: JSON.stringify(this.peerConnection!.localDescription.toJSON()),
+                        tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
                         id: this.id++,
                     });
                     this.dataChannelStatus = "answered offer";
@@ -500,10 +473,10 @@ class App extends Vue {
         }
     }
     setAnswer() {
+        if (!this.peerConnection) {
+            return;
+        }
         try {
-            if (!this.peerConnection) {
-                return;
-            }
             const answer = new RTCSessionDescription(JSON.parse(this.sessionDescription));
             this.peerConnection.setRemoteDescription(answer)
                 .then(() => {
@@ -753,34 +726,34 @@ class App extends Vue {
     send(message: string) {
         let data: Uint8Array | string | undefined;
         let isBinary = true;
-        try {
-            if (this.messageType === "Uint8Array") {
-                data = new Uint8Array(this.message.split(",").map(m => +m));
-            } else if (this.messageType === "protobuf") {
-                if (this.protobufType) {
-                    const object = JSON.parse(this.message);
-                    data = this.protobufType.encode(object).finish();
-                } else {
+
+        if (this.messageType === "Uint8Array") {
+            data = new Uint8Array(this.message.split(",").map(m => +m));
+        } else if (this.messageType === "protobuf") {
+            if (this.protobufType) {
+                try {
+                    data = this.protobufType.encode(JSON.parse(this.message)).finish();
+                } catch (error) {
                     this.messages.unshift({
                         moment: getNow(),
                         type: "error",
-                        reason: "Protobuf file content is not loaded.",
+                        reason: error.message,
                         id: this.id++,
                     });
                     return;
                 }
             } else {
-                data = this.message;
-                isBinary = false;
+                this.messages.unshift({
+                    moment: getNow(),
+                    type: "error",
+                    reason: "Protobuf file content is not loaded.",
+                    id: this.id++,
+                });
+                return;
             }
-        } catch (error) {
-            this.messages.unshift({
-                moment: getNow(),
-                type: "error",
-                reason: error.message,
-                id: this.id++,
-            });
-            return;
+        } else {
+            data = this.message;
+            isBinary = false;
         }
 
         let rawData: string | undefined;
@@ -1104,7 +1077,7 @@ if (!WebSocket) {
     });
 }
 
-decoder.on("decoded", (decodedPacket: any) => {
+decoder.on("decoded", decodedPacket => {
     app.messages.unshift({
         moment: getNow(),
         type: "in",
@@ -1115,7 +1088,7 @@ decoder.on("decoded", (decodedPacket: any) => {
     });
 });
 
-previewDecoder.on("decoded", (decodedPacket: any) => {
+previewDecoder.on("decoded", decodedPacket => {
     app.previewResult = JSON.stringify(decodedPacket, null, "    ");
 });
 
