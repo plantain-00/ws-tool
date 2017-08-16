@@ -12,7 +12,6 @@ declare class TextDecoder {
     decode(typedArray: Uint8Array): string;
 }
 
-// tslint:disable-next-line:no-unused-expression
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
 const decoder = new Decoder();
@@ -141,35 +140,18 @@ message Test {
     template: appTemplateHtml,
 })
 class App extends Vue {
-    websocket: WebSocket | null = null;
     messages: Message[] = [];
-    isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
-    ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
-    baseUrl: string = localStorage.getItem("baseUrl") || "wss://copy.yorkyao.xyz/socket.io/";
     parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }, { key: "room", value: "test" }];
-    anchor: string = localStorage.getItem("anchor") || "";
-    messageInternally: string = localStorage.getItem("message") || "42[\"copy\",{\"username\":\"hello\",\"message\":\"world\"}]";
-    showRawInternally: boolean = !!localStorage.getItem("showRaw");
-    showFormattedInternally: boolean = !!localStorage.getItem("showFormatted");
     previewResult: string = "";
     isPreview: boolean = false;
     bookmarks: Bookmark[] = bookmarks ? JSON.parse(bookmarks) : [];
     isEditing: boolean = false;
     bookmarkName: string = "";
-    subprotocolInternally = localStorage.getItem("subprotocol") || "";
     filter = "";
     filterIsHidden: boolean = true;
     stompIsHidden = true;
     protobufType: protobuf.Type | null = null;
-    protobufContentInternally = localStorage.getItem("protobufContent") || defaultProtobufContent;
-    protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
     protobufIsHidden = true;
-    messageTypeInternally = localStorage.getItem("messageType") || "string";
-    protocolInternally = localStorage.getItem("protocol") || "WebSocket";
-    hostInternally = localStorage.getItem("host") || "localhost";
-    portInternally = +localStorage.getItem("port")! || 9999;
-    tcpConnected = false;
-    httpMethodInternally = localStorage.getItem("httpMethod") || "GET";
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
@@ -177,11 +159,28 @@ class App extends Vue {
     dataChannel: RTCDataChannel | null = null;
     dataChannelName = "my_test_channel";
     sessionDescription = "";
-    isDataChannelConnected = false;
     dataChannelStatus: "none" | "init" | "created offer" | "answered offer" | "set answer" = "none";
     id = 1;
     bayeuxIsHidden: boolean = true;
     useProxy = true;
+    private websocket: WebSocket | null = null;
+    private isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
+    private ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
+    private baseUrl: string = localStorage.getItem("baseUrl") || "wss://copy.yorkyao.xyz/socket.io/";
+    private anchor: string = localStorage.getItem("anchor") || "";
+    private messageInternally: string = localStorage.getItem("message") || "42[\"copy\",{\"username\":\"hello\",\"message\":\"world\"}]";
+    private showRawInternally: boolean = !!localStorage.getItem("showRaw");
+    private showFormattedInternally: boolean = !!localStorage.getItem("showFormatted");
+    private subprotocolInternally = localStorage.getItem("subprotocol") || "";
+    private protobufContentInternally = localStorage.getItem("protobufContent") || defaultProtobufContent;
+    private protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
+    private messageTypeInternally = localStorage.getItem("messageType") || "string";
+    private protocolInternally = localStorage.getItem("protocol") || "WebSocket";
+    private hostInternally = localStorage.getItem("host") || "localhost";
+    private portInternally = +localStorage.getItem("port")! || 9999;
+    private tcpConnected = false;
+    private httpMethodInternally = localStorage.getItem("httpMethod") || "GET";
+    private isDataChannelConnected = false;
 
     constructor(options?: Vue.ComponentOptions<Vue>) {
         super(options);
@@ -858,9 +857,6 @@ class App extends Vue {
     ping() {
         this.send("2");
     }
-    pingBayeux() {
-        this.send("2");
-    }
     clear() {
         this.messages = [];
     }
@@ -915,14 +911,35 @@ class App extends Vue {
             proxyWebSocket.send(JSON.stringify(protocol));
         }
     }
-    onopen(e: Event) {
+    onmessage(e: MessageEvent) {
+        this.onmessageAccepted(e.data, e.type);
+    }
+    toggleMessageVisibility(message: Message) {
+        message.visible = !this.messageVisibility(message);
+    }
+    resultId(index: number) {
+        return `result-${index}`;
+    }
+    messageVisibility(message: Message) {
+        return message.visible !== undefined
+            ? message.visible
+            : (message.formattedData ? this.showFormatted : this.showRaw);
+    }
+    visibilityButtonStyle(message: Message) {
+        return {
+            position: "absolute",
+            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom!) : 0) + "px",
+            right: 10 + "px",
+        };
+    }
+    private onopen(e: Event) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
             id: this.id++,
         });
     }
-    onclose(e: CloseEvent) {
+    private onclose(e: CloseEvent) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
@@ -932,10 +949,7 @@ class App extends Vue {
         this.websocket = null;
         clearInterval(pingId);
     }
-    onmessage(e: MessageEvent) {
-        this.onmessageAccepted(e.data, e.type);
-    }
-    onmessageAccepted(eventData: any, eventType: string) {
+    private onmessageAccepted(eventData: any, eventType: string) {
         if (this.ignorePing && eventData === "3") {
             return;
         }
@@ -996,8 +1010,7 @@ class App extends Vue {
                     id: this.id++,
                 });
             } catch (error) {
-                // tslint:disable-next-line:no-console
-                console.log(error);
+                printInConsole(error);
             }
         } else {
             try {
@@ -1012,8 +1025,7 @@ class App extends Vue {
                     id: this.id++,
                 });
             } catch (error) {
-                // tslint:disable-next-line:no-console
-                console.log(error);
+                printInConsole(error);
             }
 
             if (this.protobufType) {
@@ -1029,13 +1041,12 @@ class App extends Vue {
                         id: this.id++,
                     });
                 } catch (error) {
-                    // tslint:disable-next-line:no-console
-                    console.log(error);
+                    printInConsole(error);
                 }
             }
         }
     }
-    onerror(e: ErrorEvent) {
+    private onerror(e: ErrorEvent) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
@@ -1043,24 +1054,6 @@ class App extends Vue {
         });
         this.websocket = null;
         clearInterval(pingId);
-    }
-    toggleMessageVisibility(message: Message) {
-        message.visible = !this.messageVisibility(message);
-    }
-    resultId(index: number) {
-        return `result-${index}`;
-    }
-    messageVisibility(message: Message) {
-        return message.visible !== undefined
-            ? message.visible
-            : (message.formattedData ? this.showFormatted : this.showRaw);
-    }
-    visibilityButtonStyle(message: Message) {
-        return {
-            position: "absolute",
-            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom!) : 0) + "px",
-            right: 10 + "px",
-        };
     }
 }
 
@@ -1112,14 +1105,17 @@ proxyWebSocket.onmessage = event => {
     app.onmessage(event);
 };
 proxyWebSocket.onerror = event => {
-    // tslint:disable-next-line:no-console
-    console.log(event);
+    printInConsole(event);
     app.useProxy = false;
 };
 
 if (navigator.serviceWorker) {
     navigator.serviceWorker.register("service-worker.bundle.js").catch(error => {
-        // tslint:disable-next-line:no-console
-        console.log("registration failed with error: " + error);
+        printInConsole("registration failed with error: " + error);
     });
+}
+
+function printInConsole(message: any) {
+    // tslint:disable-next-line:no-console
+    console.log(message);
 }
