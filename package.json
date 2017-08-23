@@ -9,7 +9,8 @@
     "test": "clean-scripts test",
     "fix": "clean-scripts fix",
     "release": "clean-scripts release",
-    "watch": "clean-scripts watch"
+    "watch": "clean-scripts watch",
+    "prerender": "clean-scripts prerender"
   },
   "repository": {
     "type": "git",
@@ -53,8 +54,9 @@
     "karma-jasmine": "1.1.0",
     "karma-webpack": "2.0.4",
     "no-unused-export": "1.1.0",
+    "prerender-js": "1.0.1",
     "protobufjs": "6.8.0",
-    "rev-static": "3.3.1",
+    "rev-static": "3.4.0",
     "rimraf": "2.6.1",
     "socket.io-parser": "3.1.2",
     "standard": "10.0.2",

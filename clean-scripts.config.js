@@ -54,5 +54,10 @@ module.exports = {
     css: `watch-then-execute "index.css" --script "clean-scripts build[0].css.index"`,
     rev: `rev-static --watch`,
     sw: `watch-then-execute "vendor.bundle-*.js" "index.html" "worker.bundle.js" --script "clean-scripts build[2]"`
-  }
+  },
+  prerender: [
+    `prerender-js "http://localhost:8000" --id "prerender-container" -o prerender.html`,
+    `clean-scripts build[1]`,
+    `clean-scripts build[2]`
+  ]
 }
