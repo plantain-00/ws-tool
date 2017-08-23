@@ -7,6 +7,10 @@
     -webkit-font-smoothing: antialiased;
 }
 
+h1 {
+    font-size: 18px;
+}
+
 input, textarea {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
