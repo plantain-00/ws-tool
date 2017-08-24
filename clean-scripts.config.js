@@ -56,7 +56,14 @@ module.exports = {
     sw: `watch-then-execute "vendor.bundle-*.js" "index.html" "worker.bundle.js" --script "clean-scripts build[2]"`
   },
   prerender: [
-    `prerender-js "http://localhost:8000" --id "prerender-container" -o prerender.html`,
+    async () => {
+      const { createServer } = require('http-server')
+      const { prerender } = require('prerender-js')
+      const server = createServer()
+      server.listen(8000)
+      await prerender('http://localhost:8000', '#prerender-container', 'prerender.html')
+      server.close()
+    },
     `clean-scripts build[1]`,
     `clean-scripts build[2]`
   ]
