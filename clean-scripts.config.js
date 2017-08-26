@@ -18,7 +18,19 @@ module.exports = {
     [
       `sw-precache --config sw-precache.config.js`,
       `uglifyjs service-worker.js -o service-worker.bundle.js`
-    ]
+    ],
+    async () => {
+      const { createServer } = require('http-server')
+      const puppeteer = require('puppeteer')
+      const server = createServer()
+      server.listen(8000)
+      const browser = await puppeteer.launch()
+      const page = await browser.newPage()
+      await page.goto(`http://localhost:8000`)
+      await page.screenshot({ path: `screenshot.png`, fullPage: true })
+      server.close()
+      browser.close()
+    }
   ],
   lint: {
     ts: `tslint "*.ts" "tests/*.ts"`,
@@ -28,6 +40,7 @@ module.exports = {
   test: [
     'tsc -p spec',
     process.env.APPVEYOR ? 'echo "skip karma test"' : 'karma start spec/karma.config.js',
+    'git checkout screenshot.png',
     () => new Promise((resolve, reject) => {
       childProcess.exec('git status -s', (error, stdout, stderr) => {
         if (error) {
