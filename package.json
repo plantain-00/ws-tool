@@ -55,7 +55,6 @@
     "karma-jasmine": "1.1.0",
     "karma-webpack": "2.0.4",
     "no-unused-export": "1.1.0",
-    "prerender-js": "1.1.0",
     "protobufjs": "6.8.0",
     "puppeteer": "0.10.1",
     "rev-static": "3.4.0",
