@@ -44,7 +44,7 @@ module.exports = {
   },
   test: [
     'tsc -p spec',
-    process.env.APPVEYOR ? 'echo "skip karma test"' : 'karma start spec/karma.config.js',
+    'karma start spec/karma.config.js',
     'git checkout screenshot.png',
     () => new Promise((resolve, reject) => {
       childProcess.exec('git status -s', (error, stdout, stderr) => {
