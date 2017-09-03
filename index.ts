@@ -7,11 +7,6 @@ import * as format from "date-fns/format";
 import * as types from "./types";
 import { appTemplateHtml } from "./variables";
 
-declare class TextDecoder {
-    constructor(encoding: string);
-    decode(typedArray: Uint8Array): string;
-}
-
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
 const decoder = new Decoder();

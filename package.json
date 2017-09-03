@@ -57,7 +57,7 @@
     "karma-webpack": "2.0.4",
     "no-unused-export": "1.2.4",
     "protobufjs": "6.8.0",
-    "puppeteer": "0.10.1",
+    "puppeteer": "0.10.2",
     "rev-static": "3.4.0",
     "rimraf": "2.6.1",
     "socket.io-parser": "3.1.2",

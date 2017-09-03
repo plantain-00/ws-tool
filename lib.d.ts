@@ -13,3 +13,7 @@ declare interface RTCPeerConnection {
     ondatachannel: (event: { channel: RTCDataChannel }) => void;
     createDataChannel(channel: string): RTCDataChannel;
 }
+declare class TextDecoder {
+    constructor(encoding: string);
+    decode(typedArray: Uint8Array): string;
+}
