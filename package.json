@@ -62,7 +62,7 @@
     "sw-precache": "5.2.0",
     "tslint": "5.7.0",
     "typescript": "2.5.2",
-    "uglify-js": "3.0.28",
+    "uglify-js": "2",
     "vue": "2.4.2",
     "vue-class-component": "5.0.2",
     "watch-then-execute": "1.0.1",
