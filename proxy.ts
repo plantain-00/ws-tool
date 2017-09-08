@@ -18,7 +18,7 @@ const toUrlHeaderName = "x-to-url";
 const headersName = "x-headers";
 
 app.all("/proxy", (request, proxyResponse) => {
-    const url = request.header(toUrlHeaderName);
+    const url = request.header(toUrlHeaderName) as string;
     if (!url) {
         proxyResponse.send(`No header: ${toUrlHeaderName}`);
     } else {
@@ -27,7 +27,7 @@ app.all("/proxy", (request, proxyResponse) => {
             chunks.push(chunk as Buffer);
         });
         request.on("end", () => {
-            const headerString = request.header(headersName);
+            const headerString = request.header(headersName) as string;
             if (!headerString) {
                 return;
             }
