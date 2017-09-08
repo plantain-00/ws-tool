@@ -3,7 +3,6 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
 
 test_script:
   - node --version
