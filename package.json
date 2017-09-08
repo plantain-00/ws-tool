@@ -12,10 +12,7 @@
     "watch": "clean-scripts watch",
     "prerender": "clean-scripts prerender"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/plantain-00/ws-tool.git"
-  },
+  "repository": "git+https://github.com/plantain-00/ws-tool.git",
   "author": "York Yao",
   "license": "MIT",
   "bugs": {
