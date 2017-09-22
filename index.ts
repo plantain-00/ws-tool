@@ -749,11 +749,7 @@ class App extends Vue {
         let data: Uint8Array | string | undefined;
         let isBinary = true;
 
-        if (!this.dnsIsHidden) {
-            const request = new DNSMessage(this.dnsTransactionId);
-            request.addQuestion(this.dnsQuestionName);
-            data = request.encode();
-        } else if (this.messageType === "Uint8Array") {
+        if (this.messageType === "Uint8Array") {
             data = new Uint8Array(this.message.split(",").map(m => +m));
         } else if (this.messageType === "protobuf") {
             if (this.protobufType) {
@@ -803,16 +799,28 @@ class App extends Vue {
                 proxyWebSocket.send(JSON.stringify(protocol));
             }
         } else if (this.protocol === "UDP") {
-            if (proxyWebSocket && data) {
-                const protocol: types.Protocol = {
-                    kind: types.ProtocolKind.udpSend,
-                    address: this.host,
-                    port: +this.port,
-                    isBinary,
-                    message: typeof data === "string" ? data : data.toString(),
-                };
-                formattedData = JSON.stringify(protocol, null, "  ");
-                proxyWebSocket.send(JSON.stringify(protocol));
+            if (proxyWebSocket) {
+                if (!this.dnsIsHidden) {
+                    const request = new DNSMessage(this.dnsTransactionId);
+                    request.addQuestion(this.dnsQuestionName);
+                    formattedData = JSON.stringify(request, null, "  ");
+                    data = request.encode();
+                    isBinary = true;
+                }
+
+                if (data) {
+                    const protocol: types.Protocol = {
+                        kind: types.ProtocolKind.udpSend,
+                        address: this.host,
+                        port: +this.port,
+                        isBinary,
+                        message: typeof data === "string" ? data : data.toString(),
+                    };
+                    if (!formattedData) {
+                        formattedData = JSON.stringify(protocol, null, "  ");
+                    }
+                    proxyWebSocket.send(JSON.stringify(protocol));
+                }
             }
         } else if (this.protocol === "HTTP") {
             const request = new XMLHttpRequest();
