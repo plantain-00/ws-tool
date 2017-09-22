@@ -9,7 +9,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>WebSocket/Socket.IO/Stomp/Bayeux/HTTP/TCP/UDP/WebRTC Test Tool</h1>
+                    <h1>WebSocket/Socket.IO/Stomp/Bayeux/HTTP/TCP/UDP/WebRTC/DNS Test Tool</h1>
                 </div>
             </div>
             <div class="row">
@@ -91,6 +91,7 @@
                     <button class="btn btn-default btn-sm" @click="toggleStomp()" v-if="protocol === 'WebSocket' || protocol === 'TCP'">{{ stompIsHidden ? "show stomp" : "hide stomp"}}</button>
                     <button class="btn btn-default btn-sm" @click="toggleBayeux()" v-if="protocol === 'WebSocket'">{{ bayeuxIsHidden ? "show bayeux" : "hide bayeux"}}</button>
                     <button class="btn btn-default btn-sm" @click="toggleProtobuf()" v-if="protocol !== 'HTTP'">{{ protobufIsHidden ? "show protobuf" : "hide protobuf"}}</button>
+                    <button class="btn btn-default btn-sm" @click="toggleDNS()" v-if="protocol === 'UDP'">{{ dnsIsHidden ? "show DNS" : "hide DNS"}}</button>
                 </div>
             </div>
             <div class="row" v-if="!socketIOIsHidden && protocol === 'WebSocket'">
@@ -140,7 +141,7 @@
                     <textarea style="width:100%;height:150px;" class="form-control" v-model="protobufContent" placeholder="protobuf file content"></textarea>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" class="form-control input-sm" v-model="protobufTypePath" placeholder="protobuf type apyh">
+                    <input type="text" class="form-control input-sm" v-model="protobufTypePath" placeholder="protobuf type path">
                 </div>
                 <div class="col-md-4">
                     <button class="btn btn-link btn-sm" :disabled="!protobufContent || !protobufTypePath" @click="loadProtobuf()">load</button>
@@ -150,7 +151,7 @@
                 <div class="col-md-6">
                     <div class="col-md-12" v-if="protocol !== 'HTTP' || shouldContainBody">
                         <template v-if="!isPreview">
-                            <textarea style="width:100%;height:150px;" class="form-control" v-model="message" v-if="messageType === 'string' || protocol !== 'HTTP'"></textarea>
+                            <textarea style="width:100%;height:150px;" class="form-control" v-model="message" v-if="shouldShowMessageTextarea"></textarea>
                             <div v-for="(formData, index) in formDatas" class="row" v-else>
                                 <div class="col-md-3">
                                     <input type="text" class="form-control input-sm" :value="formData.key" @keyup="setKeyOfFormData(index, $event)" placeholder="form data name">
@@ -196,6 +197,14 @@
                             <button class="btn btn-link btn-sm" @click="deleteHeader(index)">delete</button>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row" v-if="!dnsIsHidden">
+                <div class="col-md-5">
+                    <input type="text" class="form-control input-sm" v-model="dnsQuestionName" placeholder="DNS question name">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" class="form-control input-sm" v-model="dnsTransactionId" placeholder="DNS transaction ID">
                 </div>
             </div>
             <div class="row">

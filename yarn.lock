@@ -1142,6 +1142,12 @@ diffie-hellman@^5.0.0:
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
 
+dns-protocol@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/dns-protocol/-/dns-protocol-1.0.3.tgz#33d9cb174c52a2f4866cb126c4bf286db093d969"
+  dependencies:
+    fluent-binary-converter "4"
+
 doctrine@1.5.0, doctrine@^1.2.2:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-1.5.0.tgz#379dce730f6166f76cefa4e6707a159b02c5a6fa"
@@ -1774,6 +1780,10 @@ flat-cache@^1.2.1:
     del "^2.0.2"
     graceful-fs "^4.1.2"
     write "^0.2.1"
+
+fluent-binary-converter@4:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/fluent-binary-converter/-/fluent-binary-converter-4.0.0.tgz#c6852a9a18bf273ec4d16f9c2ddc9611a2226ab2"
 
 for-each@~0.3.2:
   version "0.3.2"

@@ -4,6 +4,7 @@ import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
 import * as format from "date-fns/format";
+import DNSMessage from "dns-protocol/browser/browser";
 import * as types from "./types";
 import { appTemplateHtml } from "./variables";
 
@@ -52,6 +53,8 @@ type Bookmark = {
     port: number;
     httpMethod: string;
     headers: types.Header[];
+    dnsQuestionName: string;
+    dnsTransactionId: number;
 };
 
 type Message = {
@@ -147,6 +150,7 @@ class App extends Vue {
     stompIsHidden = true;
     protobufType: protobuf.Type | null = null;
     protobufIsHidden = true;
+    dnsIsHidden = true;
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
@@ -169,6 +173,8 @@ class App extends Vue {
     private subprotocolInternally = localStorage.getItem("subprotocol") || "";
     private protobufContentInternally = localStorage.getItem("protobufContent") || defaultProtobufContent;
     private protobufTypePathInternally = localStorage.getItem("protobufTypePath") || "testPackage.Test";
+    private dnsTransactionIdInternally = +localStorage.getItem("dnsTransactionId")! || 43825;
+    private dnsQuestionNameInternally = localStorage.getItem("dnsQuestionName") || "www.example.com";
     private messageTypeInternally = localStorage.getItem("messageType") || "string";
     private protocolInternally = localStorage.getItem("protocol") || "WebSocket";
     private hostInternally = localStorage.getItem("host") || "localhost";
@@ -257,6 +263,20 @@ class App extends Vue {
     set protobufTypePath(value: string) {
         localStorage.setItem("protobufTypePath", value);
         this.protobufTypePathInternally = value;
+    }
+    get dnsTransactionId() {
+        return this.dnsTransactionIdInternally;
+    }
+    set dnsTransactionId(value: number) {
+        localStorage.setItem("dnsTransactionId", value.toString());
+        this.dnsTransactionIdInternally = value;
+    }
+    get dnsQuestionName() {
+        return this.dnsQuestionNameInternally;
+    }
+    set dnsQuestionName(value: string) {
+        localStorage.setItem("dnsQuestionName", value.toString());
+        this.dnsQuestionNameInternally = value;
     }
     get filteredMessages() {
         return this.messages.filter(m => {
@@ -395,6 +415,9 @@ class App extends Vue {
             || this.httpMethod === "DELETE"
             || this.httpMethod === "LINK"
             || this.httpMethod === "UNLINK";
+    }
+    get shouldShowMessageTextarea() {
+        return (this.messageType === "string" || this.protocol !== "HTTP") && this.dnsIsHidden;
     }
     createDataChannel() {
         if (!this.peerConnection) {
@@ -548,6 +571,9 @@ class App extends Vue {
     toggleProtobuf() {
         this.protobufIsHidden = !this.protobufIsHidden;
     }
+    toggleDNS() {
+        this.dnsIsHidden = !this.dnsIsHidden;
+    }
     saveAsBookmark() {
         this.isEditing = false;
         this.bookmarks.unshift({
@@ -569,6 +595,8 @@ class App extends Vue {
             port: this.port,
             httpMethod: this.httpMethod,
             headers: this.headers,
+            dnsTransactionId: this.dnsTransactionId,
+            dnsQuestionName: this.dnsQuestionName,
         });
         localStorage.setItem("bookmarks", JSON.stringify(this.bookmarks));
     }
@@ -721,7 +749,11 @@ class App extends Vue {
         let data: Uint8Array | string | undefined;
         let isBinary = true;
 
-        if (this.messageType === "Uint8Array") {
+        if (!this.dnsIsHidden) {
+            const request = new DNSMessage(this.dnsTransactionId);
+            request.addQuestion(this.dnsQuestionName);
+            data = request.encode();
+        } else if (this.messageType === "Uint8Array") {
             data = new Uint8Array(this.message.split(",").map(m => +m));
         } else if (this.messageType === "protobuf") {
             if (this.protobufType) {
@@ -1026,6 +1058,21 @@ class App extends Vue {
             if (this.protobufType) {
                 try {
                     const object = this.protobufType.toObject(this.protobufType.decode(typedArray!));
+                    this.messages.unshift({
+                        moment: getNow(),
+                        type,
+                        formattedData: JSON.stringify(object, null, "    "),
+                        isBinary,
+                        visible: undefined,
+                        visibilityButtonExtraBottom: 0,
+                        id: this.id++,
+                    });
+                } catch (error) {
+                    printInConsole(error);
+                }
+            } else if (!this.dnsIsHidden && typedArray) {
+                try {
+                    const object = DNSMessage.parse(typedArray.buffer);
                     this.messages.unshift({
                         moment: getNow(),
                         type,

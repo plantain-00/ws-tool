@@ -1,7 +1,7 @@
 {
   "name": "ws-tool",
   "version": "1.0.0",
-  "description": "A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP API.",
+  "description": "A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP, WebRTC, DNS API.",
   "main": "index.js",
   "scripts": {
     "build": "clean-scripts build",
@@ -41,6 +41,7 @@
     "clean-scripts": "1.2.6",
     "clipboard": "1.7.1",
     "date-fns": "1.28.5",
+    "dns-protocol": "1.0.3",
     "ejs": "2.5.7",
     "file2variable-cli": "1.5.2",
     "github-fork-ribbon-css": "0.2.1",
