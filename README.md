@@ -23,3 +23,9 @@ Or host your own one by: `git clone https://github.com/plantain-00/ws-tool-relea
 If you want to test HTTP, TCP and UDP feature, you should enable the nodejs proxy with `npm i --production && node proxy.js`, then open `http://localhost:12345` in your browser.
 
 Otherwise, use a static file server(eg nginx) to host the html/js/css files, then open `http://localhost:{your_static_file_server_listen_port}` in your browser.
+
+#### docker
+
+```bash
+docker run -d -p 12345:12345 plantain/ws-tool
+```

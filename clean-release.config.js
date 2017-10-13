@@ -8,9 +8,15 @@ module.exports = {
     'types.js',
     'LICENSE',
     'package.json',
+    'yarn.lock',
     'README.md'
   ],
   exclude: [
   ],
-  releaseRepository: 'https://github.com/plantain-00/ws-tool-release.git'
+  releaseRepository: 'https://github.com/plantain-00/ws-tool-release.git',
+  postScript: [
+    'cd [dir] && rm -rf .git',
+    'cp Dockerfile [dir]',
+    'cd [dir] && docker build -t plantain/ws-tool . && docker push plantain/ws-tool'
+  ]
 }
