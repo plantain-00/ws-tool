@@ -1,4 +1,4 @@
-import * as Vue from "vue";
+import Vue, { ComponentOptions } from "vue";
 import Component from "vue-class-component";
 import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
@@ -183,7 +183,7 @@ class App extends Vue {
     private httpMethodInternally = localStorage.getItem("httpMethod") || "GET";
     private isDataChannelConnected = false;
 
-    constructor(options?: Vue.ComponentOptions<Vue>) {
+    constructor(options?: ComponentOptions<Vue>) {
         super(options);
         if (this.peerConnection) {
             this.peerConnection.ondatachannel = event => {
