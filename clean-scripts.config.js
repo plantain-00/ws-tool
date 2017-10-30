@@ -3,13 +3,18 @@ const { Service, execAsync } = require('clean-scripts')
 const tsFiles = `"*.ts" "spec/**/*.ts" "screenshots/**/*.ts" "prerender/**/*.ts"`
 const jsFiles = `"*.config.js" "spec/**/*.config.js"`
 
+const templateCommand = `file2variable-cli app.template.html -o variables.ts --html-minify`
+const tscCommand = `tsc`
+const webpackCommand = `webpack --display-modules`
+const revStaticCommand = `rev-static`
+
 module.exports = {
   build: [
     {
       js: [
-        `file2variable-cli app.template.html -o variables.ts --html-minify`,
-        `tsc`,
-        `webpack --display-modules`
+        templateCommand,
+        tscCommand,
+        webpackCommand
       ],
       css: {
         vendor: `cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css -o vendor.bundle.css`,
@@ -20,7 +25,7 @@ module.exports = {
       },
       clean: `rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css`
     },
-    `rev-static`,
+    revStaticCommand,
     [
       `sw-precache --config sw-precache.config.js`,
       `uglifyjs service-worker.js -o service-worker.bundle.js`
@@ -48,11 +53,11 @@ module.exports = {
   },
   release: `clean-release`,
   watch: {
-    template: `file2variable-cli app.template.html -o variables.ts --html-minify --watch`,
-    src: `tsc --watch`,
-    webpack: `webpack --watch`,
+    template: `${templateCommand} --watch`,
+    src: `${tscCommand} --watch`,
+    webpack: `${webpackCommand} --watch`,
     css: `watch-then-execute "index.css" --script "clean-scripts build[0].css.index"`,
-    rev: `rev-static --watch`,
+    rev: `${revStaticCommand} --watch`,
     sw: `watch-then-execute "vendor.bundle-*.js" "index.html" "worker.bundle.js" --script "clean-scripts build[2]"`
   },
   screenshot: [
