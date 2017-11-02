@@ -1,6 +1,6 @@
 <div>
     <ul class="bookmarks list-unstyled">
-        <li v-for="(bookmark, index) in bookmarks">
+        <li v-for="(bookmark, index) in bookmarks" key="bookmark.name">
             <button class="btn btn-link btn-xs" @click="useBookmark(index)">{{bookmark.name}}</button>
             <button class="btn btn-link btn-xs" @click="deleteBookmark(index)">delete</button>
         </li>
@@ -152,7 +152,7 @@
                     <div class="col-md-12" v-if="protocol !== 'HTTP' || shouldContainBody">
                         <template v-if="!isPreview">
                             <textarea style="width:100%;height:150px;" class="form-control" v-model="message" v-if="shouldShowMessageTextarea"></textarea>
-                            <div v-for="(formData, index) in formDatas" class="row" v-else>
+                            <div v-for="(formData, index) in formDatas" key="formData.key" class="row" v-else>
                                 <div class="col-md-3">
                                     <input type="text" class="form-control input-sm" :value="formData.key" @keyup="setKeyOfFormData(index, $event)" placeholder="form data name">
                                 </div>
@@ -175,7 +175,7 @@
                     </div>
                 </div>
                 <div class="col-md-6" v-if="protocol === 'WebSocket' || protocol === 'HTTP'">
-                    <div v-for="(parameter, index) in parameters" class="row">
+                    <div v-for="(parameter, index) in parameters" key="parameter.key" class="row">
                         <div class="col-md-3">
                             <input type="text" class="form-control input-sm" :value="parameter.key" @keyup="setKeyOfParameter(index, $event)" placeholder="parameter name">
                         </div>
@@ -186,7 +186,7 @@
                             <button class="btn btn-link btn-sm" @click="deleteParameter(index)">delete</button>
                         </div>
                     </div>
-                    <div v-for="(header, index) in headers" v-if="protocol === 'HTTP'" class="row">
+                    <div v-for="(header, index) in headers" key="header.key" v-if="protocol === 'HTTP'" class="row">
                         <div class="col-md-3">
                             <input type="text" class="form-control input-sm" :value="header.key" @keyup="setKeyOfHeader(index, $event)" placeholder="header name">
                         </div>
@@ -243,7 +243,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <ul>
-                        <li v-for="(message, index) in filteredMessages" class="visibility-button-container">
+                        <li v-for="(message, index) in filteredMessages" key="message.id" class="visibility-button-container">
                             <span class="label label-default">{{message.moment}}</span>
                             <span v-if="message.type==='open'" class="label label-success">open</span>
                             <span v-if="message.type==='close'" class="label label-danger">close</span>

@@ -1,4 +1,5 @@
-const { Service, execAsync } = require('clean-scripts')
+const { Service, execAsync, executeScriptAsync } = require('clean-scripts')
+const { watch } = require('watch-then-execute')
 
 const tsFiles = `"*.ts" "spec/**/*.ts" "screenshots/**/*.ts" "prerender/**/*.ts"`
 const jsFiles = `"*.config.js" "spec/**/*.config.js"`
@@ -7,6 +8,14 @@ const templateCommand = `file2variable-cli app.template.html -o variables.ts --h
 const tscCommand = `tsc`
 const webpackCommand = `webpack --display-modules`
 const revStaticCommand = `rev-static`
+const cssCommand = [
+  `postcss index.css -o index.postcss.css`,
+  `cleancss index.postcss.css -o index.bundle.css`
+]
+const swCommand = [
+  `sw-precache --config sw-precache.config.js`,
+  `uglifyjs service-worker.js -o service-worker.bundle.js`
+]
 
 module.exports = {
   build: [
@@ -18,18 +27,12 @@ module.exports = {
       ],
       css: {
         vendor: `cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css -o vendor.bundle.css`,
-        index: [
-          `postcss index.css -o index.postcss.css`,
-          `cleancss index.postcss.css -o index.bundle.css`
-        ]
+        index: cssCommand
       },
       clean: `rimraf vendor.bundle-*.js vendor.bundle-*.css index.bundle-*.js index.bundle-*.css`
     },
     revStaticCommand,
-    [
-      `sw-precache --config sw-precache.config.js`,
-      `uglifyjs service-worker.js -o service-worker.bundle.js`
-    ]
+    swCommand
   ],
   lint: {
     ts: `tslint ${tsFiles}`,
@@ -56,9 +59,9 @@ module.exports = {
     template: `${templateCommand} --watch`,
     src: `${tscCommand} --watch`,
     webpack: `${webpackCommand} --watch`,
-    css: `watch-then-execute "index.css" --script "clean-scripts build[0].css.index"`,
+    css: () => watch(['index.css'], [], () => executeScriptAsync(cssCommand)),
     rev: `${revStaticCommand} --watch`,
-    sw: `watch-then-execute "vendor.bundle-*.js" "index.html" "worker.bundle.js" --script "clean-scripts build[2]"`
+    sw: () => watch(['vendor.bundle-*.js', 'index.html', 'worker.bundle.js'], [], () => executeScriptAsync(cssCommand))
   },
   screenshot: [
     new Service(`http-server -p 8000`),
@@ -69,7 +72,7 @@ module.exports = {
     new Service(`http-server -p 8000`),
     `tsc -p prerender`,
     `node prerender/index.js`,
-    `clean-scripts build[1]`,
-    `clean-scripts build[2]`
+    revStaticCommand,
+    swCommand
   ]
 }
