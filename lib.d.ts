@@ -18,7 +18,7 @@ declare class TextDecoder {
     decode(typedArray: Uint8Array): string;
 }
 
-declare module 'date-fns/format' {
-    import { format } from 'date-fns'
-    export = format
+declare module "date-fns/format" {
+    import { format } from "date-fns";
+    export = format;
 }
