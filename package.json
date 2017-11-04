@@ -67,7 +67,7 @@
     "tslint": "5.8.0",
     "typescript": "2.5.2",
     "uglify-js": "2",
-    "vue": "2.5.2",
+    "vue": "2.5.3",
     "vue-class-component": "6.0.0",
     "watch-then-execute": "1.1.1",
     "webpack": "3.8.1",
