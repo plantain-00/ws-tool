@@ -1096,7 +1096,7 @@ class App extends Vue {
             }
         }
     }
-    private onerror(e: ErrorEvent) {
+    private onerror(e: Event) {
         this.messages.unshift({
             moment: getNow(),
             type: e.type,
