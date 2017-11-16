@@ -1,3 +1,5 @@
+"use strict";
+
 export const enum ProtocolKind {
     tcpConnect = "tcp:connect",
     tcpConnected = "tcp:connected",
