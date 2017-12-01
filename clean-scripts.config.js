@@ -6,7 +6,7 @@ const jsFiles = `"*.config.js" "spec/**/*.config.js"`
 
 const templateCommand = `file2variable-cli app.template.html -o variables.ts --html-minify`
 const tscCommand = `tsc`
-const webpackCommand = `webpack --display-modules`
+const webpackCommand = `webpack`
 const revStaticCommand = `rev-static`
 const cssCommand = [
   `postcss index.css -o index.postcss.css`,
@@ -49,7 +49,6 @@ module.exports = {
     ts: `tslint --fix ${tsFiles}`,
     js: `standard --fix ${jsFiles}`
   },
-  release: `clean-release`,
   watch: {
     template: `${templateCommand} --watch`,
     src: `${tscCommand} --watch`,

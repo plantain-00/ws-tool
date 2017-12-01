@@ -391,7 +391,7 @@ arraybuffer.slice@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/arraybuffer.slice/-/arraybuffer.slice-0.0.6.tgz#f33b2159f0532a3f3107a272c0ccfbd1ad2979ca"
 
-arrify@^1.0.0, arrify@^1.0.1:
+arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
@@ -811,17 +811,6 @@ clean-css@4.1.x, clean-css@^4.1.9:
   dependencies:
     source-map "0.5.x"
 
-clean-release@1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/clean-release/-/clean-release-1.3.5.tgz#3c3461656b59ab3b9deb05e4ff8e4e587f60f1ba"
-  dependencies:
-    cpy "5.1.0"
-    glob "7.1.2"
-    minimist "1.2.0"
-    mkdirp "0.5.1"
-    rimraf "2.6.2"
-    tmp "0.0.33"
-
 clean-scripts@1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/clean-scripts/-/clean-scripts-1.7.0.tgz#ce7d0bc9aa7a158cceddd84ea3679aa11cf76579"
@@ -1068,25 +1057,6 @@ cosmiconfig@^3.0.1:
     js-yaml "^3.9.0"
     parse-json "^3.0.0"
     require-from-string "^2.0.1"
-
-cp-file@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/cp-file/-/cp-file-4.2.0.tgz#715361663b71ede0b6dddbc3c80e2ba02e725ec3"
-  dependencies:
-    graceful-fs "^4.1.2"
-    make-dir "^1.0.0"
-    nested-error-stacks "^2.0.0"
-    pify "^2.3.0"
-    safe-buffer "^5.0.1"
-
-cpy@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/cpy/-/cpy-5.1.0.tgz#248982bf209b0a4507830e72a45d284d4583a16a"
-  dependencies:
-    arrify "^1.0.1"
-    cp-file "^4.2.0"
-    globby "^6.0.0"
-    nested-error-stacks "^2.0.0"
 
 create-ecdh@^4.0.0:
   version "4.0.0"
@@ -2129,7 +2099,7 @@ globby@^5.0.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-globby@^6.0.0, globby@^6.1.0:
+globby@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/globby/-/globby-6.1.0.tgz#f5a6d70e8395e21c858fb0489d64df02424d506c"
   dependencies:
@@ -2946,12 +2916,6 @@ lru-cache@^4.0.1:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
 
-make-dir@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-1.1.0.tgz#19b4369fe48c116f53c2af95ad102c0e39e85d51"
-  dependencies:
-    pify "^3.0.0"
-
 map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
@@ -3082,7 +3046,7 @@ mkdirp@0.5.0:
   dependencies:
     minimist "0.0.8"
 
-mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
+mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
@@ -3121,12 +3085,6 @@ ncname@1.0.x:
 negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
-
-nested-error-stacks@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/nested-error-stacks/-/nested-error-stacks-2.0.0.tgz#98b2ffaefb4610fa3936f1e71435d30700de2840"
-  dependencies:
-    inherits "~2.0.1"
 
 no-case@^2.2.0:
   version "2.3.2"
@@ -4615,7 +4573,7 @@ tmp@0.0.31:
   dependencies:
     os-tmpdir "~1.0.1"
 
-tmp@0.0.33, tmp@0.0.x:
+tmp@0.0.x:
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
   dependencies:
