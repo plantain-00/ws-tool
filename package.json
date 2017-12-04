@@ -42,7 +42,6 @@
     "clean-css-cli": "4.1.10",
     "clean-scripts": "1.7.0",
     "clipboard": "1.7.1",
-    "date-fns": "1.29.0",
     "dns-protocol": "1.0.3",
     "ejs": "2.5.7",
     "file2variable-cli": "1.6.0",

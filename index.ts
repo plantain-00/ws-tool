@@ -3,7 +3,6 @@ import Component from "vue-class-component";
 import { Decoder } from "socket.io-parser";
 import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
-import * as format from "date-fns/format";
 import DNSMessage from "dns-protocol/browser/browser";
 import * as types from "./types";
 import { appTemplateHtml } from "./variables";
@@ -19,8 +18,12 @@ let proxyWebSocket: WebSocket;
 const toUrlHeaderName = "x-to-url";
 const headersName = "x-headers";
 
+function formatTimeNumber(num: number) {
+    return num < 10 ? "0" + num : num.toString();
+}
+
 function getNow() {
-    return format(new Date(), "HH:mm:ss");
+    return `${formatTimeNumber(new Date().getHours())}:${formatTimeNumber(new Date().getMinutes())}:${formatTimeNumber(new Date().getSeconds())}`;
 }
 
 type Parameter = {
@@ -922,11 +925,11 @@ class App extends Vue {
             moment: getNow(),
             type: "tips",
             tips: "Tips: \n" +
-            "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
-            "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
-            "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
-            "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
-            "5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight",
+                "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
+                "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
+                "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
+                "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
+                "5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight",
             id: this.id++,
         });
     }
