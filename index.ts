@@ -5,7 +5,7 @@ import * as Clipboard from "clipboard";
 import * as protobuf from "protobufjs";
 import DNSMessage from "dns-protocol/browser";
 import * as types from "./types";
-import { appTemplateHtml } from "./variables";
+import { appTemplateHtml, appTemplateHtmlStatic } from "./variables";
 
 new Clipboard(".clipboard");
 let pingId: NodeJS.Timer;
@@ -138,9 +138,10 @@ message Test {
 }`;
 
 @Component({
-    template: appTemplateHtml,
+    render: appTemplateHtml,
+    staticRenderFns: appTemplateHtmlStatic,
 })
-class App extends Vue {
+export class App extends Vue {
     messages: Message[] = [];
     parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: "transport", value: "websocket" }, { key: "room", value: "test" }];
     previewResult: string = "";
@@ -151,20 +152,20 @@ class App extends Vue {
     filter = "";
     filterIsHidden: boolean = true;
     stompIsHidden = true;
-    protobufType: protobuf.Type | null = null;
     protobufIsHidden = true;
     dnsIsHidden = true;
     headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: "Content-Type", value: "application/json" }];
     socketIOIsHidden: boolean = true;
     formDatas: FormData[] = [];
     peerConnection = window.RTCPeerConnection ? new RTCPeerConnection({}) : null;
-    dataChannel: RTCDataChannel | null = null;
     dataChannelName = "my_test_channel";
     sessionDescription = "";
     dataChannelStatus: "none" | "init" | "created offer" | "answered offer" | "set answer" = "none";
     id = 1;
     bayeuxIsHidden: boolean = true;
     useProxy = true;
+    private protobufType: protobuf.Type | null = null;
+    private dataChannel: RTCDataChannel | null = null;
     private websocket: WebSocket | null = null;
     private isSocketIOInternally: boolean = !!localStorage.getItem("isSocketIO");
     private ignorePingInternally: boolean = !!localStorage.getItem("ignorePing");
@@ -748,7 +749,82 @@ class App extends Vue {
     useBayeuxPingMessage() {
         this.message = bayeuxPingMessage;
     }
-    send(message: string) {
+    clear() {
+        this.messages = [];
+    }
+    previewMessage() {
+        this.isPreview = true;
+        if (this.protocol === "WebSocket" && this.isSocketIO) {
+            this.previewResult = "";
+            previewDecoder.add(this.message);
+        } else if (this.messageType === "Uint8Array") {
+            try {
+                this.previewResult = new TextDecoder("utf-8").decode(new Uint8Array(this.message.split(",").map(m => +m)));
+            } catch (error) {
+                this.previewResult = error;
+            }
+        } else {
+            try {
+                this.previewResult = JSON.stringify(JSON.parse(this.message), null, "    ");
+            } catch (error) {
+                this.previewResult = error;
+            }
+        }
+    }
+    cancelPreview() {
+        this.isPreview = false;
+    }
+    showTips() {
+        this.messages.unshift({
+            moment: getNow(),
+            type: "tips",
+            tips: "Tips: \n" +
+                "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
+                "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
+                "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
+                "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
+                "5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight",
+            id: this.id++,
+        });
+    }
+    close() {
+        this.messages.unshift({
+            moment: getNow(),
+            type: "tips",
+            tips: "Is going to disconnect manually.",
+            id: this.id++,
+        });
+        if (this.protocol === "WebSocket") {
+            this.websocket!.close();
+        } else if (this.protocol === "TCP") {
+            const protocol: types.Protocol = {
+                kind: types.ProtocolKind.tcpDisconnect,
+            };
+            proxyWebSocket.send(JSON.stringify(protocol));
+        }
+    }
+    onmessage(e: MessageEvent) {
+        this.onmessageAccepted(e.data, e.type);
+    }
+    toggleMessageVisibility(message: Message) {
+        message.visible = !this.messageVisibility(message);
+    }
+    resultId(index: number) {
+        return `result-${index}`;
+    }
+    messageVisibility(message: Message) {
+        return message.visible !== undefined
+            ? message.visible
+            : (message.formattedData ? this.showFormatted : this.showRaw);
+    }
+    visibilityButtonStyle(message: Message) {
+        return {
+            position: "absolute",
+            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom!) : 0) + "px",
+            right: 10 + "px",
+        };
+    }
+    private send(message: string) {
         let data: Uint8Array | string | undefined;
         let isBinary = true;
 
@@ -892,83 +968,8 @@ class App extends Vue {
             });
         }
     }
-    ping() {
+    private ping() {
         this.send("2");
-    }
-    clear() {
-        this.messages = [];
-    }
-    previewMessage() {
-        this.isPreview = true;
-        if (this.protocol === "WebSocket" && this.isSocketIO) {
-            this.previewResult = "";
-            previewDecoder.add(this.message);
-        } else if (this.messageType === "Uint8Array") {
-            try {
-                this.previewResult = new TextDecoder("utf-8").decode(new Uint8Array(this.message.split(",").map(m => +m)));
-            } catch (error) {
-                this.previewResult = error;
-            }
-        } else {
-            try {
-                this.previewResult = JSON.stringify(JSON.parse(this.message), null, "    ");
-            } catch (error) {
-                this.previewResult = error;
-            }
-        }
-    }
-    cancelPreview() {
-        this.isPreview = false;
-    }
-    showTips() {
-        this.messages.unshift({
-            moment: getNow(),
-            type: "tips",
-            tips: "Tips: \n" +
-                "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
-                "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
-                "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
-                "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
-                "5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight",
-            id: this.id++,
-        });
-    }
-    close() {
-        this.messages.unshift({
-            moment: getNow(),
-            type: "tips",
-            tips: "Is going to disconnect manually.",
-            id: this.id++,
-        });
-        if (this.protocol === "WebSocket") {
-            this.websocket!.close();
-        } else if (this.protocol === "TCP") {
-            const protocol: types.Protocol = {
-                kind: types.ProtocolKind.tcpDisconnect,
-            };
-            proxyWebSocket.send(JSON.stringify(protocol));
-        }
-    }
-    onmessage(e: MessageEvent) {
-        this.onmessageAccepted(e.data, e.type);
-    }
-    toggleMessageVisibility(message: Message) {
-        message.visible = !this.messageVisibility(message);
-    }
-    resultId(index: number) {
-        return `result-${index}`;
-    }
-    messageVisibility(message: Message) {
-        return message.visible !== undefined
-            ? message.visible
-            : (message.formattedData ? this.showFormatted : this.showRaw);
-    }
-    visibilityButtonStyle(message: Message) {
-        return {
-            position: "absolute",
-            bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom!) : 0) + "px",
-            right: 10 + "px",
-        };
     }
     private onopen(e: Event) {
         this.messages.unshift({

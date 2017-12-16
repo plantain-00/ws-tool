@@ -4,7 +4,7 @@ const { watch } = require('watch-then-execute')
 const tsFiles = `"*.ts" "spec/**/*.ts" "screenshots/**/*.ts" "prerender/**/*.ts"`
 const jsFiles = `"*.config.js" "spec/**/*.config.js"`
 
-const templateCommand = `file2variable-cli app.template.html -o variables.ts --html-minify`
+const templateCommand = `file2variable-cli app.template.html -o variables.ts --html-minify --vue --vue-type-name "App" --vue-type-path "./index"`
 const tscCommand = `tsc`
 const webpackCommand = `webpack`
 const revStaticCommand = `rev-static`
