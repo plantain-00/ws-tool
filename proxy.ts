@@ -111,6 +111,5 @@ server.on('request', app)
 
 const port = 12345
 server.listen(port, () => {
-    // tslint:disable-next-line:no-console
   console.log(`The proxy is running, and listening: ${port}`)
 })

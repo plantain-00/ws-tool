@@ -1,10 +1,9 @@
-import * as net from "net";
+import * as net from 'net'
 
-const port = 9999;
+const port = 9999
 net.createServer(socket => {
-    socket.on("data", data => {
-        socket.write(data);
-    });
-}).listen(port);
-// tslint:disable-next-line:no-console
-console.log(`listening ${port}`);
+  socket.on('data', data => {
+    socket.write(data)
+  })
+}).listen(port)
+console.log(`listening ${port}`)

@@ -1,7 +1,7 @@
 const { Service, checkGitStatus, executeScriptAsync } = require('clean-scripts')
 const { watch } = require('watch-then-execute')
 
-const tsFiles = `"*.ts" "spec/**/*.ts" "screenshots/**/*.ts" "prerender/**/*.ts"`
+const tsFiles = `"*.ts" "spec/**/*.ts" "screenshots/**/*.ts" "prerender/**/*.ts" "tests/**/*.ts"`
 const jsFiles = `"*.config.js" "spec/**/*.config.js"`
 
 const templateCommand = `file2variable-cli --config file2variable.config.js`
