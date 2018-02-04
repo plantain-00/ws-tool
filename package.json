@@ -21,16 +21,16 @@
   "dependencies": {
     "compression": "1.7.1",
     "express": "4.16.2",
-    "node-fetch": "1.7.3",
+    "node-fetch": "2.0.0",
     "tslib": "1.9.0",
     "uws": "9.14.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "6.0.2",
-    "@commitlint/config-conventional": "6.0.2",
+    "@commitlint/cli": "6.1.0",
+    "@commitlint/config-conventional": "6.1.0",
     "@types/clipboard": "1.5.36",
     "@types/compression": "0.0.35",
-    "@types/express": "4.11.0",
+    "@types/express": "4.11.1",
     "@types/jasmine": "2.8.6",
     "@types/node": "9.4.0",
     "@types/node-fetch": "1.6.7",
@@ -44,7 +44,7 @@
     "clipboard": "1.7.1",
     "dns-protocol": "2.0.0",
     "ejs": "2.5.7",
-    "file2variable-cli": "1.8.1",
+    "file2variable-cli": "1.8.3",
     "github-fork-ribbon-css": "0.2.1",
     "http-server": "0.11.1",
     "jasmine": "2.9.0",
@@ -53,7 +53,7 @@
     "karma-firefox-launcher": "1.1.0",
     "karma-jasmine": "1.1.1",
     "karma-webpack": "2.0.9",
-    "markdownlint-cli": "0.6.0",
+    "markdownlint-cli": "0.7.0",
     "no-unused-export": "1.4.5",
     "postcss-cli": "4.1.1",
     "protobufjs": "6.8.4",
@@ -65,12 +65,12 @@
     "sw-precache": "5.2.1",
     "tslint": "5.9.1",
     "tslint-config-standard": "7.0.0",
-    "typescript": "2.6.2",
+    "typescript": "2.7.1",
     "uglify-js": "^2.8",
     "vue": "2.5.13",
     "vue-class-component": "6.1.2",
     "watch-then-execute": "1.1.1",
     "webpack": "3.10.0",
-    "webrtc-adapter": "6.1.0"
+    "webrtc-adapter": "6.1.1"
   }
 }
