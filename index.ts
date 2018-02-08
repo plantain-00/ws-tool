@@ -1,7 +1,7 @@
 import Vue, { ComponentOptions } from 'vue'
 import Component from 'vue-class-component'
 import { Decoder } from 'socket.io-parser'
-import * as Clipboard from 'clipboard'
+import Clipboard from 'clipboard'
 import * as protobuf from 'protobufjs'
 import DNSMessage from 'dns-protocol/browser'
 import * as types from './types'

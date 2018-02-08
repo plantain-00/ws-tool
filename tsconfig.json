@@ -1,31 +1,13 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "esnext",
-
-        "declaration": false,
-        "lib": [
-            "dom",
-            "es2015"
-        ],
-
-        "strict": true,
-        "noUnusedLocals": true,
-        "noImplicitReturns": true,
-
-        "skipLibCheck": true,
-        "importHelpers": true,
-        "jsx": "react",
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "moduleResolution": "node",
-        "newLine": "LF"
-    },
-    "files": [
-        "index.ts",
-        "variables.ts",
-        "vendor.ts",
-        "types.ts",
-        "lib.d.ts"
-    ]
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext"
+  },
+  "files": [
+    "index.ts",
+    "variables.ts",
+    "vendor.ts",
+    "types.ts",
+    "lib.d.ts"
+  ]
 }
