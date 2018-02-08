@@ -1085,7 +1085,7 @@ export class App extends Vue {
         }
       } else if (!this.dnsIsHidden && typedArray) {
         try {
-          const object = DNSMessage.parse(typedArray.buffer)
+          const object = DNSMessage.parse(typedArray.buffer as ArrayBuffer)
           this.messages.unshift({
             moment: getNow(),
             type,

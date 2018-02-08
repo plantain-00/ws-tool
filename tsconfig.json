@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "esnext"
+    "target": "es5"
   },
   "files": [
     "index.ts",
