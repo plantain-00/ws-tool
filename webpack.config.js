@@ -3,6 +3,7 @@ module.exports = {
     index: './index'
   },
   output: {
+    path: __dirname,
     filename: '[name].bundle.js'
   },
   optimization: {
