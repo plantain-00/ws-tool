@@ -6,7 +6,6 @@
   "files": [
     "index.ts",
     "variables.ts",
-    "vendor.ts",
     "types.ts",
     "lib.d.ts"
   ]
