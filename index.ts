@@ -1164,7 +1164,7 @@ proxyWebSocket.onerror = event => {
   app.useProxy = false
 }
 
-if (navigator.serviceWorker) {
+if (navigator.serviceWorker && !location.host.startsWith('localhost')) {
   navigator.serviceWorker.register('service-worker.bundle.js').catch(error => {
     printInConsole('registration failed with error: ' + error)
   })
