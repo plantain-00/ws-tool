@@ -405,13 +405,13 @@ export class App extends Vue {
   }
   get isConnected () {
     return (this.protocol === 'WebSocket' && this.websocket)
-            || (this.protocol === 'TCP' && this.tcpConnected)
-            || (this.protocol === 'WebRTC' && this.dataChannel && this.isDataChannelConnected)
+      || (this.protocol === 'TCP' && this.tcpConnected)
+      || (this.protocol === 'WebRTC' && this.dataChannel && this.isDataChannelConnected)
   }
   get isDisconnected () {
     return (this.protocol === 'WebSocket' && !this.websocket)
-            || (this.protocol === 'TCP' && !this.tcpConnected)
-            || (this.protocol === 'WebRTC' && !(this.dataChannel && this.isDataChannelConnected))
+      || (this.protocol === 'TCP' && !this.tcpConnected)
+      || (this.protocol === 'WebRTC' && !(this.dataChannel && this.isDataChannelConnected))
   }
   get shouldContainBody () {
     return this.httpMethod === 'POST'
@@ -442,23 +442,23 @@ export class App extends Vue {
       return
     }
     this.peerConnection.createOffer()
-            .then(offer => this.peerConnection!.setLocalDescription(offer))
-            .then(() => {
-              this.messages.unshift({
-                moment: getNow(),
-                type: 'tips',
-                tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
-                id: this.id++
-              })
-              this.dataChannelStatus = 'created offer'
-            }, (error: Error) => {
-              this.messages.unshift({
-                moment: getNow(),
-                type: 'error',
-                reason: error.message,
-                id: this.id++
-              })
-            })
+      .then(offer => this.peerConnection!.setLocalDescription(offer))
+      .then(() => {
+        this.messages.unshift({
+          moment: getNow(),
+          type: 'tips',
+          tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
+          id: this.id++
+        })
+        this.dataChannelStatus = 'created offer'
+      }, (error: Error) => {
+        this.messages.unshift({
+          moment: getNow(),
+          type: 'error',
+          reason: error.message,
+          id: this.id++
+        })
+      })
   }
   answerOffer () {
     if (!this.peerConnection) {
@@ -466,25 +466,25 @@ export class App extends Vue {
     }
     try {
       const offer = new RTCSessionDescription(JSON.parse(this.sessionDescription))
-      this.peerConnection.setRemoteDescription(offer)
-                .then(() => this.peerConnection!.createAnswer())
-                .then(answer => this.peerConnection!.setLocalDescription(answer))
-                .then(() => {
-                  this.messages.unshift({
-                    moment: getNow(),
-                    type: 'tips',
-                    tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
-                    id: this.id++
-                  })
-                  this.dataChannelStatus = 'answered offer'
-                }, (error: Error) => {
-                  this.messages.unshift({
-                    moment: getNow(),
-                    type: 'error',
-                    reason: error.message,
-                    id: this.id++
-                  })
-                })
+      this.peerConnection.setRemoteDescription(offer as any)
+        .then(() => this.peerConnection!.createAnswer())
+        .then(answer => this.peerConnection!.setLocalDescription(answer as any))
+        .then(() => {
+          this.messages.unshift({
+            moment: getNow(),
+            type: 'tips',
+            tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
+            id: this.id++
+          })
+          this.dataChannelStatus = 'answered offer'
+        }, (error: Error) => {
+          this.messages.unshift({
+            moment: getNow(),
+            type: 'error',
+            reason: error.message,
+            id: this.id++
+          })
+        })
     } catch (error) {
       this.messages.unshift({
         moment: getNow(),
@@ -500,23 +500,23 @@ export class App extends Vue {
     }
     try {
       const answer = new RTCSessionDescription(JSON.parse(this.sessionDescription))
-      this.peerConnection.setRemoteDescription(answer)
-                .then(() => {
-                  this.messages.unshift({
-                    moment: getNow(),
-                    type: 'tips',
-                    tips: 'set answer successfully.',
-                    id: this.id++
-                  })
-                  this.dataChannelStatus = 'set answer'
-                }, (error: Error) => {
-                  this.messages.unshift({
-                    moment: getNow(),
-                    type: 'error',
-                    reason: error.message,
-                    id: this.id++
-                  })
-                })
+      this.peerConnection.setRemoteDescription(answer as any)
+        .then(() => {
+          this.messages.unshift({
+            moment: getNow(),
+            type: 'tips',
+            tips: 'set answer successfully.',
+            id: this.id++
+          })
+          this.dataChannelStatus = 'set answer'
+        }, (error: Error) => {
+          this.messages.unshift({
+            moment: getNow(),
+            type: 'error',
+            reason: error.message,
+            id: this.id++
+          })
+        })
     } catch (error) {
       this.messages.unshift({
         moment: getNow(),
