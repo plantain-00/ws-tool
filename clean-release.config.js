@@ -13,6 +13,7 @@ module.exports = {
   ],
   exclude: [
   ],
+  askVersion: true,
   releaseRepository: 'https://github.com/plantain-00/ws-tool-release.git',
   postScript: [
     'cd "[dir]" && rm -rf .git',
