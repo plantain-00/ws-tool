@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es5"
+  },
+  "files": [
+    "index.ts",
+    "variables.ts",
+    "types.ts",
+    "lib.d.ts"
+  ]
+}
