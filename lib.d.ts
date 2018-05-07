@@ -6,14 +6,14 @@ declare interface RTCDataChannel {
   onopen: (event: any) => void
   onclose: (event: any) => void
   onmessage: (event: MessageEvent) => void
-  send (message: string): void
-  close (): void
+  send(message: string): void
+  close(): void
 }
 declare interface RTCPeerConnection {
   ondatachannel: (event: { channel: RTCDataChannel }) => void
-  createDataChannel (channel: string): RTCDataChannel
+  createDataChannel(channel: string): RTCDataChannel
 }
 declare class TextDecoder {
-  constructor (encoding: string);
-  decode (typedArray: Uint8Array): string
+  constructor(encoding: string);
+  decode(typedArray: Uint8Array): string
 }
