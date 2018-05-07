@@ -17,7 +17,6 @@ app.all('*', (request, response) => {
     response.setHeader('Access-Control-Allow-Origin', '*')
     response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     response.setHeader('Access-Control-Allow-Headers', 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type')
-    // response.json({ a: 1 });
     response.send(new Uint8Array([1, 2]))
   })
 })

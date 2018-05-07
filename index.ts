@@ -19,11 +19,11 @@ let proxyWebSocket: WebSocket
 const toUrlHeaderName = 'x-to-url'
 const headersName = 'x-headers'
 
-function formatTimeNumber (num: number) {
+function formatTimeNumber(num: number) {
   return num < 10 ? '0' + num : num.toString()
 }
 
-function getNow () {
+function getNow() {
   return `${formatTimeNumber(new Date().getHours())}:${formatTimeNumber(new Date().getMinutes())}:${formatTimeNumber(new Date().getSeconds())}`
 }
 
@@ -188,7 +188,7 @@ export class App extends Vue {
   private httpMethodInternally = localStorage.getItem('httpMethod') || 'GET'
   private isDataChannelConnected = false
 
-  constructor (options?: ComponentOptions<Vue>) {
+  constructor(options?: ComponentOptions<Vue>) {
     super(options)
     if (this.peerConnection) {
       this.peerConnection.ondatachannel = event => {
@@ -217,95 +217,96 @@ export class App extends Vue {
     }
   }
 
-  get httpMethod () {
+  get httpMethod() {
     return this.httpMethodInternally
   }
-  set httpMethod (value: string) {
+  set httpMethod(value: string) {
     localStorage.setItem('httpMethod', value)
     this.httpMethodInternally = value
   }
-  get host () {
+  get host() {
     return this.hostInternally
   }
-  set host (value: string) {
+  set host(value: string) {
     localStorage.setItem('host', value)
     this.hostInternally = value
   }
-  get port () {
+  get port() {
     return this.portInternally
   }
-  set port (value: number) {
+  set port(value: number) {
     localStorage.setItem('port', String(value))
     this.portInternally = value
   }
-  get protocol () {
+  get protocol() {
     return this.protocolInternally
   }
-  set protocol (value: string) {
+  set protocol(value: string) {
     if (value === 'HTTP' || this.messageType === 'FormData') {
       this.messageType = 'string'
     }
     localStorage.setItem('protocol', value)
     this.protocolInternally = value
   }
-  get messageType () {
+  get messageType() {
     return this.messageTypeInternally
   }
-  set messageType (value: string) {
+  set messageType(value: string) {
     localStorage.setItem('messageType', value)
     this.messageTypeInternally = value
   }
-  get protobufContent () {
+  get protobufContent() {
     return this.protobufContentInternally
   }
-  set protobufContent (value: string) {
+  set protobufContent(value: string) {
     localStorage.setItem('protobufContent', value)
     this.protobufContentInternally = value
   }
-  get protobufTypePath () {
+  get protobufTypePath() {
     return this.protobufTypePathInternally
   }
-  set protobufTypePath (value: string) {
+  set protobufTypePath(value: string) {
     localStorage.setItem('protobufTypePath', value)
     this.protobufTypePathInternally = value
   }
-  get dnsTransactionId () {
+  get dnsTransactionId() {
     return this.dnsTransactionIdInternally
   }
-  set dnsTransactionId (value: number) {
+  set dnsTransactionId(value: number) {
     localStorage.setItem('dnsTransactionId', value.toString())
     this.dnsTransactionIdInternally = value
   }
-  get dnsQuestionName () {
+  get dnsQuestionName() {
     return this.dnsQuestionNameInternally
   }
-  set dnsQuestionName (value: string) {
+  set dnsQuestionName(value: string) {
     localStorage.setItem('dnsQuestionName', value.toString())
     this.dnsQuestionNameInternally = value
   }
-  get filteredMessages () {
+  // tslint:disable-next-line:cognitive-complexity
+  get filteredMessages() {
     return this.messages.filter(m => {
       if (this.filter) {
         return (typeof m.rawData === 'string' && m.rawData.indexOf(this.filter) !== -1)
-                    || (typeof m.moment === 'string' && m.moment.indexOf(this.filter) !== -1)
-                    || (typeof m.formattedData === 'string' && m.formattedData.indexOf(this.filter) !== -1)
-                    || (typeof m.type === 'string' && m.type.indexOf(this.filter) !== -1)
-                    || (typeof m.reason === 'string' && m.reason.indexOf(this.filter) !== -1)
-                    || (typeof m.data === 'string' && m.data.indexOf(this.filter) !== -1)
-                    || (typeof m.tips === 'string' && m.tips.indexOf(this.filter) !== -1)
+          || (typeof m.moment === 'string' && m.moment.indexOf(this.filter) !== -1)
+          || (typeof m.formattedData === 'string' && m.formattedData.indexOf(this.filter) !== -1)
+          || (typeof m.type === 'string' && m.type.indexOf(this.filter) !== -1)
+          || (typeof m.reason === 'string' && m.reason.indexOf(this.filter) !== -1)
+          || (typeof m.data === 'string' && m.data.indexOf(this.filter) !== -1)
+          || (typeof m.tips === 'string' && m.tips.indexOf(this.filter) !== -1)
       } else {
         return true
       }
     }).slice(0, 100)
   }
-  get subprotocol () {
+  get subprotocol() {
     return this.subprotocolInternally
   }
-  set subprotocol (value) {
+  set subprotocol(value) {
     localStorage.setItem('subprotocol', value)
     this.subprotocolInternally = value
   }
-  get canSaveAsBookmark () {
+  get canSaveAsBookmark() {
     if (this.bookmarkName.trim() === '') {
       return false
     }
@@ -316,42 +317,42 @@ export class App extends Vue {
     }
     return true
   }
-  get isSocketIO () {
+  get isSocketIO() {
     return this.isSocketIOInternally
   }
-  set isSocketIO (value) {
+  set isSocketIO(value) {
     localStorage.setItem('isSocketIO', value ? '1' : '')
     this.isSocketIOInternally = value
   }
-  get ignorePing () {
+  get ignorePing() {
     return this.ignorePingInternally
   }
-  set ignorePing (value) {
+  set ignorePing(value) {
     localStorage.setItem('ignorePing', value ? '1' : '')
     this.ignorePingInternally = value
   }
-  get showRaw () {
+  get showRaw() {
     return this.showRawInternally
   }
-  set showRaw (value) {
+  set showRaw(value) {
     localStorage.setItem('showRaw', value ? '1' : '')
     this.showRawInternally = value
   }
-  get showFormatted () {
+  get showFormatted() {
     return this.showFormattedInternally
   }
-  set showFormatted (value) {
+  set showFormatted(value) {
     localStorage.setItem('showFormatted', value ? '1' : '')
     this.showFormattedInternally = value
   }
-  get message () {
+  get message() {
     return this.messageInternally
   }
-  set message (value) {
+  set message(value) {
     localStorage.setItem('message', value)
     this.messageInternally = value
   }
-  get url () {
+  get url() {
     let url = this.baseUrl
     if (this.parameters.length > 0) {
       url += '?'
@@ -365,7 +366,7 @@ export class App extends Vue {
     }
     return url
   }
-  set url (value) {
+  set url(value) {
     let index = value.indexOf('#')
     if (index > -1) {
       value = value.substring(0, index)
@@ -403,28 +404,28 @@ export class App extends Vue {
     localStorage.setItem('parameters', JSON.stringify(this.parameters))
     localStorage.setItem('anchor', this.anchor)
   }
-  get isConnected () {
+  get isConnected() {
     return (this.protocol === 'WebSocket' && this.websocket)
       || (this.protocol === 'TCP' && this.tcpConnected)
       || (this.protocol === 'WebRTC' && this.dataChannel && this.isDataChannelConnected)
   }
-  get isDisconnected () {
+  get isDisconnected() {
     return (this.protocol === 'WebSocket' && !this.websocket)
       || (this.protocol === 'TCP' && !this.tcpConnected)
       || (this.protocol === 'WebRTC' && !(this.dataChannel && this.isDataChannelConnected))
   }
-  get shouldContainBody () {
+  get shouldContainBody() {
     return this.httpMethod === 'POST'
-            || this.httpMethod === 'PUT'
-            || this.httpMethod === 'PATCH'
-            || this.httpMethod === 'DELETE'
-            || this.httpMethod === 'LINK'
-            || this.httpMethod === 'UNLINK'
+      || this.httpMethod === 'PUT'
+      || this.httpMethod === 'PATCH'
+      || this.httpMethod === 'DELETE'
+      || this.httpMethod === 'LINK'
+      || this.httpMethod === 'UNLINK'
   }
-  get shouldShowMessageTextarea () {
+  get shouldShowMessageTextarea() {
     return (this.messageType === 'string' || this.protocol !== 'HTTP') && this.dnsIsHidden
   }
-  createDataChannel () {
+  createDataChannel() {
     if (!this.peerConnection) {
       return
     }
@@ -437,7 +438,7 @@ export class App extends Vue {
       id: this.id++
     })
   }
-  createOffer () {
+  createOffer() {
     if (!this.peerConnection) {
       return
     }
@@ -452,15 +453,10 @@ export class App extends Vue {
         })
         this.dataChannelStatus = 'created offer'
       }, (error: Error) => {
-        this.messages.unshift({
-          moment: getNow(),
-          type: 'error',
-          reason: error.message,
-          id: this.id++
-        })
+        this.showError(error)
       })
   }
-  answerOffer () {
+  answerOffer() {
     if (!this.peerConnection) {
       return
     }
@@ -478,23 +474,13 @@ export class App extends Vue {
           })
           this.dataChannelStatus = 'answered offer'
         }, (error: Error) => {
-          this.messages.unshift({
-            moment: getNow(),
-            type: 'error',
-            reason: error.message,
-            id: this.id++
-          })
+          this.showError(error)
         })
     } catch (error) {
-      this.messages.unshift({
-        moment: getNow(),
-        type: 'error',
-        reason: error.message,
-        id: this.id++
-      })
+      this.showError(error)
     }
   }
-  setAnswer () {
+  setAnswer() {
     if (!this.peerConnection) {
       return
     }
@@ -510,12 +496,7 @@ export class App extends Vue {
           })
           this.dataChannelStatus = 'set answer'
         }, (error: Error) => {
-          this.messages.unshift({
-            moment: getNow(),
-            type: 'error',
-            reason: error.message,
-            id: this.id++
-          })
+          this.showError(error)
         })
     } catch (error) {
       this.messages.unshift({
@@ -526,10 +507,10 @@ export class App extends Vue {
       })
     }
   }
-  loadProtobuf () {
+  loadProtobuf() {
     if (this.protobufContent && this.protobufTypePath) {
       try {
-        this.protobufType = (protobuf.parse(this.protobufContent).root as protobuf.Root).lookup(this.protobufTypePath) as protobuf.Type
+        this.protobufType = protobuf.parse(this.protobufContent).root.lookup(this.protobufTypePath) as protobuf.Type
         this.messages.unshift({
           moment: getNow(),
           type: 'tips',
@@ -546,7 +527,7 @@ export class App extends Vue {
       }
     }
   }
-  savingAsBookmark () {
+  savingAsBookmark() {
     this.isEditing = !this.isEditing
     Vue.nextTick(() => {
       const bookmarkNameElement = this.$refs.bookmarkName as HTMLElement
@@ -555,7 +536,7 @@ export class App extends Vue {
       }
     })
   }
-  toggleFilter () {
+  toggleFilter() {
     this.filterIsHidden = !this.filterIsHidden
     Vue.nextTick(() => {
       const filterElement = this.$refs.filter as HTMLElement
@@ -564,22 +545,22 @@ export class App extends Vue {
       }
     })
   }
-  toggleSocketIO () {
+  toggleSocketIO() {
     this.socketIOIsHidden = !this.socketIOIsHidden
   }
-  toggleStomp () {
+  toggleStomp() {
     this.stompIsHidden = !this.stompIsHidden
   }
-  toggleBayeux () {
+  toggleBayeux() {
     this.bayeuxIsHidden = !this.bayeuxIsHidden
   }
-  toggleProtobuf () {
+  toggleProtobuf() {
     this.protobufIsHidden = !this.protobufIsHidden
   }
-  toggleDNS () {
+  toggleDNS() {
     this.dnsIsHidden = !this.dnsIsHidden
   }
-  saveAsBookmark () {
+  saveAsBookmark() {
     this.isEditing = false
     this.bookmarks.unshift({
       name: this.bookmarkName,
@@ -605,11 +586,11 @@ export class App extends Vue {
     })
     localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks))
   }
-  deleteBookmark (index: number) {
+  deleteBookmark(index: number) {
     this.bookmarks.splice(index, 1)
     localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks))
   }
-  useBookmark (index: number) {
+  useBookmark(index: number) {
     const bookmark = this.bookmarks[index]
     this.isSocketIO = bookmark.isSocketIO
     this.ignorePing = bookmark.ignorePing
@@ -634,63 +615,63 @@ export class App extends Vue {
     this.headers = bookmark.headers
     localStorage.setItem('headers', JSON.stringify(bookmark.headers))
   }
-  setKeyOfParameter (index: number, e: KeyboardEvent) {
+  setKeyOfParameter(index: number, e: KeyboardEvent) {
     this.parameters[index].key = (e.target as HTMLInputElement).value
     localStorage.setItem('parameters', JSON.stringify(this.parameters))
   }
-  setKeyOfHeader (index: number, e: KeyboardEvent) {
+  setKeyOfHeader(index: number, e: KeyboardEvent) {
     this.headers[index].key = (e.target as HTMLInputElement).value
     localStorage.setItem('headers', JSON.stringify(this.headers))
   }
-  setKeyOfFormData (index: number, e: KeyboardEvent) {
+  setKeyOfFormData(index: number, e: KeyboardEvent) {
     this.formDatas[index].key = (e.target as HTMLInputElement).value
   }
-  setValueOfParameter (index: number, e: KeyboardEvent) {
+  setValueOfParameter(index: number, e: KeyboardEvent) {
     this.parameters[index].value = (e.target as HTMLInputElement).value
     localStorage.setItem('parameters', JSON.stringify(this.parameters))
   }
-  setValueOfHeader (index: number, e: KeyboardEvent) {
+  setValueOfHeader(index: number, e: KeyboardEvent) {
     this.headers[index].value = (e.target as HTMLInputElement).value
     localStorage.setItem('headers', JSON.stringify(this.headers))
   }
-  setValueOfFormData (index: number, e: KeyboardEvent) {
+  setValueOfFormData(index: number, e: KeyboardEvent) {
     const element = e.target as HTMLInputElement
     this.formDatas[index].value = element.files && element.files.length > 0 ? element.files[0] : element.value
   }
-  setTypeOfFormData (index: number, e: KeyboardEvent) {
+  setTypeOfFormData(index: number, e: KeyboardEvent) {
     this.formDatas[index].type = (e.target as HTMLSelectElement).value as 'text' | 'file'
   }
-  deleteParameter (index: number) {
+  deleteParameter(index: number) {
     this.parameters.splice(index, 1)
     localStorage.setItem('parameters', JSON.stringify(this.parameters))
   }
-  deleteHeader (index: number) {
+  deleteHeader(index: number) {
     this.headers.splice(index, 1)
     localStorage.setItem('headers', JSON.stringify(this.headers))
   }
-  deleteFormData (index: number) {
+  deleteFormData(index: number) {
     this.formDatas.splice(index, 1)
   }
-  addParameter () {
+  addParameter() {
     this.parameters.push({
       key: '',
       value: ''
     })
   }
-  addHeader () {
+  addHeader() {
     this.headers.push({
       key: '',
       value: ''
     })
   }
-  addFormData () {
+  addFormData() {
     this.formDatas.push({
       key: '',
       value: '',
       type: 'text'
     })
   }
-  connect () {
+  connect() {
     if (this.protocol === 'WebSocket') {
       try {
         this.websocket = this.subprotocol ? new WebSocket(this.url, this.subprotocol) : new WebSocket(this.url)
@@ -723,37 +704,37 @@ export class App extends Vue {
       }
     }
   }
-  sendMessage () {
+  sendMessage() {
     this.send(this.message)
   }
-  useStompConnectionMessage () {
+  useStompConnectionMessage() {
     this.message = stompConnectionMessage
   }
-  useStompSubscriptionMessage () {
+  useStompSubscriptionMessage() {
     this.message = stompSubscriptionMessage
   }
-  useStompSendMessage () {
+  useStompSendMessage() {
     this.message = stompSendMessage
   }
-  useSocketIOSendMessage () {
+  useSocketIOSendMessage() {
     this.message = socketIOSendMessage
   }
-  useBayeuxHandshakeMessage () {
+  useBayeuxHandshakeMessage() {
     this.message = bayeuxHandshakeMessage
   }
-  useBayeuxSubscribeMessage () {
+  useBayeuxSubscribeMessage() {
     this.message = bayeuxSubscribeMessage
   }
-  useBayeuxPublishMessage () {
+  useBayeuxPublishMessage() {
     this.message = bayeuxPublishMessage
   }
-  useBayeuxPingMessage () {
+  useBayeuxPingMessage() {
     this.message = bayeuxPingMessage
   }
-  clear () {
+  clear() {
     this.messages = []
   }
-  previewMessage () {
+  previewMessage() {
     this.isPreview = true
     if (this.protocol === 'WebSocket' && this.isSocketIO) {
       this.previewResult = ''
@@ -772,23 +753,23 @@ export class App extends Vue {
       }
     }
   }
-  cancelPreview () {
+  cancelPreview() {
     this.isPreview = false
   }
-  showTips () {
+  showTips() {
     this.messages.unshift({
       moment: getNow(),
       type: 'tips',
       tips: 'Tips: \n' +
-                "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
-                "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
-                "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
-                "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
-                '5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight',
+        "1. for socket.io, if you connect 'http://localhost', in ws's perspective, you connected 'ws://localhost/socket.io/?transport=websocket'\n" +
+        "2. for socket.io, if you connect 'https://localhost', in ws's perspective, you connected 'wss://localhost/socket.io/?transport=websocket'\n" +
+        "3. chrome's developer tool is a good tool to view ws connection and messages\n" +
+        "4. for ActiveMQ, the default url is 'ws://localhost:61614' ,the subprotocol should be 'stomp'\n" +
+        '5. for HTTP, set `Content-Type` be `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain` to avoid CORS preflight',
       id: this.id++
     })
   }
-  close () {
+  close() {
     this.messages.unshift({
       moment: getNow(),
       type: 'tips',
@@ -804,28 +785,37 @@ export class App extends Vue {
       proxyWebSocket.send(JSON.stringify(protocol))
     }
   }
-  onmessage (e: MessageEvent) {
+  onmessage(e: MessageEvent) {
     this.onmessageAccepted(e.data, e.type)
   }
-  toggleMessageVisibility (message: Message) {
+  toggleMessageVisibility(message: Message) {
     message.visible = !this.messageVisibility(message)
   }
-  resultId (index: number) {
+  resultId(index: number) {
     return `result-${index}`
   }
-  messageVisibility (message: Message) {
+  messageVisibility(message: Message) {
     return message.visible !== undefined
-            ? message.visible
-            : (message.formattedData ? this.showFormatted : this.showRaw)
+      ? message.visible
+      : (message.formattedData ? this.showFormatted : this.showRaw)
   }
-  visibilityButtonStyle (message: Message) {
+  visibilityButtonStyle(message: Message) {
     return {
       position: 'absolute',
       bottom: (this.messageVisibility(message) ? (10 + message.visibilityButtonExtraBottom!) : 0) + 'px',
       right: 10 + 'px'
     }
   }
-  private send (message: string) {
+  private showError(error: Error) {
+    this.messages.unshift({
+      moment: getNow(),
+      type: 'error',
+      reason: error.message,
+      id: this.id++
+    })
+  }
+  // tslint:disable-next-line:cognitive-complexity
+  private send(message: string) {
     let data: Uint8Array | string | undefined
     let isBinary = true
 
@@ -969,17 +959,17 @@ export class App extends Vue {
       })
     }
   }
-  private ping () {
+  private ping() {
     this.send('2')
   }
-  private onopen (e: Event) {
+  private onopen(e: Event) {
     this.messages.unshift({
       moment: getNow(),
       type: e.type,
       id: this.id++
     })
   }
-  private onclose (e: CloseEvent) {
+  private onclose(e: CloseEvent) {
     this.messages.unshift({
       moment: getNow(),
       type: e.type,
@@ -989,7 +979,8 @@ export class App extends Vue {
     this.websocket = null
     clearInterval(pingId)
   }
-  private onmessageAccepted (eventData: any, eventType: string) {
+  // tslint:disable-next-line:cognitive-complexity
+  private onmessageAccepted(eventData: any, eventType: string) {
     if (this.ignorePing && eventData === '3') {
       return
     }
@@ -1101,7 +1092,7 @@ export class App extends Vue {
       }
     }
   }
-  private onerror (e: Event) {
+  private onerror(e: Event) {
     this.messages.unshift({
       moment: getNow(),
       type: e.type,
@@ -1148,7 +1139,7 @@ window.onscroll = () => {
     if (element) {
       const rect = element.getBoundingClientRect()
       message.visibilityButtonExtraBottom = (rect.top < innerHeight - 40 && rect.top + rect.height > innerHeight)
-                ? (rect.top + rect.height - innerHeight) : 0
+        ? (rect.top + rect.height - innerHeight) : 0
     }
   }
 }
@@ -1170,6 +1161,6 @@ if (navigator.serviceWorker && !location.host.startsWith('localhost')) {
   })
 }
 
-function printInConsole (message: any) {
+function printInConsole(message: any) {
   console.log(message)
 }
