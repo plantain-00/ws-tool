@@ -15,5 +15,5 @@ declare interface RTCPeerConnection {
 }
 declare class TextDecoder {
   constructor(encoding: string);
-  decode(typedArray: Uint8Array): string
+  public decode(typedArray: Uint8Array): string
 }
