@@ -138,6 +138,8 @@ message Test {
     required string data = 1;
 }`
 
+type DataChannelStatus = 'none' | 'init' | 'created offer' | 'answered offer' | 'set answer'
+
 @Component({
   render: appTemplateHtml,
   staticRenderFns: appTemplateHtmlStatic
@@ -161,7 +163,7 @@ export class App extends Vue {
   peerConnection = window.RTCPeerConnection ? new RTCPeerConnection({}) : null
   dataChannelName = 'my_test_channel'
   sessionDescription = ''
-  dataChannelStatus: 'none' | 'init' | 'created offer' | 'answered offer' | 'set answer' = 'none'
+  dataChannelStatus: DataChannelStatus = 'none'
   id = 1
   bayeuxIsHidden: boolean = true
   useProxy = true
@@ -445,12 +447,7 @@ export class App extends Vue {
     this.peerConnection.createOffer()
       .then(offer => this.peerConnection!.setLocalDescription(offer))
       .then(() => {
-        this.messages.unshift({
-          moment: getNow(),
-          type: 'tips',
-          tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
-          id: this.id++
-        })
+        this.showLocalDescription()
         this.dataChannelStatus = 'created offer'
       }, (error: Error) => {
         this.showError(error)
@@ -466,12 +463,7 @@ export class App extends Vue {
         .then(() => this.peerConnection!.createAnswer())
         .then(answer => this.peerConnection!.setLocalDescription(answer as any))
         .then(() => {
-          this.messages.unshift({
-            moment: getNow(),
-            type: 'tips',
-            tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
-            id: this.id++
-          })
+          this.showLocalDescription()
           this.dataChannelStatus = 'answered offer'
         }, (error: Error) => {
           this.showError(error)
@@ -1100,6 +1092,14 @@ export class App extends Vue {
     })
     this.websocket = null
     clearInterval(pingId)
+  }
+  private showLocalDescription() {
+    this.messages.unshift({
+      moment: getNow(),
+      type: 'tips',
+      tips: JSON.stringify(this.peerConnection!.localDescription!.toJSON()),
+      id: this.id++
+    })
   }
 }
 
