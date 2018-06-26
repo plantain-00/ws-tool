@@ -4,7 +4,7 @@
   "description": "A Develop Tool to Test WebSocket, Socket.IO, Stomp, HTTP, TCP, UDP, WebRTC, DNS API.",
   "scripts": {
     "build": "clean-scripts build",
-    "dev": "export NODE_ENV=development && clean-scripts build",
+    "dev": "cross-env NODE_ENV=development clean-scripts build",
     "lint": " clean-scripts lint",
     "test": "clean-scripts test",
     "fix": "clean-scripts fix",
@@ -43,6 +43,7 @@
     "clean-css-cli": "4.1.11",
     "clean-scripts": "1.9.2",
     "clipboard": "2.0.1",
+    "cross-env": "5.2.0",
     "dns-protocol": "2.0.1",
     "ejs": "2.6.1",
     "file2variable-cli": "1.8.5",
