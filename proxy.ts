@@ -1,5 +1,5 @@
 import * as express from 'express'
-import { Server as WebSocketServer } from 'uws'
+import WebSocket = require('ws')
 import * as http from 'http'
 import * as net from 'net'
 import * as dgram from 'dgram'
@@ -8,7 +8,7 @@ import * as types from './types'
 import * as compression from 'compression'
 
 const server = http.createServer()
-const wss = new WebSocketServer({ server })
+const wss = new WebSocket.Server({ server })
 const app = express()
 
 app.use('/', express.static(__dirname))
