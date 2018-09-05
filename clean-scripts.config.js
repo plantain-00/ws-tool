@@ -53,11 +53,9 @@ module.exports = {
   },
   watch: {
     template: `${templateCommand} --watch`,
-    src: `${tscCommand} --watch`,
     webpack: `${webpackCommand} --watch`,
     css: () => watch(['index.css'], [], () => executeScriptAsync(cssCommand)),
-    rev: `${revStaticCommand} --watch`,
-    sw: () => watch(['vendor.bundle-*.js', 'index.html', 'worker.bundle.js'], [], () => executeScriptAsync(cssCommand))
+    rev: `${revStaticCommand} --watch`
   },
   screenshot: [
     new Service(`http-server -p 8000`),

@@ -8,7 +8,7 @@
     "lint": " clean-scripts lint",
     "test": "clean-scripts test",
     "fix": "clean-scripts fix",
-    "watch": "clean-scripts watch",
+    "watch": "cross-env NODE_ENV=development clean-scripts watch",
     "prerender": "clean-scripts prerender",
     "screenshot": "clean-scripts screenshot"
   },
@@ -68,6 +68,7 @@
     "tslint": "5.11.0",
     "tslint-config-standard": "7.1.0",
     "tslint-sonarts": "1.7.0",
+    "ts-loader": "5.0.0",
     "typescript": "3.0.1",
     "uglify-js": "3",
     "vue": "2.5.17",
