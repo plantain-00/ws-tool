@@ -685,15 +685,13 @@ export class App extends Vue {
       if (this.isSocketIO) {
         pingId = setInterval(this.ping, 25000)
       }
-    } else if (this.protocol === 'TCP') {
-      if (proxyWebSocket && !isNaN(+this.port)) {
-        const protocol: types.Protocol = {
-          kind: types.ProtocolKind.tcpConnect,
-          host: this.host,
-          port: +this.port
-        }
-        proxyWebSocket.send(JSON.stringify(protocol))
+    } else if (this.protocol === 'TCP' && proxyWebSocket && !isNaN(+this.port)) {
+      const protocol: types.Protocol = {
+        kind: types.ProtocolKind.tcpConnect,
+        host: this.host,
+        port: +this.port
       }
+      proxyWebSocket.send(JSON.stringify(protocol))
     }
   }
   sendMessage() {
@@ -920,11 +918,9 @@ export class App extends Vue {
       } else {
         request.send()
       }
-    } else if (this.protocol === 'WebRTC') {
-      if (this.dataChannel) {
-        rawData = message
-        this.dataChannel.send(message)
-      }
+    } else if (this.protocol === 'WebRTC' && this.dataChannel) {
+      rawData = message
+      this.dataChannel.send(message)
     }
 
     if (rawData) {
