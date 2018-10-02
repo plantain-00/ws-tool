@@ -1128,7 +1128,7 @@ previewDecoder.on('decoded', decodedPacket => {
 })
 
 window.onscroll = () => {
-  const innerHeight = (window.innerHeight || document.documentElement.clientHeight)
+  const innerHeight = (window.innerHeight || document.documentElement!.clientHeight)
   for (let i = 0; i < app.messages.length; i++) {
     const message = app.messages[i]
     const element = document.getElementById(app.resultId(i))
