@@ -25,7 +25,7 @@
   "dependencies": {
     "compression": "1.7.3",
     "express": "4.16.4",
-    "node-fetch": "2.2.0",
+    "node-fetch": "2.2.1",
     "tslib": "1.9.3",
     "ws": "6.1.0"
   },
@@ -35,10 +35,10 @@
     "@types/clipboard": "2.0.1",
     "@types/compression": "0.0.36",
     "@types/express": "4.16.0",
-    "@types/jasmine": "2.8.9",
-    "@types/node": "10.12.2",
+    "@types/jasmine": "2.8.11",
+    "@types/node": "10.12.5",
     "@types/node-fetch": "2.1.2",
-    "@types/puppeteer": "1.9.1",
+    "@types/puppeteer": "1.10.0",
     "@types/socket.io-parser": "2.2.0",
     "@types/ws": "6.0.1",
     "autoprefixer": "9.3.1",
@@ -65,7 +65,7 @@
     "puppeteer": "1.10.0",
     "rev-static": "3.4.2",
     "rimraf": "2.6.2",
-    "socket.io-parser": "3.2.0",
+    "socket.io-parser": "3.3.0",
     "standard": "12.0.1",
     "sw-precache": "5.2.1",
     "ts-loader": "5.3.0",
@@ -78,7 +78,7 @@
     "vue": "2.5.17",
     "vue-class-component": "6.3.2",
     "watch-then-execute": "1.1.1",
-    "webpack": "4.24.0",
+    "webpack": "4.25.1",
     "webpack-cli": "3.1.2",
     "webrtc-adapter": "6.4.4"
   }
