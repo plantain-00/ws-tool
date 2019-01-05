@@ -41,7 +41,7 @@
     "@types/puppeteer": "1.11.1",
     "@types/socket.io-parser": "2.2.0",
     "@types/ws": "6.0.1",
-    "autoprefixer": "9.4.3",
+    "autoprefixer": "9.4.4",
     "bootstrap": "4.2.1",
     "clean-css-cli": "4.2.1",
     "clean-scripts": "1.9.2",
@@ -60,11 +60,11 @@
     "karma-webpack": "3.0.5",
     "markdownlint-cli": "0.13.0",
     "no-unused-export": "1.7.0",
-    "postcss-cli": "6.1.0",
+    "postcss-cli": "6.1.1",
     "protobufjs": "6.8.8",
     "puppeteer": "1.11.0",
     "rev-static": "3.4.2",
-    "rimraf": "2.6.2",
+    "rimraf": "2.6.3",
     "socket.io-parser": "3.3.0",
     "standard": "12.0.1",
     "sw-precache": "5.2.1",
@@ -79,7 +79,7 @@
     "vue-class-component": "6.3.2",
     "watch-then-execute": "1.1.1",
     "webpack": "4.28.3",
-    "webpack-cli": "3.1.2",
+    "webpack-cli": "3.2.0",
     "webrtc-adapter": "7.1.1"
   }
 }
