@@ -30,8 +30,8 @@
     "ws": "6.1.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "7.2.1",
-    "@commitlint/config-conventional": "7.1.2",
+    "@commitlint/cli": "7.3.1",
+    "@commitlint/config-conventional": "7.3.1",
     "@types/clipboard": "2.0.1",
     "@types/compression": "0.0.36",
     "@types/express": "4.16.0",
@@ -68,18 +68,18 @@
     "socket.io-parser": "3.3.0",
     "standard": "12.0.1",
     "sw-precache": "5.2.1",
-    "ts-loader": "5.3.2",
-    "tslint": "5.12.0",
+    "ts-loader": "5.3.3",
+    "tslint": "5.12.1",
     "tslint-config-standard": "8.0.1",
     "tslint-sonarts": "1.8.0",
     "type-coverage": "1.6.2",
-    "typescript": "3.1.6",
+    "typescript": "3.2.2",
     "uglify-js": "3",
-    "vue": "2.5.21",
+    "vue": "2.5.22",
     "vue-class-component": "6.3.2",
     "watch-then-execute": "1.1.1",
-    "webpack": "4.28.3",
-    "webpack-cli": "3.2.0",
+    "webpack": "4.28.4",
+    "webpack-cli": "3.2.1",
     "webrtc-adapter": "7.1.1"
   }
 }
