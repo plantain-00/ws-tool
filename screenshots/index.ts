@@ -8,5 +8,5 @@ import puppeteer from 'puppeteer'
   await page.waitFor(2000)
   await page.screenshot({ path: `screenshots/initial.png` })
 
-  browser.close()
+  await browser.close()
 })()
