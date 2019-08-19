@@ -7,7 +7,6 @@ import DNSMessage from 'dns-protocol/browser'
 import * as types from './types'
 import { appTemplateHtml, appTemplateHtmlStatic } from './variables'
 
-// tslint:disable-next-line:no-unused-expression
 new Clipboard('.clipboard')
 let pingId: NodeJS.Timer
 const decoder = new Decoder()
@@ -147,36 +146,36 @@ type DataChannelStatus = 'none' | 'init' | 'created offer' | 'answered offer' | 
 export class App extends Vue {
   messages: Message[] = []
   parameters: Parameter[] = parameters ? JSON.parse(parameters) : [{ key: 'transport', value: 'websocket' }, { key: 'room', value: 'test' }]
-  previewResult: string = ''
-  isPreview: boolean = false
+  previewResult = ''
+  isPreview = false
   bookmarks: Bookmark[] = bookmarks ? JSON.parse(bookmarks) : []
-  isEditing: boolean = false
-  bookmarkName: string = ''
+  isEditing = false
+  bookmarkName = ''
   filter = ''
-  filterIsHidden: boolean = true
+  filterIsHidden = true
   stompIsHidden = true
   protobufIsHidden = true
   dnsIsHidden = true
   headers: types.Header[] = headers ? JSON.parse(headers) : [{ key: 'Content-Type', value: 'application/json' }]
-  socketIOIsHidden: boolean = true
+  socketIOIsHidden = true
   formDatas: FormData[] = []
   peerConnection = window.RTCPeerConnection ? new RTCPeerConnection({}) : null
   dataChannelName = 'my_test_channel'
   sessionDescription = ''
   dataChannelStatus: DataChannelStatus = 'none'
   id = 1
-  bayeuxIsHidden: boolean = true
+  bayeuxIsHidden = true
   useProxy = true
   private protobufType: protobuf.Type | null = null
   private dataChannel: RTCDataChannel | null = null
   private websocket: WebSocket | null = null
-  private isSocketIOInternally: boolean = !!localStorage.getItem('isSocketIO')
-  private ignorePingInternally: boolean = !!localStorage.getItem('ignorePing')
+  private isSocketIOInternally = !!localStorage.getItem('isSocketIO')
+  private ignorePingInternally = !!localStorage.getItem('ignorePing')
   private baseUrl: string = localStorage.getItem('baseUrl') || 'wss://copy.yorkyao.xyz/socket.io/'
   private anchor: string = localStorage.getItem('anchor') || ''
   private messageInternally: string = localStorage.getItem('message') || '42["copy",{"username":"hello","message":"world"}]'
-  private showRawInternally: boolean = !!localStorage.getItem('showRaw')
-  private showFormattedInternally: boolean = !!localStorage.getItem('showFormatted')
+  private showRawInternally = !!localStorage.getItem('showRaw')
+  private showFormattedInternally = !!localStorage.getItem('showFormatted')
   private subprotocolInternally = localStorage.getItem('subprotocol') || ''
   private protobufContentInternally = localStorage.getItem('protobufContent') || defaultProtobufContent
   private protobufTypePathInternally = localStorage.getItem('protobufTypePath') || 'testPackage.Test'
@@ -285,7 +284,6 @@ export class App extends Vue {
     localStorage.setItem('dnsQuestionName', value.toString())
     this.dnsQuestionNameInternally = value
   }
-  // tslint:disable-next-line:cognitive-complexity
   get filteredMessages() {
     return this.messages.filter(m => {
       if (this.filter) {
@@ -804,7 +802,6 @@ export class App extends Vue {
       id: this.id++
     })
   }
-  // tslint:disable-next-line:cognitive-complexity
   private send(message: string) {
     let data: Uint8Array | string | undefined
     let isBinary = true
@@ -967,7 +964,6 @@ export class App extends Vue {
     this.websocket = null
     clearInterval(pingId)
   }
-  // tslint:disable-next-line:cognitive-complexity
   private onmessageAccepted(eventData: any, eventType: string) {
     if (this.ignorePing && eventData === '3') {
       return
