@@ -171,7 +171,7 @@ export class App extends Vue {
   private websocket: WebSocket | null = null
   private isSocketIOInternally = !!localStorage.getItem('isSocketIO')
   private ignorePingInternally = !!localStorage.getItem('ignorePing')
-  private baseUrl: string = localStorage.getItem('baseUrl') || 'wss://copy.yorkyao.xyz/socket.io/'
+  private baseUrl: string = localStorage.getItem('baseUrl') || 'wss://copy.yorkyao.com/socket.io/'
   private anchor: string = localStorage.getItem('anchor') || ''
   private messageInternally: string = localStorage.getItem('message') || '42["copy",{"username":"hello","message":"world"}]'
   private showRawInternally = !!localStorage.getItem('showRaw')
