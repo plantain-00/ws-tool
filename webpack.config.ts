@@ -1,4 +1,4 @@
-const isDev = process.env.NODE_ENV === 'development'
+import * as webpack from 'webpack'
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -9,14 +9,14 @@ module.exports = {
     path: __dirname,
     filename: '[name].bundle.js'
   },
-  resolve: isDev ? {
+  resolve: {
     extensions: ['.ts', '.tsx', '.js']
-  } : undefined,
-  module: isDev ? {
+  },
+  module: {
     rules: [
       { test: /\.tsx?$/, loader: 'ts-loader' }
     ]
-  } : undefined,
+  },
   optimization: {
     splitChunks: {
       cacheGroups: {
@@ -28,4 +28,4 @@ module.exports = {
       }
     }
   }
-}
+} as webpack.Configuration

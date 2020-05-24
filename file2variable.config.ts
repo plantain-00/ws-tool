@@ -1,11 +1,8 @@
-module.exports = {
+export default {
   files: [
     'app.template.html'
   ],
-  /**
-   * @argument {string} file
-   */
-  handler: file => {
+  handler: () => {
     return {
       type: 'vue',
       name: 'App',

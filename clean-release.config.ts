@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   include: [
     '*.bundle-*.js',
     '*.bundle-*.css',

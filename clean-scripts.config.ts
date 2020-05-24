@@ -1,14 +1,13 @@
-const { Service, executeScriptAsync } = require('clean-scripts')
-const { watch } = require('watch-then-execute')
+import { executeScriptAsync } from 'clean-scripts'
+import { watch } from 'watch-then-execute'
 
-const tsFiles = `"*.ts" "spec/**/*.ts" "screenshots/**/*.ts" "prerender/**/*.ts" "tests/**/*.ts"`
-const jsFiles = `"*.config.js" "spec/**/*.config.js"`
+const tsFiles = `"*.ts" "tests/**/*.ts"`
+const jsFiles = `"*.config.js"`
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const templateCommand = `file2variable-cli --config file2variable.config.js`
-const tscCommand = `tsc`
-const webpackCommand = `webpack`
+const templateCommand = `file2variable-cli --config file2variable.config.ts`
+const webpackCommand = `webpack --config webpack.config.ts`
 const revStaticCommand = `rev-static`
 const cssCommand = [
   `postcss index.css -o index.postcss.css`,
@@ -24,7 +23,6 @@ module.exports = {
     {
       js: [
         templateCommand,
-        tscCommand,
         webpackCommand
       ],
       css: {
@@ -43,27 +41,12 @@ module.exports = {
     markdown: `markdownlint README.md`,
     typeCoverage: 'type-coverage -p . --strict'
   },
-  test: [
-    'tsc -p spec',
-    'karma start spec/karma.config.js'
-  ],
+  test: [],
   fix: `eslint --ext .js,.ts,.tsx ${tsFiles} ${jsFiles} --fix`,
   watch: {
     template: `${templateCommand} --watch`,
     webpack: `${webpackCommand} --watch`,
     css: () => watch(['index.css'], [], () => executeScriptAsync(cssCommand)),
     rev: `${revStaticCommand} --watch`
-  },
-  screenshot: [
-    new Service(`http-server -p 8000`),
-    `tsc -p screenshots`,
-    `node screenshots/index.js`
-  ],
-  prerender: [
-    new Service(`http-server -p 8000`),
-    `tsc -p prerender`,
-    `node prerender/index.js`,
-    revStaticCommand,
-    swCommand
-  ]
+  }
 }
