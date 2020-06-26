@@ -2,7 +2,6 @@ import { executeScriptAsync } from 'clean-scripts'
 import { watch } from 'watch-then-execute'
 
 const tsFiles = `"*.ts" "tests/**/*.ts"`
-const jsFiles = `"*.config.js"`
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -35,14 +34,13 @@ module.exports = {
     swCommand
   ],
   lint: {
-    ts: `eslint --ext .js,.ts,.tsx ${tsFiles} ${jsFiles}`,
+    ts: `eslint --ext .js,.ts,.tsx ${tsFiles}`,
     export: `no-unused-export ${tsFiles}`,
-    commit: `commitlint --from=HEAD~1`,
     markdown: `markdownlint README.md`,
     typeCoverage: 'type-coverage -p . --strict'
   },
   test: [],
-  fix: `eslint --ext .js,.ts,.tsx ${tsFiles} ${jsFiles} --fix`,
+  fix: `eslint --ext .js,.ts,.tsx ${tsFiles} --fix`,
   watch: {
     template: `${templateCommand} --watch`,
     webpack: `${webpackCommand} --watch`,
