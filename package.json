@@ -19,7 +19,7 @@
     "url": "https://github.com/plantain-00/ws-tool/issues"
   },
   "typeCoverage": {
-    "atLeast": 86
+    "atLeast": 87.57
   },
   "homepage": "https://github.com/plantain-00/ws-tool#readme",
   "dependencies": {
