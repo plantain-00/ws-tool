@@ -466,7 +466,7 @@ export class App extends Vue {
         }, (error: Error) => {
           this.showError(error)
         })
-    } catch (error) {
+    } catch (error: unknown) {
       this.showError(error)
     }
   }
@@ -488,11 +488,11 @@ export class App extends Vue {
         }, (error: Error) => {
           this.showError(error)
         })
-    } catch (error) {
+    } catch (error: unknown) {
       this.messages.unshift({
         moment: getNow(),
         type: 'error',
-        reason: error.message,
+        reason: error instanceof Error ? error.message : String(error),
         id: this.id++
       })
     }
@@ -507,11 +507,11 @@ export class App extends Vue {
           tips: 'The protobuf definitions is loaded successfully.',
           id: this.id++
         })
-      } catch (error) {
+      } catch (error: unknown) {
         this.messages.unshift({
           moment: getNow(),
           type: 'error',
-          reason: error.message,
+          reason: error instanceof Error ? error.message : String(error),
           id: this.id++
         })
       }
@@ -665,11 +665,11 @@ export class App extends Vue {
     if (this.protocol === 'WebSocket') {
       try {
         this.websocket = this.subprotocol ? new WebSocket(this.url, this.subprotocol) : new WebSocket(this.url)
-      } catch (error) {
+      } catch (error: unknown) {
         this.messages.unshift({
           moment: getNow(),
           type: 'error',
-          reason: error.message,
+          reason: error instanceof Error ? error.message : String(error),
           id: this.id++
         })
         return
@@ -730,14 +730,14 @@ export class App extends Vue {
     } else if (this.messageType === 'Uint8Array') {
       try {
         this.previewResult = new TextDecoder('utf-8').decode(new Uint8Array(this.message.split(',').map(m => +m)))
-      } catch (error) {
-        this.previewResult = error
+      } catch (error: unknown) {
+        this.previewResult = String(error)
       }
     } else {
       try {
         this.previewResult = JSON.stringify(JSON.parse(this.message), null, '    ')
-      } catch (error) {
-        this.previewResult = error
+      } catch (error: unknown) {
+        this.previewResult = String(error)
       }
     }
   }
@@ -794,11 +794,11 @@ export class App extends Vue {
       right: 10 + 'px'
     }
   }
-  private showError(error: Error) {
+  private showError(error: unknown) {
     this.messages.unshift({
       moment: getNow(),
       type: 'error',
-      reason: error.message,
+      reason: error instanceof Error ? error.message : String(error),
       id: this.id++
     })
   }
@@ -812,11 +812,11 @@ export class App extends Vue {
       if (this.protobufType) {
         try {
           data = this.protobufType.encode(JSON.parse(this.message)).finish()
-        } catch (error) {
+        } catch (error: unknown) {
           this.messages.unshift({
             moment: getNow(),
             type: 'error',
-            reason: error.message,
+            reason: error instanceof Error ? error.message : String(error),
             id: this.id++
           })
           return
@@ -1024,7 +1024,7 @@ export class App extends Vue {
           visibilityButtonExtraBottom: 0,
           id: this.id++
         })
-      } catch (error) {
+      } catch (error: unknown) {
         printInConsole(error)
       }
     } else {
@@ -1039,7 +1039,7 @@ export class App extends Vue {
           visibilityButtonExtraBottom: 0,
           id: this.id++
         })
-      } catch (error) {
+      } catch (error: unknown) {
         printInConsole(error)
       }
 
@@ -1055,7 +1055,7 @@ export class App extends Vue {
             visibilityButtonExtraBottom: 0,
             id: this.id++
           })
-        } catch (error) {
+        } catch (error: unknown) {
           printInConsole(error)
         }
       } else if (!this.dnsIsHidden && typedArray) {
@@ -1070,7 +1070,7 @@ export class App extends Vue {
             visibilityButtonExtraBottom: 0,
             id: this.id++
           })
-        } catch (error) {
+        } catch (error: unknown) {
           printInConsole(error)
         }
       }
@@ -1148,11 +1148,11 @@ proxyWebSocket.onerror = event => {
 }
 
 if (navigator.serviceWorker && !location.host.startsWith('localhost')) {
-  navigator.serviceWorker.register('service-worker.bundle.js').catch(error => {
+  navigator.serviceWorker.register('service-worker.bundle.js').catch((error: unknown) => {
     printInConsole('registration failed with error: ' + error)
   })
 }
 
-function printInConsole(message: any) {
+function printInConsole(message: unknown) {
   console.log(message)
 }
