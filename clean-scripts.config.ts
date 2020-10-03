@@ -37,7 +37,7 @@ module.exports = {
     ts: `eslint --ext .js,.ts,.tsx ${tsFiles}`,
     export: `no-unused-export ${tsFiles}`,
     markdown: `markdownlint README.md`,
-    typeCoverage: 'type-coverage -p . --strict'
+    typeCoverage: 'type-coverage -p . --strict --ignore-files "variables.ts"'
   },
   test: [],
   fix: `eslint --ext .js,.ts,.tsx ${tsFiles} --fix`,

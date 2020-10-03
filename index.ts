@@ -1108,7 +1108,7 @@ if (!WebSocket) {
   })
 }
 
-decoder.on('decoded', decodedPacket => {
+decoder.on('decoded', (decodedPacket: unknown) => {
   app.messages.unshift({
     moment: getNow(),
     type: 'in',
@@ -1119,7 +1119,7 @@ decoder.on('decoded', decodedPacket => {
   })
 })
 
-previewDecoder.on('decoded', decodedPacket => {
+previewDecoder.on('decoded', (decodedPacket: unknown) => {
   app.previewResult = JSON.stringify(decodedPacket, null, '    ')
 })
 
