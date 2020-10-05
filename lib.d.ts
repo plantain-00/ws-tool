@@ -3,9 +3,9 @@ declare interface Window {
 }
 declare interface RTCDataChannel {
   readyState: 'open' | 'close'
-  onopen: (event: any) => void
-  onclose: (event: any) => void
-  onmessage: (event: MessageEvent) => void
+  onopen: () => void
+  onclose: () => void
+  onmessage: (event: MessageEvent<string | ArrayBuffer>) => void
   send(message: string): void
   close(): void
 }
