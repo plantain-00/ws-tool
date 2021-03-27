@@ -564,7 +564,7 @@ export function appTemplateHtml(_ctx, _cache) {
                                     ])
                                   ]))
                                 }), 128 /* KEYED_FRAGMENT */))
-                          ], 64 /* STABLE_FRAGMENT */))
+                          ], 2112 /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */))
                         : (_openBlock(), _createBlock("pre", { key: 1 }, _toDisplayString(_ctx.previewResult), 1 /* TEXT */))
                     ]))
                   : _createCommentVNode("v-if", true)
