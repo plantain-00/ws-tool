@@ -37,7 +37,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "radio",
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = $event => (_ctx.protocol = $event)),
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = $event => ((_ctx.protocol) = $event)),
                 value: "WebSocket",
                 disabled: _ctx.isConnected
               }, null, 8 /* PROPS */, ["disabled"]), [
@@ -48,7 +48,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "radio",
-                "onUpdate:modelValue": _cache[1] || (_cache[1] = $event => (_ctx.protocol = $event)),
+                "onUpdate:modelValue": _cache[1] || (_cache[1] = $event => ((_ctx.protocol) = $event)),
                 value: "HTTP",
                 disabled: _ctx.isConnected
               }, null, 8 /* PROPS */, ["disabled"]), [
@@ -59,7 +59,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "radio",
-                "onUpdate:modelValue": _cache[2] || (_cache[2] = $event => (_ctx.protocol = $event)),
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = $event => ((_ctx.protocol) = $event)),
                 value: "TCP",
                 disabled: _ctx.isConnected
               }, null, 8 /* PROPS */, ["disabled"]), [
@@ -70,7 +70,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "radio",
-                "onUpdate:modelValue": _cache[3] || (_cache[3] = $event => (_ctx.protocol = $event)),
+                "onUpdate:modelValue": _cache[3] || (_cache[3] = $event => ((_ctx.protocol) = $event)),
                 value: "UDP",
                 disabled: _ctx.isConnected
               }, null, 8 /* PROPS */, ["disabled"]), [
@@ -81,7 +81,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "radio",
-                "onUpdate:modelValue": _cache[4] || (_cache[4] = $event => (_ctx.protocol = $event)),
+                "onUpdate:modelValue": _cache[4] || (_cache[4] = $event => ((_ctx.protocol) = $event)),
                 value: "WebRTC",
                 disabled: _ctx.isConnected
               }, null, 8 /* PROPS */, ["disabled"]), [
@@ -101,7 +101,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   id: "url",
                   type: "url",
                   class: "form-control",
-                  "onUpdate:modelValue": _cache[5] || (_cache[5] = $event => (_ctx.url = $event)),
+                  "onUpdate:modelValue": _cache[5] || (_cache[5] = $event => ((_ctx.url) = $event)),
                   placeholder: "url"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.url]
@@ -116,7 +116,7 @@ export function appTemplateHtml(_ctx, _cache) {
                       type: "text",
                       class: "form-control",
                       placeholder: "subprotocol",
-                      "onUpdate:modelValue": _cache[6] || (_cache[6] = $event => (_ctx.subprotocol = $event))
+                      "onUpdate:modelValue": _cache[6] || (_cache[6] = $event => ((_ctx.subprotocol) = $event))
                     }, null, 512 /* NEED_PATCH */), [
                       [_vModelText, _ctx.subprotocol]
                     ])
@@ -127,7 +127,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   }, [
                     _withDirectives(_createElementVNode("select", {
                       class: "form-control",
-                      "onUpdate:modelValue": _cache[7] || (_cache[7] = $event => (_ctx.httpMethod = $event))
+                      "onUpdate:modelValue": _cache[7] || (_cache[7] = $event => ((_ctx.httpMethod) = $event))
                     }, [
                       _createElementVNode("option", null, "GET"),
                       _createElementVNode("option", null, "POST"),
@@ -154,7 +154,7 @@ export function appTemplateHtml(_ctx, _cache) {
               _createElementVNode("div", { class: "col-md-3" }, [
                 _withDirectives(_createElementVNode("input", {
                   class: "form-control",
-                  "onUpdate:modelValue": _cache[8] || (_cache[8] = $event => (_ctx.host = $event)),
+                  "onUpdate:modelValue": _cache[8] || (_cache[8] = $event => ((_ctx.host) = $event)),
                   placeholder: "host"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.host]
@@ -165,7 +165,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   type: "number",
                   class: "form-control",
                   placeholder: "port",
-                  "onUpdate:modelValue": _cache[9] || (_cache[9] = $event => (_ctx.port = $event))
+                  "onUpdate:modelValue": _cache[9] || (_cache[9] = $event => ((_ctx.port) = $event))
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.port]
                 ])
@@ -182,7 +182,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   type: "text",
                   class: "form-control",
                   placeholder: "data channel",
-                  "onUpdate:modelValue": _cache[10] || (_cache[10] = $event => (_ctx.dataChannelName = $event))
+                  "onUpdate:modelValue": _cache[10] || (_cache[10] = $event => ((_ctx.dataChannelName) = $event))
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.dataChannelName]
                 ])
@@ -206,7 +206,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   style: {"width":"100%","height":"110px"},
                   class: "form-control",
                   placeholder: "session description(offer or answer)",
-                  "onUpdate:modelValue": _cache[12] || (_cache[12] = $event => (_ctx.sessionDescription = $event))
+                  "onUpdate:modelValue": _cache[12] || (_cache[12] = $event => ((_ctx.sessionDescription) = $event))
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.sessionDescription]
                 ])
@@ -333,7 +333,7 @@ export function appTemplateHtml(_ctx, _cache) {
                 _createElementVNode("label", null, [
                   _withDirectives(_createElementVNode("input", {
                     type: "checkbox",
-                    "onUpdate:modelValue": _cache[27] || (_cache[27] = $event => (_ctx.isSocketIO = $event)),
+                    "onUpdate:modelValue": _cache[27] || (_cache[27] = $event => ((_ctx.isSocketIO) = $event)),
                     disabled: _ctx.isConnected
                   }, null, 8 /* PROPS */, ["disabled"]), [
                     [_vModelCheckbox, _ctx.isSocketIO]
@@ -343,7 +343,7 @@ export function appTemplateHtml(_ctx, _cache) {
                 _createElementVNode("label", null, [
                   _withDirectives(_createElementVNode("input", {
                     type: "checkbox",
-                    "onUpdate:modelValue": _cache[28] || (_cache[28] = $event => (_ctx.ignorePing = $event)),
+                    "onUpdate:modelValue": _cache[28] || (_cache[28] = $event => ((_ctx.ignorePing) = $event)),
                     disabled: _ctx.isConnected || !_ctx.isSocketIO
                   }, null, 8 /* PROPS */, ["disabled"]), [
                     [_vModelCheckbox, _ctx.ignorePing]
@@ -413,7 +413,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   ? (_openBlock(), _createElementBlock("label", { key: 0 }, [
                       _withDirectives(_createElementVNode("input", {
                         type: "radio",
-                        "onUpdate:modelValue": _cache[37] || (_cache[37] = $event => (_ctx.messageType = $event)),
+                        "onUpdate:modelValue": _cache[37] || (_cache[37] = $event => ((_ctx.messageType) = $event)),
                         value: "string"
                       }, null, 512 /* NEED_PATCH */), [
                         [_vModelRadio, _ctx.messageType]
@@ -425,7 +425,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   ? (_openBlock(), _createElementBlock("label", { key: 1 }, [
                       _withDirectives(_createElementVNode("input", {
                         type: "radio",
-                        "onUpdate:modelValue": _cache[38] || (_cache[38] = $event => (_ctx.messageType = $event)),
+                        "onUpdate:modelValue": _cache[38] || (_cache[38] = $event => ((_ctx.messageType) = $event)),
                         value: "Uint8Array"
                       }, null, 512 /* NEED_PATCH */), [
                         [_vModelRadio, _ctx.messageType]
@@ -437,7 +437,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   ? (_openBlock(), _createElementBlock("label", { key: 2 }, [
                       _withDirectives(_createElementVNode("input", {
                         type: "radio",
-                        "onUpdate:modelValue": _cache[39] || (_cache[39] = $event => (_ctx.messageType = $event)),
+                        "onUpdate:modelValue": _cache[39] || (_cache[39] = $event => ((_ctx.messageType) = $event)),
                         value: "protobuf"
                       }, null, 512 /* NEED_PATCH */), [
                         [_vModelRadio, _ctx.messageType]
@@ -449,7 +449,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   ? (_openBlock(), _createElementBlock("label", { key: 3 }, [
                       _withDirectives(_createElementVNode("input", {
                         type: "radio",
-                        "onUpdate:modelValue": _cache[40] || (_cache[40] = $event => (_ctx.messageType = $event)),
+                        "onUpdate:modelValue": _cache[40] || (_cache[40] = $event => ((_ctx.messageType) = $event)),
                         value: "FormData"
                       }, null, 512 /* NEED_PATCH */), [
                         [_vModelRadio, _ctx.messageType]
@@ -469,7 +469,7 @@ export function appTemplateHtml(_ctx, _cache) {
                 _withDirectives(_createElementVNode("textarea", {
                   style: {"width":"100%","height":"150px"},
                   class: "form-control",
-                  "onUpdate:modelValue": _cache[41] || (_cache[41] = $event => (_ctx.protobufContent = $event)),
+                  "onUpdate:modelValue": _cache[41] || (_cache[41] = $event => ((_ctx.protobufContent) = $event)),
                   placeholder: "protobuf file content"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.protobufContent]
@@ -479,7 +479,7 @@ export function appTemplateHtml(_ctx, _cache) {
                 _withDirectives(_createElementVNode("input", {
                   type: "text",
                   class: "form-control input-sm",
-                  "onUpdate:modelValue": _cache[42] || (_cache[42] = $event => (_ctx.protobufTypePath = $event)),
+                  "onUpdate:modelValue": _cache[42] || (_cache[42] = $event => ((_ctx.protobufTypePath) = $event)),
                   placeholder: "protobuf type path"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.protobufTypePath]
@@ -510,7 +510,7 @@ export function appTemplateHtml(_ctx, _cache) {
                                   key: 0,
                                   style: {"width":"100%","height":"150px"},
                                   class: "form-control",
-                                  "onUpdate:modelValue": _cache[44] || (_cache[44] = $event => (_ctx.message = $event))
+                                  "onUpdate:modelValue": _cache[44] || (_cache[44] = $event => ((_ctx.message) = $event))
                                 }, null, 512 /* NEED_PATCH */)), [
                                   [_vModelText, _ctx.message]
                                 ])
@@ -650,7 +650,7 @@ export function appTemplateHtml(_ctx, _cache) {
                 _withDirectives(_createElementVNode("input", {
                   type: "text",
                   class: "form-control input-sm",
-                  "onUpdate:modelValue": _cache[45] || (_cache[45] = $event => (_ctx.dnsQuestionName = $event)),
+                  "onUpdate:modelValue": _cache[45] || (_cache[45] = $event => ((_ctx.dnsQuestionName) = $event)),
                   placeholder: "DNS question name"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.dnsQuestionName]
@@ -660,7 +660,7 @@ export function appTemplateHtml(_ctx, _cache) {
                 _withDirectives(_createElementVNode("input", {
                   type: "number",
                   class: "form-control input-sm",
-                  "onUpdate:modelValue": _cache[46] || (_cache[46] = $event => (_ctx.dnsTransactionId = $event)),
+                  "onUpdate:modelValue": _cache[46] || (_cache[46] = $event => ((_ctx.dnsTransactionId) = $event)),
                   placeholder: "DNS transaction ID"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.dnsTransactionId]
@@ -716,7 +716,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   ref: "bookmarkName",
                   type: "text",
                   class: "form-control input-sm",
-                  "onUpdate:modelValue": _cache[53] || (_cache[53] = $event => (_ctx.bookmarkName = $event)),
+                  "onUpdate:modelValue": _cache[53] || (_cache[53] = $event => ((_ctx.bookmarkName) = $event)),
                   placeholder: "bookmark name"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.bookmarkName]
@@ -741,7 +741,7 @@ export function appTemplateHtml(_ctx, _cache) {
                   ref: "filter",
                   type: "text",
                   class: "form-control input-sm",
-                  "onUpdate:modelValue": _cache[55] || (_cache[55] = $event => (_ctx.filter = $event)),
+                  "onUpdate:modelValue": _cache[55] || (_cache[55] = $event => ((_ctx.filter) = $event)),
                   placeholder: "filter"
                 }, null, 512 /* NEED_PATCH */), [
                   [_vModelText, _ctx.filter]
@@ -754,7 +754,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "checkbox",
-                "onUpdate:modelValue": _cache[56] || (_cache[56] = $event => (_ctx.showRaw = $event))
+                "onUpdate:modelValue": _cache[56] || (_cache[56] = $event => ((_ctx.showRaw) = $event))
               }, null, 512 /* NEED_PATCH */), [
                 [_vModelCheckbox, _ctx.showRaw]
               ]),
@@ -763,7 +763,7 @@ export function appTemplateHtml(_ctx, _cache) {
             _createElementVNode("label", null, [
               _withDirectives(_createElementVNode("input", {
                 type: "checkbox",
-                "onUpdate:modelValue": _cache[57] || (_cache[57] = $event => (_ctx.showFormatted = $event))
+                "onUpdate:modelValue": _cache[57] || (_cache[57] = $event => ((_ctx.showFormatted) = $event))
               }, null, 512 /* NEED_PATCH */), [
                 [_vModelCheckbox, _ctx.showFormatted]
               ]),
